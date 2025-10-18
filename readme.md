@@ -7,7 +7,7 @@ Reaching BLAS performance while remaining 100% Rust.
 Core Level-1 and Level-2 routines are implemented. Some outperform
 [OpenBLAS](https://github.com/OpenMathLib/OpenBLAS) and 
 [Apple Accelerate](https://developer.apple.com/documentation/accelerate/blas/)
-on Apple Silicon. 
+on Apple Silicon **when single-threaded**.  
 
 Level-3 routines are being written. 
 
