@@ -1,8 +1,8 @@
 use blas_src as _;
-use cblas_sys::{cblas_cgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
+use cblas_sys::{cblas_zgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
 
 use coral::enums::CoralTranspose;
-use coral::level3::cgemm::cgemm;
+use coral::level3::zgemm::zgemm;
 
 #[inline(always)]
 fn to_cblas(op: CoralTranspose) -> CBLAS_TRANSPOSE {
@@ -14,52 +14,51 @@ fn to_cblas(op: CoralTranspose) -> CBLAS_TRANSPOSE {
 }
 
 #[inline(always)]
-fn cblas_cgemm_ref(
+fn cblas_zgemm_ref(
     op_a  : CoralTranspose,
     op_b  : CoralTranspose,
     m     : i32,
     n     : i32,
     k     : i32,
-    alpha : [f32; 2],
-    a     : *const f32,
+    alpha : [f64; 2],
+    a     : *const f64,
     lda   : i32,
-    b     : *const f32,
+    b     : *const f64,
     ldb   : i32,
-    beta  : [f32; 2],
-    c     : *mut f32,
+    beta  : [f64; 2],
+    c     : *mut f64,
     ldc   : i32,
 ) {
     unsafe {
-        cblas_cgemm(
+        cblas_zgemm(
             CBLAS_LAYOUT::CblasColMajor,
             to_cblas(op_a),
             to_cblas(op_b),
             m, n, k,
-            &alpha as *const [f32; 2],
-            a      as *const [f32; 2], 
+            &alpha as *const [f64; 2] as *const _,
+            a      as *const _,
             lda,
-            b      as *const [f32; 2], 
+            b      as *const _,
             ldb,
-            &beta  as *const [f32; 2],
-            c      as *mut [f32; 2], 
+            &beta  as *const [f64; 2] as *const _,
+            c      as *mut _,
             ldc,
         );
     }
 }
 
-fn make_matrix_colmajor_c32(
+fn make_matrix_colmajor_c64(
     rows : usize,
     cols : usize,
     ld   : usize,
-    f    : impl Fn(usize, usize) -> [f32; 2],
-) -> Vec<f32> {
+    f    : impl Fn(usize, usize) -> [f64; 2],
+) -> Vec<f64> {
     assert!(ld >= rows);
     let mut a = vec![0.0; 2 * ld * cols];
     for j in 0..cols {
         for i in 0..rows {
             let [re, im] = f(i, j);
             let idx = 2 * (i + j * ld);
-
             a[idx + 0] = re;
             a[idx + 1] = im;
         }
@@ -77,10 +76,10 @@ fn opch(op: CoralTranspose) -> char {
 }
 
 fn assert_allclose(
-    a    : &[f32],
-    b    : &[f32],
-    rtol : f32,
-    atol : f32,
+    a    : &[f64],
+    b    : &[f64],
+    rtol : f64,
+    atol : f64,
     ctx  : &str,
     ldc  : usize,
 ) {
@@ -96,7 +95,7 @@ fn assert_allclose(
             let i    = elem % ldc;
 
             panic!(
-                "[{}] mismatch at (i={}, j={}, part={}): coral={:.8e} vs cblas={:.8e} \
+                "[{}] mismatch at (i={}, j={}, part={}): coral={:.16e} vs cblas={:.16e} \
                  delta={:.3e} tol={:.3e} (ldc={})",
                 ctx, i, j, part, x, y, diff, tol, ldc
             );
@@ -104,10 +103,8 @@ fn assert_allclose(
     }
 }
 
-// just to accomodate both openblas and accelerate 
-// rtol = atol = 1e-3 works for openblas
-const RTOL: f32 = 3e-3;
-const ATOL: f32 = 2e-3;
+const RTOL: f64 = 3e-12;
+const ATOL: f64 = 2e-12;
 
 fn run_case(
     op_a  : CoralTranspose,
@@ -118,8 +115,8 @@ fn run_case(
     lda   : usize,
     ldb   : usize,
     ldc   : usize,
-    alpha : [f32; 2],
-    beta  : [f32; 2],
+    alpha : [f64; 2],
+    beta  : [f64; 2],
 ) {
     let (a_rows, a_cols) = match op_a {
         CoralTranspose::NoTranspose          => (m, k),
@@ -133,27 +130,27 @@ fn run_case(
     };
     assert!(lda >= a_rows && ldb >= b_rows && ldc >= m);
 
-    let a = make_matrix_colmajor_c32(a_rows, a_cols, lda, |i, j| {
+    let a = make_matrix_colmajor_c64(a_rows, a_cols, lda, |i, j| {
         [
-            0.1 + (i as f32) * 0.25 + (j as f32) * 0.125,
-            -0.05 + (i as f32) * 0.20 - (j as f32) * 0.075
+            0.1  + (i as f64) * 0.25  + (j as f64) * 0.125,
+           -0.05 + (i as f64) * 0.20  - (j as f64) * 0.075
         ]
     });
-    let b = make_matrix_colmajor_c32(b_rows, b_cols, ldb, |i, j| {
+    let b = make_matrix_colmajor_c64(b_rows, b_cols, ldb, |i, j| {
         [
-            -0.2 + (i as f32) * 0.05 - (j as f32) * 0.075,
-            0.15 - (i as f32) * 0.03 + (j as f32) * 0.02
+           -0.2  + (i as f64) * 0.05  - (j as f64) * 0.075,
+            0.15 - (i as f64) * 0.03  + (j as f64) * 0.02
         ]
     });
-    let c_init = make_matrix_colmajor_c32(m, n, ldc, |i, j| {
+    let c_init = make_matrix_colmajor_c64(m, n, ldc, |i, j| {
         [
-            0.3 - (i as f32) * 0.01 + (j as f32) * 0.02,
-            -0.1 + (i as f32) * 0.015 - (j as f32) * 0.025
+            0.3  - (i as f64) * 0.01  + (j as f64) * 0.02,
+           -0.1  + (i as f64) * 0.015 - (j as f64) * 0.025
         ]
     });
 
     let mut c_coral = c_init.clone();
-    cgemm(
+    zgemm(
         op_a, op_b,
         m, n, k,
         alpha,
@@ -164,7 +161,7 @@ fn run_case(
     );
 
     let mut c_ref = c_init.clone();
-    cblas_cgemm_ref(
+    cblas_zgemm_ref(
         op_a, op_b,
         m as i32, n as i32, k as i32,
         alpha,
@@ -184,7 +181,6 @@ fn run_case(
     assert_allclose(&c_coral, &c_ref, RTOL, ATOL, &ctx, ldc);
 }
 
-
 fn run_all_ops(
     m     : usize,
     n     : usize,
@@ -195,11 +191,11 @@ fn run_all_ops(
     ldb_t : usize,
     ldc   : usize,
 ) {
-    let cases: &[[f32; 4]] = &[
-        [1.0, 0.0, 0.0, 0.0],   
-        [0.5, 0.25, 1.0, 0.0],  
-        [0.75, -0.25, -0.5, 0.3],
-        [0.0, 0.0, 0.7, -0.2],  
+    let cases: &[[f64; 4]] = &[
+        [1.0, 0.0, 0.0, 0.0],      
+        [0.5, 0.25, 1.0, 0.0],     
+        [0.75, -0.25, -0.5, 0.3],  
+        [0.0, 0.0, 0.7, -0.2],     
     ];
 
     let ops = &[
@@ -246,7 +242,7 @@ fn not_block_multiple_all_ops() {
 }
 
 #[test]
-fn padded_lds_all_ops() {
+fn padded_lds_all_ops_z() {
     let (m, n, k) = (17, 19, 13);
     let lda_n = m + 3;
     let lda_t = k + 2;

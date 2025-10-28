@@ -112,7 +112,8 @@ fn pack_at_mrxk_tail(
     }
 }
 
-/// pack an `mc x kc` A-block; pads the last partial MR.
+/// pack an `mc x kc` A-block;
+/// pads the last partial MR.
 #[inline(always)]
 pub(crate) fn pack_a_block(
     mc          : usize,
@@ -269,7 +270,8 @@ fn pack_bt_kxnr_tail(
     }
 }
 
-/// pack a `kc x nc` B-block; pads the last partial NR.
+/// pack a `kc x nc` B-block; 
+/// pads the last partial NR.
 #[inline(always)]
 pub(crate) fn pack_b_block(
     kc           : usize, 

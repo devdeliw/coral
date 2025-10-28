@@ -167,6 +167,10 @@ pub(crate) fn c32_mrxnr_beta0(
     ldc   : usize,      // complex elems 
     alpha : Complex32,
 ) {
+
+    debug_assert_eq!(MR, 4);
+    debug_assert_eq!(NR, 8);
+
     unsafe {
         let mut acc_re: [float32x4_t; NR] = [vdupq_n_f32(0.0); NR];
         let mut acc_im: [float32x4_t; NR] = [vdupq_n_f32(0.0); NR];
@@ -243,6 +247,10 @@ pub(crate) fn c32_mrxnr_beta1(
     ldc   : usize,
     alpha : Complex32,
 ) {
+
+    debug_assert_eq!(MR, 4);
+    debug_assert_eq!(NR, 8);
+
     unsafe {
         let mut acc_re: [float32x4_t; NR] = [vdupq_n_f32(0.0); NR];
         let mut acc_im: [float32x4_t; NR] = [vdupq_n_f32(0.0); NR];
@@ -323,6 +331,10 @@ pub(crate) fn c32_mrxnr_betax(
     alpha : Complex32,
     beta  : Complex32,
 ) {
+
+    debug_assert_eq!(MR, 4);
+    debug_assert_eq!(NR, 8);
+    
     unsafe {
         let mut acc_re: [float32x4_t; NR] = [vdupq_n_f32(0.0); NR];
         let mut acc_im: [float32x4_t; NR] = [vdupq_n_f32(0.0); NR];

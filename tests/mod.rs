@@ -103,3 +103,8 @@ mod dgemm_tests;
 //
 #[path = "level3/cgemm_tests.rs"] 
 mod cgemm_tests;
+// 
+// complex double precision 
+//
+#[path = "level3/zgemm_tests.rs"] 
+mod zgemm_tests;

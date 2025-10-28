@@ -13,9 +13,9 @@ use crate::level3::{
 use crate::enums::CoralTranspose;
 use crate::level3::microkernel::c32_mrxnr::Complex32; 
 
-pub const MC: usize = 384;
-pub const NC: usize = 576;
-pub const KC: usize = 256;
+pub(crate) const MC: usize = 384;
+pub(crate) const NC: usize = 576;
+pub(crate) const KC: usize = 256;
 
 #[inline(always)]
 fn c32(x: [f32; 2]) -> Complex32 {

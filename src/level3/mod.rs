@@ -33,5 +33,14 @@ pub(crate) mod cgemm_cn;
 pub(crate) mod cgemm_ct;
 pub(crate) mod cgemm_cc;
 
-pub mod zgemm; 
+pub mod zgemm;
+pub(crate) mod zgemm_nn;
+pub(crate) mod zgemm_nt; 
+pub(crate) mod zgemm_tn; 
+pub(crate) mod zgemm_tt;
+pub(crate) mod zgemm_nc;
+pub(crate) mod zgemm_tc;
+pub(crate) mod zgemm_cn;
+pub(crate) mod zgemm_ct;
+pub(crate) mod zgemm_cc;
 

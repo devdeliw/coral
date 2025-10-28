@@ -6,9 +6,9 @@ use crate::level3::{
 };
 use crate::enums::CoralTranspose;
 
-pub const MC: usize = 258; 
-pub const NC: usize = 384; 
-pub const KC: usize = 256;
+pub(crate) const MC: usize = 258; 
+pub(crate) const NC: usize = 384; 
+pub(crate) const KC: usize = 256;
 
 #[inline(always)]
 fn is_transpose(op: CoralTranspose) -> bool {
