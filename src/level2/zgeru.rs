@@ -1,39 +1,54 @@
-//! Performs a complex double precision rank-1 matrix update (GERU).
+//! `GERU`. Performs a complex double precision rank-1 matrix update.
 //!
-//! ```text
-//!     A := alpha * x * y^T + A
-//! ```
+//! \\[ 
+//! A := \alpha x y^{T} + A. 
+//! \\]
 //!
-//! where `A` is an `n_rows x n_cols` column-major matrix, `x` is a vector of length
-//! `n_rows`, and `y` is a vector of length `n_cols`.  
+//! where $A$ is an `n_rows x n_cols` column-major matrix, $x$ is a vector of length
+//! `n_rows`, and $y$ is a vector of length `n_cols`.  
 //!
-//! Internally, this uses a fast path for the **unit-stride** case (`incx == 1` and `incy == 1`)
+//! Internally, this uses a fast path for the unit-stride case (`incx == 1` and `incy == 1`)
 //! that applies a scaled [`zaxpy`] into each column, and falls back to a general pointer-walk
 //! loop for arbitrary strides.
 //!
 //! # Arguments
-//! - `n_rows` (usize)      : Number of rows (m) in the matrix `A`.
-//! - `n_cols` (usize)      : Number of columns (n) in the matrix `A`.
-//! - `alpha`  ([f64; 2])   : Complex scalar multiplier applied to the outer product `x * y^T`.
-//! - `x`      (&[f64])     : Input slice containing interleaved complex vector `x` elements.
-//! - `incx`   (usize)      : Stride between consecutive complex elements of `x`.
-//! - `y`      (&[f64])     : Input slice containing interleaved complex vector `y` elements.
-//! - `incy`   (usize)      : Stride between consecutive complex elements of `y`.
-//! - `matrix` (&mut [f64]) : Input slice containing interleaved complex matrix `A`; updated in place.
-//! - `lda`    (usize)      : Leading dimension of `A`.
+//! - `n_rows` (usize)      : Number of rows ($m$) in the matrix $A$.
+//! - `n_cols` (usize)      : Number of columns ($n$) in the matrix $A$.
+//! - `alpha`  ([f64; 2])   : Complex scalar multiplier applied to the outer product $x y^T$.
+//! - `x`      (&[f64])     : Input slice containing interleaved complex vector $x$ elements.
+//! - `incx`   (usize)      : Stride between consecutive complex elements of $x$.
+//! - `y`      (&[f64])     : Input slice containing interleaved complex vector $y$ elements.
+//! - `incy`   (usize)      : Stride between consecutive complex elements of $y$.
+//! - `matrix` (&mut [f64]) : Input slice containing interleaved complex matrix $A$.
+//! - `lda`    (usize)      : Leading dimension of $A$.
 //!
 //! # Returns
 //! - Nothing. The contents of `matrix` are updated in place.
 //!
-//! # Notes
-//! - Optimized for AArch64 NEON targets; fast path uses SIMD, have not made portable.
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub
-//!
 //! # Author
 //! Deval Deliwala
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::zgeru;
+//!
+//! fn main() {
+//!     let m = 2;
+//!     let n = 2;
+//!
+//!     let alpha = [1.0, -0.5];
+//!     let x     = vec![1.0, 0.0, 2.0, 0.0]; // (1, 2)
+//!     let incx  = 1;
+//!     let y     = vec![0.0, 1.0, 1.0, 0.0]; // (i, 1)
+//!     let incy  = 1;
+//!
+//!     let mut a = vec![0.0; 2 * m * n];
+//!     let lda = m;
+//!
+//!     zgeru(m, n, alpha, &x, incx, &y, incy, &mut a, lda);
+//! }
+//! ```
+
 
 use crate::level1::zaxpy::zaxpy;
 
@@ -125,4 +140,3 @@ pub fn zgeru(
         }
     }
 }
-

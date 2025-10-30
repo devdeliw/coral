@@ -1,42 +1,58 @@
-//! Performs a single precision symmetric rank-1 update (SYR).
+//! `SYR`. Performs a single precision symmetric rank-1 update.
 //!
 //! This function implements the BLAS [`ssyr`] routine, computing
 //!
-//! ```text
-//!     A := alpha * x * x^T + A
-//! ```
+//! \\[
+//! A := \alpha x x^{T} + A. 
+//! \\]
 //!
-//! where `A` is an `n x n` **symmetric** column-major matrix and only the triangle
-//! indicated by `uplo` is referenced/updated. `x` is a vector of length `n`.
+//! where $A$ is an $n \times n$ **symmetric** column-major matrix and only the triangle
+//! indicated by `uplo` is referenced/updated. $x$ is a vector of length $n$.
 //!
-//! Internally, this uses a fast path for the **unit-stride** case (`incx == 1`)
+//! Internally, this uses a fast path for the unit-stride case (`incx == 1`)
 //! that applies a triangular [`saxpy`] into each column, and falls back to a general
-//! pointer-walk loop with fused multiply-add (FMA) for arbitrary strides.
+//! pointer-walk loop with FMA for arbitrary strides.
 //!
 //! # Arguments
-//! - `uplo`   (CoralTriangular) : Which triangle of `A` is stored.
-//! - `n`      (usize)           : Order of the matrix `A`.
-//! - `alpha`  (f32)             : Scalar multiplier applied to the outer product `x * x^T`.
-//! - `x`      (&[f32])          : Input slice containing the vector `x`.
-//! - `incx`   (usize)           : Stride between consecutive elements of `x`.
-//! - `matrix` (&mut [f32])      : Input/output slice containing the matrix `A`. 
-//!                              | Only the specified triangle is touched.
-//! - `lda`    (usize)           : Leading dimension of `A`.
+//! - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
+//! - `n`      (usize)           : Order of the matrix $A$.
+//! - `alpha`  (f32)             : Scalar multiplier applied to the outer product $x x^T$.
+//! - `x`      (&[f32])          : Input slice containing the vector $x$.
+//! - `incx`   (usize)           : Stride between consecutive elements of $x$.
+//! - `matrix` (&mut [f32])      : Input/output slice containing the matrix $A$. 
+//! - `lda`    (usize)           : Leading dimension of $A$.
 //!
 //! # Returns
 //! - Nothing. The contents of `matrix` are updated in place within the specified triangle.
 //!
-//! # Notes
-//! - Optimized for AArch64 NEON targets; fast path uses SIMD via the level1 [`saxpy`] kernel.
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub
-//!
 //! # Author
 //! Deval Deliwala
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::ssyr;
+//! use coral::enums::CoralTriangular;
+//!
+//! fn main() {
+//!     let uplo = CoralTriangular::UpperTriangular;
+//!
+//!     let n = 3;
+//!     let alpha = 2.0;
+//!
+//!     let x = vec![1.0, 2.0, 3.0];
+//!     let incx = 1;
+//!
+//!     // only upper triangle is referenced
+//!     let mut a = vec![0.0; n * n]; 
+//!     let lda = n;
+//!
+//!     ssyr(uplo, n, alpha, &x, incx, &mut a, lda);
+//! }
+//! ```
+
 
 use crate::level1::saxpy::saxpy;
+
 // assert length helpers
 use crate::level1::assert_length_helpers::required_len_ok;
 use crate::level2::assert_length_helpers::required_len_ok_matrix;
@@ -163,4 +179,3 @@ pub fn ssyr(
         }
     }
 }
-

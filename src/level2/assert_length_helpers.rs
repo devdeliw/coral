@@ -31,5 +31,3 @@ pub(crate) fn required_len_ok_matrix_cplx(
         len >= 2 * (n_cols - 1) * lda + 2 * n_rows
     }
 }
-
-

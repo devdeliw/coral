@@ -1,27 +1,53 @@
-//! Double precision complex GEMV.
+//! `GEMV`. General double precision complex matrix-vector multiply.
 //!
-//! ```text
-//! NoTranspose   => y = alpha * A * x + beta * y
-//! Transpose     => y = alpha * A^T * x + beta * y
-//! ConjTranspose => y = alpha * A^H * x + beta * y
-//! ```
-//! 
+//! \\[ 
+//! y := \alpha \operatorname{op}(A) x + \beta y, \quad \operatorname{op}(A) \in \\{A, A^{T}, A^{H}\\}.
+//! \\]
+//!
 //! `A` is interleaved column-major `[re, im, ...]`
 //!
 //! # Arguments
-//! - `n_rows` (usize)      : Number of rows (m) in the matrix `A`.
-//! - `n_cols` (usize)      : Number of columns (n) in the matrix `A`.
-//! - `alpha`  ([f64; 2])   : Complex scalar multiplier applied to the product `A^T * x`.
-//! - `matrix` (&[f64])     : Input slice containing the matrix `A`.
-//! - `lda`    (usize)      : Leading dimension of `A`.
+//! - `n_rows` (usize)      : Number of rows ($m$) in the matrix $A$.
+//! - `n_cols` (usize)      : Number of columns ($n$) in the matrix $A$.
+//! - `alpha`  ([f64; 2])   : Complex scalar multiplier applied to the product $A^T x$.
+//! - `matrix` (&[f64])     : Input slice containing the matrix $A$.
+//! - `lda`    (usize)      : Leading dimension of $A$.
 //! - `x`      (&[f64])     : Input complex vector of length `n_rows`.
-//! - `incx`   (usize)      : Stride between consecutive complex elements of `x`.
-//! - `beta`   ([f64; 2])   : Complex scalar multiplier applied to `y` prior to accumulation.
+//! - `incx`   (usize)      : Stride between consecutive complex elements of $x$.
+//! - `beta`   ([f64; 2])   : Complex scalar multiplier applied to $y$ prior to accumulation.
 //! - `y`      (&mut [f64]) : Input/output complex vector of length `n_cols`.
-//! - `incy`   (usize)      : Stride between consecutive complex elements of `y`.
+//! - `incy`   (usize)      : Stride between consecutive complex elements of $y$.
 //!
 //! # Returns
-//! - Nothing. The contents of `y` are updated in place.
+//! - Nothing. The contents of $y$ are updated in place.
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::zgemv;
+//!
+//! fn main() {
+//!     let m = 2;
+//!     let n = 2;
+//!
+//!     let a = vec![
+//!         1.0, 0.0, 0.0, 1.0, // col 0 
+//!         2.0, 0.0, 0.0, 0.0, // col 1
+//!     ];
+//!
+//!     let lda   = m;
+//!
+//!     let x     = vec![1.0, -1.0,  0.5, 0.5]; // (1 - i, 0.5 + 0.5i)
+//!     let incx  = 1;
+//!     let mut y = vec![0.0, 0.0,  0.0, 0.0];
+//!     let incy  = 1;
+//!
+//!     let alpha = [1.0, 0.0];
+//!     let beta  = [0.0, 0.0];
+//!
+//!     zgemv(m, n, alpha, &a, lda, &x, incx, beta, &mut y, incy);
+//! }
+//! ```
+
 
 use crate::enums::CoralTranspose; 
 use crate::level2::{ 
@@ -51,5 +77,3 @@ pub fn zgemv(
         CoralTranspose::ConjugateTranspose  => zgemv_conjtranspose(n_rows, n_cols, alpha, matrix, lda, x, incx, beta, y, incy),
     }
 }
-
-

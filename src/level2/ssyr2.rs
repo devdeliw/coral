@@ -1,38 +1,53 @@
-//! Performs a single precision symmetric rank-2 update (SYR2).
+//! `SYR2`. Performs a single precision symmetric rank-2 update.
 //!
-//! ```text
-//!     A := alpha * (x * y^T + y * x^T) + A
-//! ```
+//! \\[ 
+//! A := \alpha (x y^{T} + y x^{T}) + A. 
+//! \\]
 //!
-//! where `A` is an `n x n` **symmetric** column-major matrix and only the triangle
+//! where $A$ is an $n \times n$ **symmetric** column-major matrix and only the triangle
 //! indicated by `uplo` is referenced/updated.
 //!
 //! # Arguments
-//! - `uplo`   (CoralTriangular) : Which triangle of `A` is stored.
-//! - `n`      (usize)           : Order of the matrix `A`.
-//! - `alpha`  (f32)             : Scalar multiplier applied to the outer product `x * x^T`.
-//! - `x`      (&[f32])          : Input slice containing the vector `x`.
-//! - `incx`   (usize)           : Stride between consecutive elements of `x`.
-//! - `y`      (&[f32])          : Input slice containing the vector `y`.
-//! - `incy`   (usize)           : Stride between consecutive elements of `y`.
-//! - `matrix` (&mut [f32])      : Input/output slice containing the matrix `A`. 
-//!                              | Only the specified triangle is touched.
-//! - `lda`    (usize)           : Leading dimension of `A`.
+//! - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
+//! - `n`      (usize)           : Order of the matrix $A$.
+//! - `alpha`  (f32)             : Scalar multiplier applied to the outer product $x x^T$.
+//! - `x`      (&[f32])          : Input slice containing the vector $x$.
+//! - `incx`   (usize)           : Stride between consecutive elements of $x$.
+//! - `y`      (&[f32])          : Input slice containing the vector $y$.
+//! - `incy`   (usize)           : Stride between consecutive elements of $y$.
+//! - `matrix` (&mut [f32])      : Input/output slice containing the matrix $A$. 
+//! - `lda`    (usize)           : Leading dimension of $A$.
 //!
 //! # Returns
-//! - Nothing. The contents of `matrix` are updated in place.
+//! - Nothing. The contents of `matrix` are updated in place
 //!   within the specified triangle.
-//!
-//! # Notes
-//! - Fast path for unit strides uses two triangular [`saxpy`] streams per column.
-//! - Optimized for AArch64 NEON targets; fast path uses SIMD via the level1 [`saxpy`] kernel.
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub
 //!
 //! # Author
 //! Deval Deliwala
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::ssyr2;
+//! use coral::enums::CoralTriangular;
+//!
+//! fn main() {
+//!     let uplo  = CoralTriangular::UpperTriangular;
+//!
+//!     let n = 3;
+//!     let alpha = 0.5;
+//!
+//!     let x = vec![1.0, 2.0, 3.0];
+//!     let incx = 1;
+//!     let y = vec![2.0, -1.0, 0.5];
+//!     let incy = 1;
+//! 
+//!     // only upper triangle is referenced
+//!     let mut a = vec![0.0; n * n];
+//!     let lda = n;
+//!
+//!     ssyr2(uplo, n, alpha, &x, incx, &y, incy, &mut a, lda);
+//! }
+//! ```
 
 use crate::level1::saxpy::saxpy;
 use crate::level1::assert_length_helpers::required_len_ok;
@@ -180,4 +195,3 @@ pub fn ssyr2(
         }
     }
 }
-

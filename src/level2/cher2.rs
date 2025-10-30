@@ -1,44 +1,59 @@
-//! Performs a complex single precision Hermitian rank-2 update (HER2).
+//! `HER2`. Performs a complex single precision Hermitian rank-2 update.
 //!
 //! This function implements the BLAS [`cher2`] routine, computing
 //!
-//! ```text
-//!     A := alpha * (x * y^H) + conj(alpha) * (y * x^H) + A
-//! ```
+//! \\[ 
+//! A := \alpha (x y^{H}) + \operatorname{conj}(\alpha) (y x^{H}) + A. 
+//! \\]
 //!
-//! where `A` is an `n x n` **Hermitian** interleaved column-major matrix `[re, im, ...]`
-//! and only the triangle indicated by `uplo` is referenced/updated. `x` and `y` are complex 
-//! vectors of length `n`
+//! where $A$ is an $n \times n$ **Hermitian** interleaved column-major matrix `[re, im, ...]`
+//! and only the triangle indicated by `uplo` is referenced/updated. $x$ and $y$ are complex 
+//! vectors of length $n$
 //!
-//! Internally, this uses a fast path for the **unit-stride** case (`incx == 1 && incy == 1`)
+//! Internally, this uses a fast path for the unit-stride case (`incx == 1 && incy == 1`)
 //! that applies two triangular [`caxpy`] streams per column, and falls back to a general
 //! call with arbitrary strides.
 //!
 //! # Arguments
-//! - `uplo`   (CoralTriangular) : Which triangle of `A` is stored.
-//! - `n`      (usize)           : Dimension of the matrix `A`.
-//! - `alpha`  ([f32; 2])        : Complex scalar multiplier ([real, imag]).
-//! - `x`      (&[f32])          : Input slice containing complex vector `x`.
-//! - `incx`   (usize)           : Stride between consecutive elements of `x.
-//! - `y`      (&[f32])          : Input slice containing complex vector `y`.
-//! - `incy`   (usize)           : Stride between consecutive elements of `y`.
-//! - `matrix` (&mut [f32])      : Input/output slice containing the matrix `A`.
-//!                              | as interleaved complex scalars; specified triangle updated in place.
-//! - `lda`    (usize)           : Leading dimension of `A`. 
+//! - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
+//! - `n`      (usize)           : Dimension of the matrix $A$.
+//! - `alpha`  ([f32; 2])        : Complex scalar multiplier; `([real, imag])`.
+//! - `x`      (&[f32])          : Input slice containing complex vector $x$.
+//! - `incx`   (usize)           : Stride between consecutive elements of $x$.
+//! - `y`      (&[f32])          : Input slice containing complex vector $y$.
+//! - `incy`   (usize)           : Stride between consecutive elements of $y$.
+//! - `matrix` (&mut [f32])      : Input/output slice containing the matrix $A$.
+//! - `lda`    (usize)           : Leading dimension of $A$. 
 //!
 //! # Returns
 //! - Nothing. The contents of `matrix` are updated in place
 //!   within the specified triangle.
 //!
-//! # Notes
-//! - Optimized for AArch64 NEON targets; fast path uses SIMD via the level1 [`caxpy`] kernel.
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub
-//!
 //! # Author
 //! Deval Deliwala
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::cher2::cher2;
+//! use coral::enums::CoralTriangular;
+//!
+//! fn main() {
+//!     let uplo  = CoralTriangular::UpperTriangular;
+//!
+//!     let n     = 2;
+//!     let alpha = [0.5, -0.25]; // complex alpha (re, im)
+//!
+//!     let x     = vec![1.0, 0.0,   0.0, 1.0]; // (1+0i, 0+1i)
+//!     let incx  = 1;
+//!     let y     = vec![0.0, 1.0,   1.0, 0.0]; // (i, 1)
+//!     let incy  = 1;
+//!
+//!     let mut a = vec![0.0; 2 * n * n];
+//!     let lda   = n;
+//!
+//!     cher2(uplo, n, alpha, &x, incx, &y, incy, &mut a, lda);
+//! }
+//! ```
 
 use crate::level1::caxpy::caxpy;
 use crate::level1::assert_length_helpers::required_len_ok_cplx;
@@ -294,4 +309,3 @@ pub fn cher2(
         }
     }
 }
-

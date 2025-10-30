@@ -363,5 +363,3 @@ pub(crate) fn single_add_and_scale_c64(
         }
     }
 }
-
-

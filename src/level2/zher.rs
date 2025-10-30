@@ -1,41 +1,57 @@
-//! Performs a complex double precision Hermitian rank-1 update (HER).
+//! `HER`. Performs a complex double precision Hermitian rank-1 update.
 //!
-//! ```text
-//!     A := alpha * x * x^H + A
-//! ```
+//! \\[ 
+//! A := \alpha x x^{H} + A. 
+//! \\]
 //!
-//! where `A` is an `n x n` **Hermitian** interleaved column-major matrix, `[re, im, ...]`.
-//! Only the triangle indicated by `uplo` is referenced and updated. `x` is a complex vector 
-//! of length `n`. 
 //!
-//! Internally, this uses a fast path for the **unit-stride** case (`incx == 1`)
+//! where $A$ is an $n \times n$ **Hermitian** interleaved column-major matrix, `[re, im, ...]`.
+//! Only the triangle indicated by `uplo` is referenced and updated. $x$ is a complex vector 
+//! of length $n$. 
+//!
+//! Internally, this uses a fast path for the unit-stride case (`incx == 1`)
 //! that applies a triangular [`zaxpy`] into each column, and falls back to a general
 //! call with arbitrary strides.
 //!
 //! # Arguments
-//! - `uplo`   (CoralTriangular) : Which triangle of `A` is stored.
-//! - `n`      (usize)           : Order of the matrix `A`.
-//! - `alpha`  (f64)             : Real scalar multiplier applied to the outer product `x * x^H`.
-//! - `x`      (&[f64])          : Input slice containing the complex vector `x`. 
-//! - `incx`   (usize)           : Stride between consecutive complex elements of `x`.
-//! - `matrix` (&mut [f64])      : Input/output slice containing the matrix `A`.
-//!                              | specified triangle updated in place.
-//! - `lda`    (usize)           : Leading dimension of `A`.
+//! - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
+//! - `n`      (usize)           : Order of the matrix $A$.
+//! - `alpha`  (f64)             : Real scalar multiplier applied to the outer product $x x^H$.
+//! - `x`      (&[f64])          : Input slice containing the complex vector $x$. 
+//! - `incx`   (usize)           : Stride between consecutive complex elements of $x$.
+//! - `matrix` (&mut [f64])      : Input/output slice containing the matrix $A$.
+//! - `lda`    (usize)           : Leading dimension of $A$.
 //!
 //! # Returns
 //! - Nothing. The contents of `matrix` are updated in place within the specified triangle.
 //!
-//! # Notes
-//! - Optimized for AArch64 NEON targets; fast path uses SIMD via the level1 [`zaxpy`] kernel.
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub
-//!
 //! # Author
 //! Deval Deliwala
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::zher;
+//! use coral::enums::CoralTriangular;
+//!
+//! fn main() {
+//!     let uplo  = CoralTriangular::LowerTriangular;
+//!
+//!     let n = 2;
+//!     let alpha = 1.0; // real
+//!
+//!     let x = vec![1.0, -1.0,  0.0, 1.0]; // (1 - i, i)
+//!     let incx  = 1;
+//!
+//!     let mut a = vec![0.0; 2 * n * n];
+//!     let lda = n;
+//!
+//!     zher(uplo, n, alpha, &x, incx, &mut a, lda);
+//! }
+//! ```
+
 
 use crate::level1::zaxpy::zaxpy;
+
 // assert length helpers
 use crate::level1::assert_length_helpers::required_len_ok_cplx;
 use crate::level2::assert_length_helpers::required_len_ok_matrix_cplx;
@@ -194,4 +210,3 @@ pub fn zher(
         }
     }
 }
-

@@ -3,9 +3,8 @@
 //! This function implements the BLAS [`crate::level2::strsv`] routine for **lower triangular** matrices,
 //! solving the system 
 //!
-//! ```text
-//! op(L) * x = b in place for x, where op(L) is either L or L^T
-//! ```
+//! \\[ \operatorname{op}(L) x = b, \quad \operatorname{op}(L) \in \{L, L^{T}\}. \\]
+//!
 //!
 //! The [`strlsv`] function is crate-visible and is implemented via 
 //! [`crate::level2::strsv`] using block forward/back substitution kernels.
@@ -435,4 +434,3 @@ pub(crate) fn strlsv(
         CoralTranspose::ConjugateTranspose => strlsv_transpose  (n, unit_diag, matrix, lda, x, incx),
     }
 }
-

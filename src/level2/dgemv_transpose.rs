@@ -1,8 +1,7 @@
 //! Performs a double precision general matrix–vector multiply (GEMV) in the form:
 //!
-//!```text
-//!     y := alpha * A^T * x + beta * y
-//! ```
+//! \\[ y := \alpha A^{T} x + \beta y. \\]
+//!
 //!
 //! where `A` is an `n_rows` x `n_cols` interleaved column-major matrix,
 //! `x` is a vector of length `n_rows`, and `y` is a vector of length `n_cols`.  
@@ -180,4 +179,3 @@ pub(crate) fn dgemv_transpose(
         write_back_f64(n_cols, &ybuffer, y, incy);
     }
 }
-

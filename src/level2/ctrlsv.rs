@@ -3,9 +3,8 @@
 //! This function implements the BLAS [`crate::level2::ctrsv`] routine for **lower triangular** matrices,
 //! solving the system 
 //!
-//! ```text
-//! `op(L) * x = b` in place for `x`, where `op(L)` is `L`, `L^T`, or `L^H`
-//! ```
+//! \\[ \operatorname{op}(L) x = b, \quad \operatorname{op}(L) \in \{L, L^{T}, L^{H}\}. \\]
+//!
 //!
 //! The [`ctrlsv`] function is crate-visible and is implemented via
 //! [`crate::level2::ctrsv`] using block forward/back substitution kernels.
@@ -508,4 +507,3 @@ pub(crate) fn ctrlsv(
         CoralTranspose::ConjugateTranspose => ctrlsv_conjtranspose(n, unit_diag, matrix, lda, x, incx),
     }
 }
-

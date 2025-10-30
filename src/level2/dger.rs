@@ -1,41 +1,62 @@
-//! Performs a double precision rank-1 matrix update (GER).
+//! `GER`. Performs a double precision rank-1 matrix update.
 //!
 //! This function implements the BLAS [`dger`] routine, computing the outer-product update
 //!
-//! ```text
-//!     A := alpha * x * y^T + A
-//! ```
+//! \\[ 
+//! A := \alpha x y^{T} + A. 
+//! \\]
 //!
-//! where `A` is an `n_rows x n_cols` column-major matrix, `x` is a vector of length
-//! `n_rows`, and `y` is a vector of length `n_cols`.  
 //!
-//! Internally, this uses a fast path for the **unit-stride** case (`incx == 1` and `incy == 1`)
+//! where $A$ is an `n_rows x n_cols` column-major matrix, $x$ is a vector of length
+//! `n_rows`, and $y$ is a vector of length `n_cols`.  
+//!
+//! Internally, this uses a fast path for the unit-stride case (`incx == 1` and `incy == 1`)
 //! that applies a scaled [`daxpy`] into each column, and falls back to a general pointer-walk
 //! loop for arbitrary strides.
 //!
 //! # Arguments
-//! - `n_rows` (usize)      : Number of rows (m) in the matrix `A`.
-//! - `n_cols` (usize)      : Number of columns (n) in the matrix `A`.
-//! - `alpha`  (f64)        : Scalar multiplier applied to the outer product `x * y^T`.
-//! - `x`      (&[f64])     : Input slice containing the vector `x`.
-//! - `incx`   (usize)      : Stride between consecutive elements of `x`.
-//! - `y`      (&[f64])     : Input slice containing the vector `y`.
-//! - `incy`   (usize)      : Stride between consecutive elements of `y`.
-//! - `matrix` (&mut [f64]) : Input/output slice containing the matrix `A`.
-//! - `lda`    (usize)      : Leading dimension of `A`.
+//! - `n_rows` (usize)      : Number of rows ($m$) in the matrix $A$.
+//! - `n_cols` (usize)      : Number of columns ($n$) in the matrix $A$.
+//! - `alpha`  (f64)        : Scalar multiplier applied to the outer product $x y^T$.
+//! - `x`      (&[f64])     : Input slice containing the vector $x$.
+//! - `incx`   (usize)      : Stride between consecutive elements of $x$.
+//! - `y`      (&[f64])     : Input slice containing the vector $y$.
+//! - `incy`   (usize)      : Stride between consecutive elements of $y$.
+//! - `matrix` (&mut [f64]) : Input/output slice containing the matrix $A$.
+//! - `lda`    (usize)      : Leading dimension of $A$.
 //!
 //! # Returns
 //! - Nothing. The contents of `matrix` are updated in place.
 //!
-//! # Notes
-//! - Optimized for AArch64 NEON targets; fast path uses SIMD, have not made portable.
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub
-//!
 //! # Author
 //! Deval Deliwala
+//!
+//! # Example
+//! ```rust
+//! use coral::level2::dger;
+//!
+//! fn main() {
+//!     let m     = 2;
+//!     let n     = 3;
+//!
+//!     let alpha = 2.0;
+//!     let x     = vec![1.0, 2.0];      // length m
+//!     let incx  = 1;
+//!     let y     = vec![3.0, 4.0, 5.0]; // length n
+//!     let incy  = 1;
+//!
+//!     let mut a = vec![
+//!         1.0, 2.0,   // column 0
+//!         3.0, 4.0,   // column 1
+//!         5.0, 6.0,   // column 2
+//!     ];
+//!
+//!     let lda = m;
+//!
+//!     dger(m, n, alpha, &x, incx, &y, incy, &mut a, lda);
+//! }
+//! ```
+
 
 use crate::level1::daxpy::daxpy;
 
@@ -110,4 +131,3 @@ pub fn dger(
         }
     }
 }
-

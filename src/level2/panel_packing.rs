@@ -154,5 +154,3 @@ pub(crate) fn pack_panel_c64(
 ) {
     pack_panel_cplx::<f64>(panel, matrix, n_rows, col_idx, n_cols, row_stride, col_stride);
 }
-
-

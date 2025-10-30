@@ -67,9 +67,47 @@ pub mod dsyr2;
 pub mod cher2; 
 pub mod zher2; 
 
+// GEMV
+pub use sgemv::sgemv;
+pub use dgemv::dgemv;
+pub use cgemv::cgemv;
+pub use zgemv::zgemv;
 
+// TRMV
+pub use strmv::strmv;
+pub use dtrmv::dtrmv;
+pub use ctrmv::ctrmv;
+pub use ztrmv::ztrmv;
 
+// TRSV
+pub use strsv::strsv;
+pub use dtrsv::dtrsv;
+pub use ctrsv::ctrsv;
+pub use ztrsv::ztrsv;
 
+// SYMV / HEMV
+pub use ssymv::ssymv;
+pub use dsymv::dsymv;
+pub use chemv::chemv;
+pub use zhemv::zhemv;
 
+// GER 
+pub use sger::sger;
+pub use dger::dger;
+pub use cgeru::cgeru;
+pub use cgerc::cgerc;
+pub use zgeru::zgeru;
+pub use zgerc::zgerc;
 
+// SYR / HER
+pub use ssyr::ssyr;
+pub use dsyr::dsyr;
+pub use cher::cher;
+pub use zher::zher;
+
+// SYR2 / HER2
+pub use ssyr2::ssyr2;
+pub use dsyr2::dsyr2;
+pub use cher2::cher2;
+pub use zher2::zher2;
 

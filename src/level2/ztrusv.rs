@@ -3,9 +3,8 @@
 //! This function implements the BLAS [`crate::level2::ztrsv`] routine for **upper triangular** matrices,
 //! solving the system 
 //!
-//! ```text
-//! op(A) * x = b in place for x, where op(A) is either A, A^T, or A^H.
-//! ```
+//! \\[ \operatorname{op}(U) x = b, \quad \operatorname{op}(U) \in \{U, U^{T}, U^{H}\}. \\]
+//!
 //!
 //! The [`ztrusv`] function is crate-visible and is implemented via 
 //! [`crate::level2::ztrsv`] using block back/forward substitution kernels.
@@ -481,4 +480,3 @@ pub(crate) fn ztrusv(
         CoralTranspose::ConjugateTranspose => ztrusv_conjtranspose(n, unit_diag, matrix, lda, x, incx),
     }
 }
-

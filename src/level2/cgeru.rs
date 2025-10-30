@@ -1,41 +1,56 @@
-//! Performs a complex single precision rank-1 matrix update (GERU).
+//! `GER`. Performs an unconjugated complex single precision rank-1 matrix update.
 //!
 //! This function implements the BLAS [`cgeru`] routine, computing the outer-product update
 //!
-//! ```text
-//!     A := alpha * x * y^T + A
-//! ```
+//! \\[
+//! A := \alpha x y^{T} + A.
+//! \\]
 //!
-//! where `A` is an `n_rows x n_cols` column-major matrix, `x` is a vector of length
-//! `n_rows`, and `y` is a vector of length `n_cols`.  
 //!
-//! Internally, this uses a fast path for the **unit-stride** case (`incx == 1` and `incy == 1`)
+//! where $A$ is an `n_rows x n_cols` column-major matrix, $x$ is a vector of length
+//! `n_rows`, and $y$ is a vector of length `n_cols`.  
+//!
+//! Internally, this uses a fast path for the unit-stride case (`incx == 1` and `incy == 1`)
 //! that applies a scaled [`caxpy`] into each column, and falls back to a general pointer-walk
-//! loop with fused multiply-add (FMA) for arbitrary strides.
+//! loop with FMA for arbitrary strides.
 //!
 //! # Arguments
-//! - `n_rows` (usize)      : Number of rows (m) in the matrix `A`.
-//! - `n_cols` (usize)      : Number of columns (n) in the matrix `A`.
-//! - `alpha`  ([f32; 2])   : Complex scalar multiplier applied to the outer product `x * y^T`.
-//! - `x`      (&[f32])     : Input slice containing interleaved complex vector `x` elements.
-//! - `incx`   (usize)      : Stride between consecutive complex elements of `x`.
-//! - `y`      (&[f32])     : Input slice containing interleaved complex vector `y` elements.
-//! - `incy`   (usize)      : Stride between consecutive complex elements of `y`.
-//! - `matrix` (&mut [f32]) : Input slice containing interleaved complex matrix `A`; updated in place 
-//! - `lda`    (usize)      : Leading dimension of `A`.
+//! - `n_rows` (usize)      : Number of rows ($m$) in the matrix $A$.
+//! - `n_cols` (usize)      : Number of columns ($n$) in the matrix $A$.
+//! - `alpha`  ([f32; 2])   : Complex scalar multiplier applied to the outer product $x y^T$.
+//! - `x`      (&[f32])     : Input slice containing interleaved complex vector $x$ elements.
+//! - `incx`   (usize)      : Stride between consecutive complex elements of $x$.
+//! - `y`      (&[f32])     : Input slice containing interleaved complex vector $y$ elements.
+//! - `incy`   (usize)      : Stride between consecutive complex elements of $y$.
+//! - `matrix` (&mut [f32]) : Input slice containing interleaved complex matrix $A$.
+//! - `lda`    (usize)      : Leading dimension of $A$.
 //!
 //! # Returns
-//! - Nothing. The contents of `matrix` are updated in place as `A := alpha * x * y^T + A`.
-//!
-//! # Notes
-//! - Optimized for AArch64 NEON targets; fast path uses SIMD, have not made portable.
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub
+//! - Nothing. The contents of `matrix` are updated in place.
 //!
 //! # Author
 //! Deval Deliwala
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::cgeru;
+//!
+//! fn main() {
+//!     let m = 2;
+//!     let n = 2;
+//!
+//!     let alpha = [0.5, 0.0];
+//!     let x     = vec![1.0, 0.0, 0.0, 1.0];
+//!     let incx  = 1;
+//!     let y     = vec![1.0, -1.0, 2.0, 0.0];
+//!     let incy  = 1; 
+//!
+//!     let mut a = vec![0.0; 2 * m * n];
+//!     let lda = m;
+//!
+//!     cgeru(m, n, alpha, &x, incx, &y, incy, &mut a, lda);
+//! }
+//! ```
 
 use crate::level1::caxpy::caxpy;
 
@@ -127,4 +142,3 @@ pub fn cgeru(
         }
     }
 }
-

@@ -1,46 +1,71 @@
-//! Performs a single precision complex Hermitian matrix–vector multiply (HEMV) in the form:
+//! `HEMV`. Performs a single precision complex Hermitian matrix–vector multiply in the form:
 //!
-//! ```text
-//!     y := alpha * A * x + beta * y
-//! ```
+//! \\[
+//! y := \alpha A x + \beta y. 
+//! \\]
 //!
-//! where `A` is an `n` x `n` **Hermitian** interleaved column-major matrix `[re, im, ...]`. 
-//! Only the triangle indicated by `uplo` is referenced. `x` is a complex vector of length `n`, 
-//! and `y` is a complex vector of length `n`.
+//! where $A$ is an $n \times n$ **Hermitian** interleaved column-major matrix `[re, im, ...]`. 
+//! Only the triangle indicated by `uplo` is referenced. $x$ is a complex vector of length $n$, 
+//! and $y$ is a complex vector of length $n$.
 //!
-//! This function implements the BLAS [`crate::level2::chemv`] routine, optimized for
+//! This function implements the BLAS [`chemv`] routine, optimized for
 //! AArch64 NEON architectures with blocking and panel packing. For off-diagonal work
-//! it fuses a column-wise [`caxpyf`] stream with column-dots via [`cdotcf`] so each `A` element
-//! is read exactly once while producing both the `A x` and the conjugate-transposed
-//! contributions implied by Hermitian structure.
+//! it fuses a column-wise [`caxpyf`] stream with column-dots via [`cdotcf`] so each $A$ element
+//! is read exactly once.
 //!
 //! # Arguments
-//! - `uplo`   (CoralTriangular) : Which triangle of `A` is stored.
-//! - `n`      (usize)           : Dimension of the matrix `A`.
-//! - `alpha`  ([f32; 2])        : Scalar multiplier applied to `A * x` (`[re, im]`).
-//! - `matrix` (&[f32])          : Input slice containing the matrix `A`; interleaved complex.
-//! - `lda`    (usize)           : Leading dimension of `A`. 
-//! - `x`      (&[f32])          : Input complex vector of length `n`. 
-//! - `incx`   (usize)           : Stride between consecutive complex elements of `x`.
-//! - `beta`   ([f32; 2])        : Scalar multiplier applied to `y` prior to accumulation.
-//! - `y`      (&mut [f32])      : Input/output complex vector of complex length `n`
-//! - `incy`   (usize)           : Stride between consecutive complex elements of `y`.
+//! - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
+//! - `n`      (usize)           : Dimension of the matrix $A$.
+//! - `alpha`  ([f32; 2])        : Scalar multiplier applied to $A x$; (`[re, im]`).
+//! - `matrix` (&[f32])          : Input slice containing the matrix $A$; interleaved complex.
+//! - `lda`    (usize)           : Leading dimension of $A$. 
+//! - `x`      (&[f32])          : Input complex vector of length $n$. 
+//! - `incx`   (usize)           : Stride between consecutive complex elements of $x$.
+//! - `beta`   ([f32; 2])        : Scalar multiplier applied to $y$ prior to accumulation.
+//! - `y`      (&mut [f32])      : Input/output complex vector of complex length $n$
+//! - `incy`   (usize)           : Stride between consecutive complex elements of $y$.
 //!
 //! # Returns
-//! - Nothing. The contents of `y` are updated in place. 
+//! - Nothing. The contents of $y$ are updated in place. 
 //!
 //! # Notes
 //! - If `n == 0`, the function returns immediately.
 //! - If `alpha == (0,0) && beta == (1,0)`, the function returns immediately (no change).
-//! - A **fast path** is taken when `lda == n`, using an in-place triangular microkernel
-//!   that touches each stored `A` element once without packing.
-//! - Otherwise, a **blocked algorithm** iterates over row panels of height `MC` and
+//! - A fast path is taken when `lda == n`, using an in-place triangular microkernel
+//!   that touches each stored $A$ element once without packing.
+//! - Otherwise, a blocked algorithm iterates over row panels of height `MC` and
 //!   column panels of width `NC`. Off-diagonal panels are handled with a fused
 //!   [`caxpyf`]/[`cdotcf`] kernel on packed rectangles that lie entirely within the stored
 //!   triangle; diagonal blocks are handled by a triangular microkernel.
 //!
 //! # Author
 //! Deval Deliwala
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::chemv;
+//! use coral::enums::CoralTriangular;
+//!
+//! fn main() {
+//!     let uplo  = CoralTriangular::UpperTriangular;
+//!     let n     = 2;
+//!     let alpha = [1.0, 0.0];
+//!
+//!     let a = vec![
+//!         2.0, 0.0, 0.0, -1.0,  // col 0: (2, -i)
+//!         0.0, 1.0, 3.0,  0.0,  // col 1: (i, 3)
+//!     ];
+//!
+//!     let lda   = n;
+//!     let x     = vec![1.0, 0.0, 0.0, 1.0];   // (1, i)
+//!     let incx  = 1;
+//!     let beta  = [0.0, 0.0];
+//!     let mut y = vec![0.0, 0.0, 0.0, 0.0];
+//!     let incy  = 1;
+//!
+//!     chemv(uplo, n, alpha, &a, lda, &x, incx, beta, &mut y, incy);
+//! }
+//! ```
 
 use core::slice;
 
@@ -420,4 +445,3 @@ pub fn chemv(
         write_back_c32(n, &ybuffer, y, incy); 
     }
 }
-

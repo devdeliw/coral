@@ -1,36 +1,53 @@
-//! Performs a single precision triangular solve (TRSV).
+//! `TRSV`. Performs a single precision triangular solve.
 //!
-//! ```text 
-//! solves op(A) * x = b for x, op(A) is A or A^T 
-//! ```
+//! \\[ 
+//! \operatorname{op}(A) x = b, \quad \operatorname{op}(A) \in \\{A, A^{T}\\}.
+//! \\]
 //!
-//! This function implements the BLAS [`strsv`] routine for both **upper** and **lower**
+//! This function implements the BLAS [`strsv`] routine for both upper and lower
 //! triangular systems.
 //!
 //! # Arguments
-//! - `uplo`        (CoralTriangular) : Indicates whether `A` is upper or lower triangular.
-//! - `transpose`   (CoralTranspose)  : Specifies whether to solve with `A` or `A^T`.
+//! - `uplo`        (CoralTriangular) : Indicates whether $A$ is upper or lower triangular.
+//! - `transpose`   (CoralTranspose)  : Specifies whether to solve with $A$ or $A^T$.
 //! - `diagonal`    (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
-//! - `n`           (usize)           : Order of the square matrix `A`.
-//! - `matrix`      (&[f32])          : Input slice containing the triangular matrix `A` in
-//!                                   | column-major layout.
-//! - `lda`         (usize)           : Leading dimension of `A`.
-//! - `x`           (&mut [f32])      : Input/output slice containing the right-hand side `b` on
-//!                                   | entry and the solution `x` on exit. 
-//! - `incx`        (usize)           : Stride between consecutive elements of `x`.
+//! - `n`           (usize)           : Order of the square matrix $A$.
+//! - `matrix`      (&[f32])          : Input slice containing the triangular matrix $A$. 
+//! - `lda`         (usize)           : Leading dimension of $A$.
+//! - `x`           (&mut [f32])      : Input/output slice containing the right-hand side $b$ on
+//!                                     entry and the solution $x$ on exit. 
+//! - `incx`        (usize)           : Stride between consecutive elements of $x$.
 //!
 //! # Returns
-//! - Nothing. `x` is updated in place with the solution. 
-//!
-//! # Notes
-//! - The kernel is optimized for AArch64 NEON targets 
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub
+//! - Nothing. $x$ is updated in place with the solution. 
 //!
 //! # Author
 //! Deval Deliwala
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::strsv;
+//! use coral::enums::{CoralTriangular, CoralTranspose, CoralDiagonal};
+//!
+//! fn main() {
+//!     let n    = 2;
+//!     let uplo = CoralTriangular::UpperTriangular;
+//!     let transpose = CoralTranspose::NoTranspose;
+//!     let diagonal  = CoralDiagonal::NonUnitDiagonal;
+//!
+//!     let a = vec![
+//!         2.0, 0.0,  // col 0
+//!         1.0, 3.0,  // col 1
+//!     ];
+//!
+//!     let lda  = n;
+//!     let mut x = vec![2.0, 3.0]; // b on entry;
+//!                                 // overwritten with solution x
+//!     let incx = 1;
+//!
+//!     strsv(uplo, transpose, diagonal, n, &a, lda, &mut x, incx);
+//! }
+//! ```
 
 use crate::enums::{CoralDiagonal, CoralTranspose, CoralTriangular};
 use crate::level2::{

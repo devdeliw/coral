@@ -1,8 +1,7 @@
 //! Performs a single precision general matrix–vector multiply (GEMV) in the form:
 //! 
-//! ```text
-//!     y := alpha * A * x + beta * y
-//! ```
+//! \\[ y := \alpha A x + \beta y. \\]
+//!
 //!
 //! where `A` is an `n_rows` x `n_cols` column-major matrix, `x` is a vector of
 //! length `n_cols`, and `y` is a vector of length `n_rows`.  

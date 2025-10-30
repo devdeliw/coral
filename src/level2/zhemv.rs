@@ -1,47 +1,73 @@
-//! Performs a double precision complex Hermitian matrix–vector multiply (HEMV) in the form:
+//! `HEMV`. Performs a double precision complex Hermitian matrix–vector multiply in the form:
 //!
-//! ```text
-//!     y := alpha * A * x + beta * y
-//! ```
+//! \\[ 
+//! y := \alpha A x + \beta y. 
+//! \\]
 //!
-//! where `A` is an `n` x `n` **Hermitian** interleaved column-major matrix, `[re, im, ...]`.
-//! Only the triangle indicated by `uplo` is referenced. `x` is a complex vector of length `n`,
-//! and `y` is a complex vector of length `n`.
 //!
-//! This function implements the BLAS [`crate::level2::zhemv`] routine, optimized for
+//! where $A$ is an $n \times n$ **Hermitian** interleaved column-major matrix, `[re, im, ...]`.
+//! Only the triangle indicated by `uplo` is referenced. $x$ is a complex vector of length $n$,
+//! and $y$ is a complex vector of length $n$.
+//!
+//! This function implements the BLAS [`zhemv`] routine, optimized for
 //! AArch64 NEON architectures with blocking and panel packing. For off-diagonal work
 //! it fuses a column-wise [`zaxpyf`] stream with column-dots via [`zdotcf`] so each `A` element
-//! is read exactly once while producing both the `A x` and the conjugate-transposed
-//! contributions implied by Hermitian structure.
+//! is read exactly once.
 //!
 //! # Arguments
-//! - `uplo`   (CoralTriangular) : Which triangle of `A` is stored.
-//! - `n`      (usize)           : Order of the matrix `A`.
-//! - `alpha`  ([f64; 2])        : Scalar multiplier applied to `A * x` (`[re, im]`).
-//! - `matrix` (&[f64])          : Input slice containing the matrix `A`. 
-//! - `lda`    (usize)           : Leading dimension of `A`.
-//! - `x`      (&[f64])          : Input complex vector of length `n`.
-//! - `incx`   (usize)           : Stride between consecutive complex elements of `x`.
-//! - `beta`   ([f64; 2])        : Scalar multiplier applied to `y` prior to accumulation.
-//! - `y`      (&mut [f64])      : Input/output complex vector of length `n`.
-//! - `incy`   (usize)           : Stride between consecutive complex elements of `y`.
+//! - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
+//! - `n`      (usize)           : Order of the matrix $A$.
+//! - `alpha`  ([f64; 2])        : Scalar multiplier applied to $A x$; (`[re, im]`).
+//! - `matrix` (&[f64])          : Input slice containing the matrix $A$. 
+//! - `lda`    (usize)           : Leading dimension of $A$.
+//! - `x`      (&[f64])          : Input complex vector of length $n$.
+//! - `incx`   (usize)           : Stride between consecutive complex elements of $x$.
+//! - `beta`   ([f64; 2])        : Scalar multiplier applied to $y$ prior to accumulation.
+//! - `y`      (&mut [f64])      : Input/output complex vector of length $n$.
+//! - `incy`   (usize)           : Stride between consecutive complex elements of $y$.
 //!
 //! # Returns
-//! - Nothing. The contents of `y` are updated in place.
+//! - Nothing. The contents of $y$ are updated in place.
 //!
 //! # Notes
 //! - If `n == 0`, the function returns immediately.
 //! - If `alpha == (0,0) && beta == (1,0)`, the function returns immediately (no change).
-//! - A **fast path** is taken when `lda == n`, using an in-place triangular microkernel
+//! - A fast path is taken when `lda == n`, using an in-place triangular microkernel
 //!   that touches each stored `A` element once without packing.
-//! - Otherwise, a **blocked algorithm** iterates over row panels of height `MC` and
+//! - Otherwise, a blocked algorithm iterates over row panels of height `MC` and
 //!   column panels of width `NC`. Off-diagonal panels are handled with a fused
 //!   [`zaxpyf`]/[`zdotcf`] kernel on packed rectangles that lie entirely within the stored
 //!   triangle; diagonal blocks are handled by a triangular microkernel.
-//! - Assumes column-major layout.
 //!
 //! # Author
 //! Deval Deliwala
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::zhemv;
+//! use coral::enums::CoralTriangular;
+//!
+//! fn main() {
+//!     let uplo  = CoralTriangular::LowerTriangular;
+//!     let n = 2;
+//!     let alpha = [1.0, 0.0];
+//!
+//!     let a = vec![
+//!         2.0, 0.0,   0.0,  1.0,
+//!         0.0, -1.0,  3.0,  0.0,
+//!     ];
+//!
+//!     let lda   = n;
+//!     let x     = vec![1.0, -1.0, 0.0, 1.0];
+//!     let incx  = 1;
+//!     let beta  = [0.0, 0.0];
+//!     let mut y = vec![0.0, 0.0, 0.0, 0.0];
+//!     let incy  = 1;
+//!
+//!     zhemv(uplo, n, alpha, &a, lda, &x, incx, beta, &mut y, incy);
+//! }
+//! ```
+
 
 use core::slice;
 use crate::enums::CoralTriangular; 
@@ -419,4 +445,3 @@ pub fn zhemv(
         write_back_c64(n, &ybuffer, y, incy); 
     }
 }
-

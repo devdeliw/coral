@@ -1,34 +1,52 @@
-//! Performs a single precision triangular matrix–vector multiply (TRMV).
+//! `TRMV`. Performs a single precision triangular matrix–vector multiply.
 //!
-//! ```text
-//! x := op(A) * x, op(A) is A or A^T 
-//! ```
+//! \\[ 
+//! x := \operatorname{op}(A) x, \quad \operatorname{op}(A) \in \\{A, A^{T}\\}. 
+//! \\]
 //!
-//! This function implements the BLAS [`strmv`] routine for both **upper** and **lower**
+//! This function implements the BLAS [`strmv`] routine for both upper and lower
 //! triangular matrices. 
 //!
 //! # Arguments
-//! - `uplo`        (CoralTriangular) : Indicates whether `A` is upper or lower triangular.
-//! - `transpose`   (CoralTranspose)  : Specifies whether to use `A` or `A^T`.
+//! - `uplo`        (CoralTriangular) : Indicates whether $A$ is upper or lower triangular.
+//! - `transpose`   (CoralTranspose)  : Specifies whether to use $A$ or $A^T$.
 //! - `diagonal`    (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
-//! - `n`           (usize)           : Order of the square matrix `A`.
-//! - `matrix`      (&[f32])          : Input slice containing the triangular matrix `A`. 
-//! - `lda`         (usize)           : Leading dimension of `A`.
-//! - `x`           (&mut [f32])      : Input/output slice containing the vector `x`.
-//! - `incx`        (usize)           : Stride between consecutive elements of `x`.
+//! - `n`           (usize)           : Order of the square matrix $A$.
+//! - `matrix`      (&[f32])          : Input slice containing the triangular matrix $A$. 
+//! - `lda`         (usize)           : Leading dimension of $A$.
+//! - `x`           (&mut [f32])      : Input/output slice containing the vector $x$.
+//! - `incx`        (usize)           : Stride between consecutive elements of $x$.
 //!
 //! # Returns
-//! - Nothing. The contents of `x` are updated in place. 
-//!
-//! # Notes
-//! - The kernel is optimized for AArch64 NEON targets 
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub
+//! - Nothing. The contents of $x$ are updated in place. 
 //!
 //! # Author
 //! Deval Deliwala
+//! 
+//! # Example
+//! ```rust
+//! use coral::level2::strmv;
+//! use coral::enums::{CoralTriangular, CoralTranspose, CoralDiagonal};
+//!
+//! fn main() {
+//!     let n = 2;
+//!     let uplo      = CoralTriangular::UpperTriangular;
+//!     let transpose = CoralTranspose::NoTranspose;
+//!     let diagonal  = CoralDiagonal::NonUnitDiagonal;
+//!
+//!     let a = vec![
+//!         2.0, 0.0,   // col 0
+//!         1.0, 3.0,   // col 1
+//!     ];
+//!
+//!     let lda   = n;
+//!     let mut x = vec![1.0, 2.0];
+//!     let incx  = 1;
+//!
+//!     strmv(uplo, transpose, diagonal, n, &a, lda, &mut x, incx);
+//! }
+//! ```
+
 
 use crate::enums::{CoralDiagonal, CoralTranspose, CoralTriangular};
 use crate::level2::{ 

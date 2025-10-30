@@ -1,8 +1,7 @@
 //! Performs a single precision general matrix–vector multiply (GEMV) in the form:
 //!
-//!```text
-//!     y := alpha * A^T * x + beta * y
-//! ```
+//! \\[ y := \alpha A^{T} x + \beta y. \\]
+//!
 //!
 //! where `A` is an `n_rows` x `n_cols` column-major matrix, `x` is a vector of
 //! length `n_rows`, and `y` is a vector of length `n_cols`.  
@@ -181,4 +180,3 @@ pub(crate) fn sgemv_transpose(
         write_back_f32(n_cols, &ybuffer, y, incy);
     }
 }
-

@@ -377,4 +377,3 @@ pub(crate) fn dtrusv(
         CoralTranspose::ConjugateTranspose => dtrusv_transpose  (n, unit_diag, matrix, lda, x, incx),
     }
 }
-

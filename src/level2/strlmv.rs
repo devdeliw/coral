@@ -467,4 +467,3 @@ pub(crate) fn strlmv(
         CoralTranspose::ConjugateTranspose => strlmv_transpose  (n, unit_diag, matrix, lda, x, incx),
     }
 }
-

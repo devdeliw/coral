@@ -1,8 +1,7 @@
 //! Performs a double precision complex general matrix–vector multiply (GEMV) in the form:
 //!
-//!```text
-//!     y := alpha * A^H * x + beta * y
-//! ```
+//! \\[ y := \alpha A^{H} x + \beta y. \\]
+//!
 //!
 //! where `A` is an `n_rows` x `n_cols` interleaved column-major matrix, `[re, im, ...]`, 
 //! `x` is a complex vector of length `n_rows`, and `y` is a complex vector of length `n_cols`.  
@@ -183,4 +182,3 @@ pub(crate) fn zgemv_conjtranspose(
         write_back_c64(n_cols, &ybuffer, y, incy);
     }
 }
-

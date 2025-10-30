@@ -457,4 +457,3 @@ pub(crate) fn strumv(
         CoralTranspose::ConjugateTranspose => strumv_transpose  (n, unit_diag, matrix, lda, x, incx),
     }
 }
-

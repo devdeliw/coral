@@ -4,9 +4,8 @@
 //! This function implements the BLAS [`crate::level2::ctrmv`] routine for 
 //! **upper triangular** matrices, computing the in-place product 
 //!
-//! ```text
-//! x := op(A) * x, where op(A) is either A, A^T, or A^H 
-//! ```
+//! \\[ x := \operatorname{op}(U) x, \quad \operatorname{op}(U) \in \{U, U^{T}, U^{H}\}. \\]
+//!
 //!
 //! Function is crate visible and is implemented via [`crate::level2::ctrmv`] routine. 
 //!
@@ -782,4 +781,3 @@ pub(crate) fn ctrumv(
         CoralTranspose::ConjugateTranspose => ctrumv_conjugatetranspose (n, unit_diag, matrix, lda, x, incx),
     }
 }
-

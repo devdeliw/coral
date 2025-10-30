@@ -51,5 +51,3 @@ pub(crate) fn a_ij_immutable_c64(
         matrix.add(2 * (i * inc_row + j * inc_col)) 
     }
 }
-
-
