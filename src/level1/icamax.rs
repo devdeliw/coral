@@ -1,17 +1,16 @@
-//! Finds the index of the element with maximum absolute value in a complex 
+//! `IAMAX`. Finds the index of the element with maximum absolute value in a complex 
 //! single precision vector.
 //!
 //! This function implements the BLAS [`icamax`] routine, returning the 0-based index
-//! of the first complex element of maximum absolute value over `n` elements of the input
-//! vector `x` with a specified stride.
+//! of the first complex element of maximum absolute value over $n$ elements of the input
+//! vector $x$ with a specified stride.
 //!
 //! The absolute value of a complex number is defined here as |Re(x)| + |Im(x)|.
 //!
 //! # Arguments
 //! - `n`    (usize)  : Number of complex elements in the vector.
-//! - `x`    (&[f32]) : Input slice containing interleaved complex vector elements
-//!                   | `[re0, im0, re1, im1, ...]`.
-//! - `incx` (usize)  : Stride between consecutive complex elements of `x`; complex units
+//! - `x`    (&[f32]) : Input slice containing interleaved complex vector elements.
+//! - `incx` (usize)  : Stride between consecutive complex elements of $x$; complex units
 //!
 //! # Returns
 //! - `usize` 0-based index of the first complex element with maximum absolute value.

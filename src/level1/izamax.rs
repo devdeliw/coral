@@ -2,17 +2,13 @@
 //! double precision vector.
 //!
 //! This function implements the BLAS [`izamax`] routine, returning the 0-based index
-//! of the first complex element of maximum absolute value over `n` elements of the input
-//! vector `x` with a specified stride.
-//!
-//! The absolute value of a complex number is defined here as |Re(x)| + |Im(x)|.
+//! of the first complex element of maximum absolute value over $n$ elements of the input
+//! vector $x$ with a specified stride.
 //!
 //! # Arguments
 //! - `n`    (usize)  : Number of complex elements in the vector.
-//! - `x`    (&[f64]) : Input slice containing interleaved complex vector elements
-//!                   | `[re0, im0, re1, im1, ...]`.
-//! - `incx` (usize)  : Stride between consecutive complex elements of `x`
-//!                     (measured in complex numbers; every step advances two scalar idxs).
+//! - `x`    (&[f64]) : Input slice containing interleaved complex vector elements.
+//! - `incx` (usize)  : Stride between consecutive complex elements of $x$
 //!
 //! # Returns
 //! - `usize` 0-based index of the first complex element with maximum absolute value.

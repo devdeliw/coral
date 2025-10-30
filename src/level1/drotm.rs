@@ -1,7 +1,7 @@
-//! Applies a modified Givens rotation to two double precision vectors.
+//! `ROT`. Applies a modified Givens rotation to two double precision vectors.
 //!
 //! This function implements the BLAS [`drotm`] routine, updating the elements of 
-//! vectors `x` and `y` using the modified Givens transformation defined by the 
+//! vectors $x$ and $y$ using the modified Givens transformation defined by the 
 //! parameter array `param`. The transformation form depends on `param[0]` (`flag`):
 //! 
 //! - `-2.0` : Identity (no operation).
@@ -12,14 +12,14 @@
 //! # Arguments
 //! - `n`     (usize)      : Number of elements to process.
 //! - `x`     (&mut [f64]) : First input/output slice containing vector elements.
-//! - `incx`  (usize)      : Stride between consecutive elements of `x`.
+//! - `incx`  (usize)      : Stride between consecutive elements of $x$.
 //! - `y`     (&mut [f64]) : Second input/output slice containing vector elements.
-//! - `incy`  (usize)      : Stride between consecutive elements of `y`.
+//! - `incy`  (usize)      : Stride between consecutive elements of $y$.
 //! - `param` (&[f64; 5])  : Array of 5 parameters defining the modified Givens rotation
 //!                          (`flag, h11, h21, h12, h22`).
 //!
 //! # Returns
-//! - Nothing. The contents of `x` and `y` are updated in place.
+//! - Nothing. The contents of $x$ and $y$ are updated in place.
 //!
 //! # Notes
 //! - For `flag = -2.0`, the routine exits immediately without modifying inputs.

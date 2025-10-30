@@ -1,21 +1,20 @@
-//! SCAL Scales a complex single precision vector by a real scalar.
+//! `SCAL`. Scales a complex single precision vector by a real scalar.
 //!
-//! ```text
-//! x := alpha * x
-//! ```
+//! \\[
+//! x := \alpha x
+//! \\]
 //!
 //! This function implements the BLAS [`csscal`] routine, multiplying each complex element 
-//! of the input vector `x` by the real scalar `alpha` over `n` entries with a specified stride.
+//! of the input vector $x$ by the real scalar $\alpha$ over $n$ entries with a specified stride.
 //!
 //! # Arguments 
 //! - `n`     (usize)      : Number of complex elements to scale. 
 //! - `alpha` (f32)        : Real scalar multiplier. 
-//! - `x`     (&mut [f32]) : Input/output slice containing interleaved complex vector elements 
-//!                        | `[re0, im0, re1, im1, ...]`. 
-//! - `incx`  (usize)      : Stride between consecutive complex elements of `x`; complex units 
+//! - `x`     (&mut [f32]) : Input/output slice containing interleaved complex vector elements.
+//! - `incx`  (usize)      : Stride between consecutive complex elements of $x$; complex units. 
 //!
 //! # Returns 
-//! - Nothing. The contents of `x` are updated in place. 
+//! - Nothing. The contents of $x$ are updated in place. 
 //!
 //! # Notes 
 //! - For `incx == 1`, [`csscal`] uses NEON SIMD instructions for optimized performance on AArch64. 
@@ -24,6 +23,7 @@
 //!
 //! # Author 
 //! Deval Deliwala
+
 
 #[cfg(target_arch = "aarch64")]
 use core::arch::aarch64::{ 

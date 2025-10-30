@@ -1,16 +1,16 @@
-//! Computes the Euclidean norm NRM2 of a single precision vector.
+//! `NRM2`. Computes the Euclidean norm of a single precision vector.
 //!
-//! ```text 
-//! sqrt(x[0]^2 + x[1]^2 + ... + x[n-1]^2)
-//! ```
+//! \[
+//! \sqrt{\sum_{i=0}^{n-1} x_i^2}
+//! \]
 //!
-//! This function implements the BLAS [`snrm2`] routine, over `n` elements 
-//! of the input vector `x` with a specified stride.
+//! This function implements the BLAS [`snrm2`] routine, over $n$ elements 
+//! of the input vector $x$ with a specified stride.
 //!
 //! # Arguments
 //! - `n`    (usize)  : Number of elements in the vector.
 //! - `x`    (&[f32]) : Input slice containing vector elements.
-//! - `incx` (usize)  : Stride between consecutive elements of `x`.
+//! - `incx` (usize)  : Stride between consecutive elements of $x$.
 //!
 //! # Returns
 //! - `f32` Euclidean norm of the selected vector elements.

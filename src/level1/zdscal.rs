@@ -1,26 +1,25 @@
-//! SCAL Scales a complex double precision vector by a real scalar.
+//! `SCAL`. Scales a complex double precision vector by a real scalar.
 //!
-//! ```text
-//! x := alpha * x 
-//! ```
+//! \\[
+//! x := \alpha x 
+//! \\]
 //!
 //! This function implements the BLAS [`zdscal`] routine, multiplying each complex element 
-//! of the input vector `x` by the real scalar `alpha` over `n` entries with a specified stride.
+//! of the input vector $x$ by the real scalar $\alpha$ over $n$ entries with a specified stride.
 //!
 //! # Arguments 
 //! - `n`     (usize)      : Number of complex elements to scale. 
 //! - `alpha` (f64)        : Real scalar multiplier. 
-//! - `x`     (&mut [f64]) : Input/output slice containing interleaved complex vector elements 
-//!                        | `[re0, im0, re1, im1, ...]`. 
-//! - `incx`  (usize)      : Stride between consecutive complex elements of `x`; complex units. 
+//! - `x`     (&mut [f64]) : Input/output slice containing interleaved complex vector elements. 
+//! - `incx`  (usize)      : Stride between consecutive complex elements of $x$; complex units. 
 //!
 //! # Returns 
-//! - Nothing. The contents of `x` are updated in place. 
+//! - Nothing. The contents of $x$ are updated in place. 
 //!
 //! # Notes 
 //! - For `incx == 1`, [`zdscal`] uses NEON SIMD instructions for optimized performance on AArch64. 
 //! - For non unit strides, the function falls back to a scalar loop. 
-//! - If `n == 0` or `incx == 0`, the function returns immediately; no slice modification. 
+//! - If `n == 0` or `incx == 0`, the function returns immediately.
 //!
 //! # Author 
 //! Deval Deliwala

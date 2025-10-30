@@ -1,16 +1,15 @@
-//! Computes the sum of absolute values ASUM of elements in a complex double precision vector.
+//! `ASUM`. Computes the sum of absolute values of elements in a complex double precision vector.
 //!
-//! ```text 
-//! sum(|Re(x[i])| + |Im(x[i])|)
-//! ```
+//! \\[
+//! \sum\_{i=0}^{n-1} \\left( \lvert \operatorname{Re}(x_i) \rvert + \lvert \operatorname{Im}(x_i) \rvert \\right)
+//! \\]
 //!
 //! This function implements the BLAS [`dzasum`] routine over `n` elements of the
 //! input complex vector `x` with a specified stride. 
 //!
 //! # Arguments 
 //! - `n`    : Number of elements to sum. 
-//! - `x`    : Input slice containing interleaved complex vector elements 
-//!            `[re0, im0, re1, im1, ...]` 
+//! - `x`    : Input slice containing interleaved complex vector elements.
 //! - `incx` : Stride between consecutive complex elements of `x`; complex units. 
 //!
 //! # Returns 

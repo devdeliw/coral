@@ -1,35 +1,37 @@
-//! Applies a plane rotation to two complex single precision vectors.
+//! `ROT`. Applies a plane rotation to two complex single precision vectors.
 //!
-//! ```text
-//! x[i] := c * x[i] + s * y[i]
-//! y[i] := c * y[i] - s * x[i]
-//! ```
+//! \\[
+//! x_i' = c x_i + s y_i 
+//! \\]
+//! \\[
+//! y_i' = c y_i - s x_i
+//! \\]
+//!
 //! This function implements the BLAS [`csrot`] routine, replacing elements of
-//! vectors `x` and `y`. The rotation is applied elementwise to both the real and imag parts
-//! of each complex number, over `n` complex entries with specified strides.
+//! vectors $x$ and $y$. The rotation is applied elementwise to both the real and imag parts
+//! of each complex number, over $n$ complex entries with specified strides.
 //!
 //! # Arguments
 //! - `n`    (usize)      : Number of complex elements to process.
-//! - `x`    (&mut [f32]) : Input/output slice containing interleaved complex vector elements
-//!                       | `[re0, im0, re1, im1, ...]`; updated in place.
-//! - `incx` (usize)      : Stride between consecutive complex elements of `x`; complex units. 
-//! - `y`    (&mut [f32]) : Input/output slice containing interleaved complex vector elements,
-//!                       | updated in place.
-//! - `incy` (usize)      : Stride between consecutive complex elements of `y`; complex units. 
+//! - `x`    (&mut [f32]) : Input/output slice containing interleaved complex vector elements.
+//! - `incx` (usize)      : Stride between consecutive complex elements of $x$; complex units. 
+//! - `y`    (&mut [f32]) : Input/output slice containing interleaved complex vector elements.
+//! - `incy` (usize)      : Stride between consecutive complex elements of $y$; complex units. 
 //! - `c`    (f32)        : Cosine component of the rotation.
 //! - `s`    (f32)        : Sine component of the rotation.
 //!
 //! # Returns
-//! - Nothing. The contents of `x` and `y` are updated in place.
+//! - Nothing. The contents of $x$ and $y$ are updated in place.
 //!
 //! # Notes
 //! - For `incx == 1 && incy == 1`, [`csrot`] uses unrolled NEON SIMD instructions
 //!   for optimized performance on AArch64.
 //! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0`, the function returns immediately; no slice modification.
+//! - If `n == 0`, the function returns immediately.
 //!
 //! # Author
 //! Deval Deliwala
+
 
 #[cfg(target_arch = "aarch64")]
 use core::arch::aarch64::{

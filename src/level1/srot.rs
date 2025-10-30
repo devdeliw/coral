@@ -1,28 +1,29 @@
-//! Applies a plane rotation ROT to two single precision vectors.
+//! `ROT`. Applies a plane rotation to two single precision vectors.
 //!
 //! This function implements the BLAS [`srot`] routine, replacing elements of
-//! vectors `x` and `y` with
+//! vectors $x$ and $y$ with
 //!
-//! ```text 
-//! x[i] := c * x[i] + s * y[i]
-//! y[i] := c * y[i] - s * x[i]
-//! ```
+//! \\[
+//! x := c x + s y
+//! \\]
+//! \\[
+//! y := c y - s x
+//! \\]
 //!
-//! over `n` entries with specified strides.
+//!
+//! over $n$ entries with specified strides.
 //!
 //! # Arguments
 //! - `n`    (usize)      : Number of elements to process.
-//! - `x`    (&mut [f32]) : Input/output slice containing the first vector
-//!                       | updated in place.
-//! - `incx` (usize)      : Stride between consecutive elements of `x`.
-//! - `y`    (&mut [f32]) : Input/output slice containing the second vector
-//!                       | updated in place.
-//! - `incy` (usize)      : Stride between consecutive elements of `y`.
+//! - `x`    (&mut [f32]) : Input/output slice containing the first vector.
+//! - `incx` (usize)      : Stride between consecutive elements of $x$.
+//! - `y`    (&mut [f32]) : Input/output slice containing the second vector.
+//! - `incy` (usize)      : Stride between consecutive elements of $y$.
 //! - `c`    (f32)        : Cosine component of the rotation.
 //! - `s`    (f32)        : Sine component of the rotation.
 //!
 //! # Returns
-//! - Nothing. The contents of `x` and `y` are updated in place.
+//! - Nothing. The contents of $x$ and $y$ are updated in place.
 //!
 //! # Notes
 //! - For `incx == 1 && incy == 1`, [`srot`] uses unrolled NEON SIMD instructions

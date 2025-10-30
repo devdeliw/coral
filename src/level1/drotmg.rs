@@ -1,12 +1,16 @@
-//! Constructs the modified Givens rotation parameters ROTMG for double precision scalars.
+//! `ROT`. Constructs the modified Givens rotation parameters for double precision scalars.
 //!
 //! This function implements the BLAS [`drotmg`] routine, which generates the 
-//! parameter array `param` that defines a modified Givens transformation matrix `H`.  
+//! parameter array `param` that defines a modified Givens transformation matrix $H$.  
 //!
 //! The transformation zeros the second component of the 2-vector: 
-//! ```text
-//! (sqrt(sd1)*sx1, sqrt(sd2)*sy1)^T`
-//! ```
+//!
+//! \\[
+//! \begin{bmatrix}
+//! \sqrt{sd_1}\\, sx_1 \\\\
+//! \sqrt{sd_2}\\, sy_1
+//! \end{bmatrix}
+//! \\]
 //!
 //! The resulting 2x2 matrix `H` is encoded compactly in `param` with a flag:
 //! - `param[0] = -2.0` : Identity (no operation).
@@ -28,7 +32,7 @@
 //! - Applies rescaling with thresholds `GAM`, `GAMSQ`, and `RGAMSQ` to prevent overflow 
 //!   or underflow in the computed parameters.
 //! - If `sd1 < 0.0` or the computation is undefined, [`drotmg`] sets `param[0] = -1.0` 
-//!   and zeroes the inputs
+//!   and zeroes the inputs.
 //!
 //! # Author
 //! Deval Deliwala

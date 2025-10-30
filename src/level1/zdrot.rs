@@ -1,35 +1,35 @@
-//! Applies a plane rotation ROT to two complex double precision vectors.
+//! `ROT`. Applies a plane rotation to two complex double precision vectors.
 //!
 //! This function implements the BLAS [`zdrot`] routine, replacing elements of
-//! vectors `x` and `y` with
-//! 
-//! ```text
-//! x[i] := c * x[i] + s * y[i]
-//! y[i] := c * y[i] - s * x[i]
-//! ```
+//! vectors $x$ and $y$ with
+//!
+//! \\[
+//! x_i' = c x_i + s y_i 
+//! \\]
+//! \\[
+//! y_i' = c y_i - s x_i
+//! \\]
 //!
 //! where the rotation is applied elementwise to both the real and imaginary parts
-//! of each complex number, over `n` complex entries with specified strides.
+//! of each complex number, over $n$ complex entries with specified strides.
 //!
 //! # Arguments
 //! - `n`    (usize)      : Number of complex elements to process.
-//! - `x`    (&mut [f64]) : Input/output slice containing interleaved complex vector elements
-//!                       | `[re0, im0, re1, im1, ...]`, updated in place.
+//! - `x`    (&mut [f64]) : Input/output slice containing interleaved complex vector elements.
 //! - `incx` (usize)      : Stride between consecutive complex elements of `x`; complex units. 
-//! - `y`    (&mut [f64]) : Input/output slice containing interleaved complex vector elements,
-//!                       | updated in place.
+//! - `y`    (&mut [f64]) : Input/output slice containing interleaved complex vector elements.
 //! - `incy` (usize)      : Stride between consecutive complex elements of `y`; complex units. 
 //! - `c`    (f64)        : Cosine component of the rotation.
 //! - `s`    (f64)        : Sine component of the rotation.
 //!
 //! # Returns
-//! - Nothing. The contents of `x` and `y` are updated in place.
+//! - Nothing. The contents of $x$ and $y$ are updated in place.
 //!
 //! # Notes
 //! - For `incx == 1 && incy == 1`, [`zdrot`] uses unrolled NEON SIMD instructions
 //!   for optimized performance on AArch64.
 //! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0`, the function returns immediately; no slice modification.
+//! - If `n == 0`, the function returns immediately.
 //!
 //! # Author
 //! Deval Deliwala

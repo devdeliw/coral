@@ -1,17 +1,17 @@
-//! SWAP Swaps elements of two double precision vectors.
+//! `SWAP`. Swaps elements of two double precision vectors.
 //!
 //! This function implements the BLAS [`dswap`] routine, exchanging elements of 
-//! two input vectors `x` and `y` over `n` entries with specified strides.
+//! two input vectors $x$ and $y$ over $n$ entries with specified strides.
 //!
 //! # Arguments 
 //! - `n`    (usize)      : Number of elements to swap. 
 //! - `x`    (&mut [f64]) : First input/output slice containing vector elements. 
-//! - `incx` (usize)      : Stride between consecutive elements of `x`. 
+//! - `incx` (usize)      : Stride between consecutive elements of $x$. 
 //! - `y`    (&mut [f64]) : Second input/output slice containing vector elements. 
-//! - `incy` (usize)      : Stride between consecutive elements of `y`. 
+//! - `incy` (usize)      : Stride between consecutive elements of $y$. 
 //!
 //! # Returns 
-//! - Nothing. The contents of `x` and `y` are swapped in place.
+//! - Nothing. The contents of $x$ and $y$ are swapped in place.
 //!
 //! # Notes 
 //! - For `incx == 1 && incy == 1`, [`dswap`] uses unrolled NEON SIMD instructions 

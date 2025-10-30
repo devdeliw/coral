@@ -1,16 +1,16 @@
-//! Computes the sum of absolute values ASUM of elements in a single precision vector. 
+//! `ASUM`. Computes the sum of absolute values of elements in a single precision vector. 
 //!
-//! ```text 
-//! sum(|x[i]|)
-//! ```
+//! \\[ 
+//! \sum\_{i=0}^{n-1} \lvert x_i \rvert
+//! \\]
 //!
-//! This function implements the BLAS [`sasum`] routine over `n` elements of the input 
-//! vector `x` with a specified stride. 
+//! This function implements the BLAS [`sasum`] routine over $n$ elements of the input 
+//! vector $x$ with a specified stride. 
 //!
 //! # Arguments 
 //! - `n`    (usize)  : Number of elements to sum. 
 //! - `x`    (&[f32]) : Input slice containing vector elements 
-//! - `incx` (usize)  : Stride between consecutive elements of `x` 
+//! - `incx` (usize)  : Stride between consecutive elements of $x$ 
 //!
 //! # Returns 
 //! - `f32` sum of absolute values of selected vector elements. 

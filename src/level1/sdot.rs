@@ -1,18 +1,18 @@
-//! Computes the DOT product of two single precision vectors.
+//! `DOT`. Computes the dot product of two single precision vectors.
 //!
-//! ```text 
-//! sum(x[i] * y[i])
-//! ```
+//! \\[
+//! \sum\_{i=0}^{n-1}(x_i y_i)
+//! \\]
 //!
-//! This function implements the BLAS [`sdot`] routine, over `n` elements 
-//! of the input vectors `x` and `y`with specified strides.
+//! This function implements the BLAS [`sdot`] routine, over $n$ elements 
+//! of the input vectors $x$ and $y$ with specified strides.
 //!
 //! # Arguments
 //! - `n`    (usize)  : Number of elements in the vectors.
 //! - `x`    (&[f32]) : Input slice containing the first vector.
-//! - `incx` (usize)  : Stride between consecutive elements of `x`.
+//! - `incx` (usize)  : Stride between consecutive elements of $x$.
 //! - `y`    (&[f32]) : Input slice containing the second vector.
-//! - `incy` (usize)  : Stride between consecutive elements of `y`.
+//! - `incy` (usize)  : Stride between consecutive elements of $y$.
 //!
 //! # Returns
 //! - `f32` dot product of the selected vector elements.

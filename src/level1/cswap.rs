@@ -1,18 +1,17 @@
-//! SWAP Swaps elements of two complex single precision vectors.
+//! `SWAP`. Swaps elements of two complex single precision vectors.
 //!
 //! This function implements the BLAS [`cswap`] routine, exchanging elements of 
-//! two input complex vectors `x` and `y` over `n` entries with specified strides.
+//! two input complex vectors $x$ and $y$ over $n$ entries with specified strides.
 //!
 //! # Arguments 
 //! - `n`    (usize)      : Number of complex elements to swap. 
-//! - `x`    (&mut [f32]) : First input/output slice containing interleaved complex vector elements 
-//!                       | `[re0, im0, re1, im1, ...]`. 
-//! - `incx` (usize)      : Stride between consecutive complex elements of `x`; complex units. 
+//! - `x`    (&mut [f32]) : First input/output slice containing interleaved complex vector elements. 
+//! - `incx` (usize)      : Stride between consecutive complex elements of $x$; complex units. 
 //! - `y`    (&mut [f32]) : Second input/output slice containing interleaved complex vector elements 
-//! - `incy` (usize)      : Stride between consecutive complex elements of `y`; complex units.  
+//! - `incy` (usize)      : Stride between consecutive complex elements of $y$; complex units.  
 //!
 //! # Returns 
-//! - Nothing. The contents of `x` and `y` are swapped in place.
+//! - Nothing. The contents of $x$ and $y$ are swapped in place.
 //!
 //! # Notes 
 //! - For `incx == 1 && incy == 1`, [`cswap`] uses unrolled NEON SIMD instructions 
@@ -22,6 +21,7 @@
 //!
 //! # Author 
 //! Deval Deliwala
+
 
 #[cfg(target_arch = "aarch64")] 
 use core::arch::aarch64::{

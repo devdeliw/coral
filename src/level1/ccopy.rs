@@ -1,25 +1,23 @@
-//! COPY Copies a complex single precision vector into another.
+//! `COPY`. Copies a complex single precision vector into another.
 //!
 //! This function implements the BLAS [`ccopy`] routine, copying `n` complex elements from
-//! the input vector `x` into the output vector `y` with specified strides.
+//! the input vector $x$ into the output vector $y$ with specified strides.
 //!
-//! # Arguments
+//! # Arguments 
 //! - `n`    (usize)      : Number of complex elements to copy.
-//! - `x`    (&[f32])     : Input slice containing interleaved complex vector elements
-//!                       | `[re0, im0, re1, im1, ...]`.
-//! - `incx` (usize)      : Stride between consecutive complex elements of `x`; complex units.
-//! - `y`    (&mut [f32]) : Output slice to receive copied complex elements
-//!                       `[re0, im0, re1, im1, ...]`.
-//! - `incy` (usize)      : Stride between consecutive complex elements of `y`; complex units.
-//!
+//! - `x`    (&[f32])     : Input slice containing interleaved complex vector elements.
+//! - `incx` (usize)      : Stride between consecutive complex elements of $x$; complex units.
+//! - `y`    (&mut [f32]) : Output slice to receive copied complex elements.
+//! - `incy` (usize)      : Stride between consecutive complex elements of $y$; complex units.
+//! 
 //! # Returns
-//! - Nothing. The contents of `y` are overwritten with elements from `x`.
+//! - Nothing. The contents of $y$ are overwritten with elements from $x$.
 //!
 //! # Notes
-//! - For `incx == 1 && incy == 1`, [`ccopy`] uses `core::ptr::copy_nonoverlapping` for fast
+//! - For `incx == 1 && incy == 1`, [`ccopy`] uses [`core::ptr::copy_nonoverlapping`] for fast
 //!   contiguous memory copying of real and imag parts.
 //! - For non unit or negative strides, the function falls back to a scalar loop.
-//! - If `n == 0`, the function returns immediately without modifying `y`.
+//! - If `n == 0`, the function returns immediately without modifying $y$.
 //!
 //! # Author
 //! Deval Deliwala

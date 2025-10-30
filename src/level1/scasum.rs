@@ -1,17 +1,16 @@
-//! Computes the sum of absolute values of elements ASUM in a complex single precision vector. 
+//! `ASUM`. Computes the sum of absolute values of elements in a complex single precision vector. 
 //!
-//! ```text 
-//! sum(|Re(x[i])| + |Im(x[i])|)
-//! ```
+//! \[
+//! \sum\_{i=0}^{n-1} \\left( \lvert \operatorname{Re}(x_i) \rvert + \lvert \operatorname{Im}(x_i) \rvert \\right)
+//! \]
 //!
-//! This function implements the BLAS [`scasum`] routine over `n` elements of the 
-//! input complex vector `x` with a specified stride. 
+//! This function implements the BLAS [`scasum`] routine over $n$ elements of the 
+//! input complex vector $x$ with a specified stride. 
 //!
 //! # Arguments 
 //! - `n`    (usize)  : Number of elements to sum. 
-//! - `x`    (&[f32]) : Input slice containing interleaved complex vector elements 
-//!                   | `[re0, im0, re1, im1, ...]` 
-//! - `incx` (usize)  : Stride between consecutive complex elements of `x`; complex units.  
+//! - `x`    (&[f32]) : Input slice containing interleaved complex vector elements. 
+//! - `incx` (usize)  : Stride between consecutive complex elements of $x$; complex units.  
 //!
 //! # Returns 
 //! - `f32` sum of absolute values of the real and imag parts of selected vector elements. 

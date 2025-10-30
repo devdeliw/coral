@@ -1,20 +1,25 @@
-//! Constructs a Givens rotation ROTG for double precision scalars.
+//! `ROT`. Constructs a Givens rotation for double precision scalars.
 //!
 //! This function implements the BLAS [`drotg`] routine, computing parameters
-//! `c` and `s` that define a Givens plane rotation such that
+//! $c$ and $s$ that define a Givens plane rotation such that
 //!
-//! ```text
-//! [ c  s ] [ a ] = [ r ]
-//! [-s  c ] [ b ]   [ 0 ]
-//! ```
+//! \\[ 
+//! \begin{bmatrix} 
+//! c & s \\\\ -s & c 
+//! \end{bmatrix} \begin{bmatrix} 
+//! a \\\\ b 
+//! \end{bmatrix} = \begin{bmatrix} 
+//! r \\\\ 0 
+//! \end{bmatrix}
+//! \\]
 //!
-//! The values of `a` and `b` are overwritten with `r` and `z`, where `r`
-//! is the nonzero result and `z` encodes information for reconstructing
+//! The values of $a$ and $b$ are overwritten with $r$ and $z$, where $r$
+//! is the nonzero result and $z$ encodes information for reconstructing
 //! the rotation.
 //!
 //! # Arguments
-//! - `a` : Input scalar, overwritten with `r`, the rotated value.
-//! - `b` : Input scalar, overwritten with `z`, a parameter related to the rotation.
+//! - `a` : Input scalar, overwritten with $r$, the rotated value.
+//! - `b` : Input scalar, overwritten with $z$, a parameter related to the rotation.
 //! - `c` : Output scalar cosine component of the rotation.
 //! - `s` : Output scalar sine component of the rotation.
 //!
@@ -24,8 +29,8 @@
 //! # Notes
 //! - If both `a` and `b` are zero, the routine sets `c = 1.0`, `s = 0.0`,
 //!   and overwrites `a = b = 0.0`.
-//! - The value `z` stored in `b` allows reconstruction of the rotation without
-//!   recomputing `c` and `s` in some BLAS contexts.
+//! - The value $z$ stored in `b` allows reconstruction of the rotation without
+//!   recomputing `c` and `s`.
 //!
 //! # Author
 //! Deval Deliwala

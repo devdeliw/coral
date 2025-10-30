@@ -1,13 +1,13 @@
-//! Finds the index of the element with maximum absolute value in a double precision vector.
+//! `IAMAX`. Finds the index of the element with maximum absolute value in a double precision vector.
 //!
 //! This function implements the BLAS [`idamax`] routine, returning the 0-based index
-//! of the first element of maximum absolute value over `n` elements of the input
-//! vector `x` with a specified stride.
+//! of the first element of maximum absolute value over $n$ elements of the input
+//! vector $x$ with a specified stride.
 //!
 //! # Arguments
 //! - `n`    (usize)  : Number of elements in the vector.
 //! - `x`    (&[f64]) : Input slice containing vector elements.
-//! - `incx` (usize)  : Stride between consecutive elements of `x`.
+//! - `incx` (usize)  : Stride between consecutive elements of $x$.
 //!
 //! # Returns
 //! - `usize` 0-based index of the first element with maximum absolute value.

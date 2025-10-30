@@ -1,19 +1,18 @@
-//! Computes the conjugated DOT of two complex single precision vectors.
+//! `DOT`. Computes the conjugated dot of two complex single precision vectors.
 //!
-//! ```text
-//! sum(conj(x[i]) * y[i])
-//! ```
+//! \\[
+//! \sum\_{i=0}^{n-1} \overline{x_i}\\, y_i
+//! \\]
 //!
-//! This function implements the BLAS [`cdotc`] routine, over `n` complex elements of the 
-//! input vectors `x` and `y` with specified strides.
+//! This function implements the BLAS [`cdotc`] routine, over $n$ complex elements of the 
+//! input vectors $x$ and $y$ with specified strides.
 //!
 //! # Arguments
 //! - `n`    (usize)  : Number of complex elements in the vectors.
-//! - `x`    (&[f32]) : Input slice containing interleaved complex vector elements
-//!                   | `[re0, im0, re1, im1, ...]`. Conjugated before multiplication.
-//! - `incx` (usize)  : Stride between consecutive complex elements of `x`; complex units.
-//! - `y`    (&[f32]) : Input slice containing interleaved complex vector elements
-//! - `incy` (usize)  : Stride between consecutive complex elements of `y`; complex units.
+//! - `x`    (&[f32]) : Input slice containing interleaved complex vector elements.
+//! - `incx` (usize)  : Stride between consecutive complex elements of $x$; complex units.
+//! - `y`    (&[f32]) : Input slice containing interleaved complex vector elements.
+//! - `incy` (usize)  : Stride between consecutive complex elements of $y$; complex units.
 //!
 //! # Returns
 //! - `[f32; 2]` complex result of the dot product, `[real, imag]`.
@@ -26,6 +25,7 @@
 //!
 //! # Author
 //! Deval Deliwala
+
 
 #[cfg(target_arch = "aarch64")]
 use core::arch::aarch64::{

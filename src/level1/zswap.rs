@@ -1,18 +1,17 @@
-//! SWAP Swaps elements of two complex double precision vectors.
+//! `SWAP`. Swaps elements of two complex double precision vectors.
 //!
 //! This function implements the BLAS [`zswap`] routine, exchanging elements of 
-//! two input complex vectors `x` and `y` over `n` entries with specified strides.
+//! two input complex vectors $x$ and $y$ over $n$ entries with specified strides.
 //!
 //! # Arguments 
 //! - `n`    (usize)      : Number of complex elements to swap. 
-//! - `x`    (&mut [f64]) : First input/output slice containing interleaved complex vector elements 
-//!                       | `[re0, im0, re1, im1, ...]`. 
-//! - `incx` (usize)      : Stride between consecutive complex elements of `x`; complex units. 
-//! - `y`    (&mut [f64]) : Second input/output slice containing interleaved complex vector elements 
-//! - `incy` (usize)      : Stride between consecutive complex elements of `y`; complex units. 
+//! - `x`    (&mut [f64]) : First input/output slice containing interleaved complex vector elements. 
+//! - `incx` (usize)      : Stride between consecutive complex elements of $x$; complex units. 
+//! - `y`    (&mut [f64]) : Second input/output slice containing interleaved complex vector elements. 
+//! - `incy` (usize)      : Stride between consecutive complex elements of $y$; complex units. 
 //!
 //! # Returns 
-//! - Nothing. The contents of `x` and `y` are swapped in place.
+//! - Nothing. The contents of $x$ and $y$ are swapped in place.
 //!
 //! # Notes 
 //! - For `incx == 1 && incy == 1`, [`zswap`] uses unrolled NEON SIMD instructions 

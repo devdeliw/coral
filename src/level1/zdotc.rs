@@ -1,19 +1,18 @@
-//! Computes the conjugated dot product DOTC of two complex double precision vectors.
+//! `DOT`. Computes the conjugated dot product of two complex double precision vectors.
 //!
-//! ```text 
-//! sum(conj(x[i]) * y[i]) 
-//! ```
+//! \[
+//! \sum\_{i=0}^{n-1} \overline{x_i}\\, y_i
+//! \]
 //!
-//! This function implements the BLAS [`zdotc`] routine over `n` complex elements 
-//! of the input vectors `x` and `y` with specified strides. 
+//! This function implements the BLAS [`zdotc`] routine over $n$ complex elements 
+//! of the input vectors $x$ and $y$ with specified strides. 
 //!
 //! # Arguments
 //! - `n`    (usize)  : Number of complex elements in the vectors.
-//! - `x`    (&[f64]) : Input slice containing interleaved complex vector elements
-//!                   | `[re0, im0, re1, im1, ...]`. Conjugated before multiplication.
-//! - `incx` (usize)  : Stride between consecutive complex elements of `x`; complex units. 
-//! - `y`    (&[f64]) : Input slice containing interleaved complex vector elements
-//! - `incy` (usize)  : Stride between consecutive complex elements of `y`; complex units. 
+//! - `x`    (&[f64]) : Input slice containing interleaved complex vector elements.
+//! - `incx` (usize)  : Stride between consecutive complex elements of $x$; complex units. 
+//! - `y`    (&[f64]) : Input slice containing interleaved complex vector elements.
+//! - `incy` (usize)  : Stride between consecutive complex elements of $y$; complex units. 
 //!
 //! # Returns
 //! - `[f64; 2]` complex result of the dot product, `[real, imag]`.

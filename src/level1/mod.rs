@@ -54,4 +54,60 @@ pub mod drotg;
 pub mod drotm; 
 pub mod drotmg; 
 pub mod csrot; 
-pub mod zdrot;  
+pub mod zdrot; 
+
+pub use sasum::sasum;
+pub use dasum::dasum;
+pub use scasum::scasum;
+pub use dzasum::dzasum;
+
+pub use isamax::isamax;
+pub use idamax::idamax;
+pub use icamax::icamax;
+pub use izamax::izamax;
+
+pub use snrm2::snrm2;
+pub use dnrm2::dnrm2;
+pub use scnrm2::scnrm2;
+pub use dznrm2::dznrm2;
+
+pub use sscal::sscal;
+pub use dscal::dscal;
+pub use cscal::cscal;
+pub use zscal::zscal;
+pub use csscal::csscal;
+pub use zdscal::zdscal;
+
+pub use scopy::scopy;
+pub use dcopy::dcopy;
+pub use ccopy::ccopy;
+pub use zcopy::zcopy;
+
+pub use sswap::sswap;
+pub use dswap::dswap;
+pub use cswap::cswap;
+pub use zswap::zswap;
+
+pub use saxpy::saxpy;
+pub use daxpy::daxpy;
+pub use caxpy::caxpy;
+pub use zaxpy::zaxpy;
+
+pub use sdot::sdot;
+pub use ddot::ddot;
+pub use cdotu::cdotu;
+pub use zdotu::zdotu;
+pub use cdotc::cdotc;
+pub use zdotc::zdotc;
+
+pub use srot::srot;
+pub use srotg::srotg;
+pub use srotm::srotm;
+pub use srotmg::srotmg;
+pub use drot::drot;
+pub use drotg::drotg;
+pub use drotm::drotm;
+pub use drotmg::drotmg;
+pub use csrot::csrot;
+pub use zdrot::zdrot;
+
