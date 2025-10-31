@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/devdeliw/CORAL/blob/main/coral_logo.png"/ width="25%">
+  <img src="https://github.com/devdeliw/CORAL/blob/main/coral_logo.png"/ width="100%">
 </p>
 
 **COre** **R**ust **A**rchitecture for **L**inear-algebra. 
