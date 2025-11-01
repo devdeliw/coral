@@ -5,7 +5,7 @@
 //! \\]
 //!
 //! This function implements the BLAS [`zaxpy`] routine, updating the vector $y$
-//! by adding $\alpha * x$ elementwise over $n$ complex entries with specified strides.
+//! by adding $\alpha x$ elementwise over $n$ complex entries with specified strides.
 //!
 //! # Arguments
 //! - `n`     (usize)      : Number of complex elements to process.

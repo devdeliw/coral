@@ -1,8 +1,8 @@
 //! `NRM2`. Computes the Euclidean norm of a complex single precision vector.
 //!
-//! \[
+//! \\[
 //! \sqrt{\sum\_{i=0}^{n-1} \\left( \lvert \operatorname{Re}(x_i) \rvert^2 + \lvert \operatorname{Im}(x_i) \rvert^2 \\right)}
-//! \]
+//! \\]
 //!
 //! This function implements the BLAS [`scnrm2`] routine over $n$ complex elements of the 
 //! input vector $x$ with a specified stride.

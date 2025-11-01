@@ -1,8 +1,8 @@
 //! `DOT`. Computes the conjugated dot product of two complex double precision vectors.
 //!
-//! \[
+//! \\[
 //! \sum\_{i=0}^{n-1} \overline{x_i}\\, y_i
-//! \]
+//! \\]
 //!
 //! This function implements the BLAS [`zdotc`] routine over $n$ complex elements 
 //! of the input vectors $x$ and $y$ with specified strides. 

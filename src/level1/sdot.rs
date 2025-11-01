@@ -1,7 +1,7 @@
 //! `DOT`. Computes the dot product of two single precision vectors.
 //!
 //! \\[
-//! \sum\_{i=0}^{n-1}(x_i y_i)
+//! \sum\_{i=0}^{n-1} x_i\\, y_i
 //! \\]
 //!
 //! This function implements the BLAS [`sdot`] routine, over $n$ elements 

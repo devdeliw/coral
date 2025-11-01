@@ -49,7 +49,10 @@ pub fn dznrm2(
         return 0.0; 
     } 
 
-    debug_assert!(required_len_ok_cplx(x.len(), n, incx), "x too short for n/incx (complex)");
+    debug_assert!(
+        required_len_ok_cplx(x.len(), n, incx),
+        "x too short for n/incx (complex)"
+    );
 
     let mut scale : f64 = 0.0; 
     let mut ssq   : f64 = 1.0; 

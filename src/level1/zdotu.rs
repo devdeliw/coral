@@ -1,7 +1,7 @@
 //! `DOT`. Computes the unconjugated dot product of two complex double precision vectors.
 //!
 //! \\[
-//! \sum\_{i=0}^{n-1} x_i y_i
+//! \sum\_{i=0}^{n-1} x_i\\, y_i
 //! \\]
 //!
 //! This function implements the BLAS [`zdotu`] routine over $n$ complex elements 

@@ -1,5 +1,9 @@
 //! `SCAL`. Scales a complex double precision vector by a complex scalar.
 //!
+//! \\[
+//! x := \alpha  x
+//! \\]
+//!
 //! This function implements the BLAS [`zscal`] routine, multiplying each complex element 
 //! of the input vector $x$ by the complex scalar $\alpha$ over $n$ entries with a specified stride.
 //!
