@@ -1,6 +1,6 @@
 [package]
 name        = "coral-blas"
-version     = "0.1.2"
+version     = "0.1.3"
 edition     = "2024"
 authors     = ["deval deliwala <devaldeliwala@berkeley.edu>"]
 
@@ -37,6 +37,4 @@ cblas-sys = "0.1"
 [package.metadata.docs.rs]
 features = ["default"]
 rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex-header.html"]
-default-target = "aarch64-unknown-linux-gnu"
-targets = ["aarch64-unknown-linux-gnu"]
 
