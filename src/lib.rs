@@ -1,7 +1,3 @@
-#[cfg(not(target_arch = "aarch64"))]
-compile_error!("coral-blas targets AArch64 only. \
-This build is running on a non-AArch64 target.");
-
 #[cfg(target_arch = "aarch64")]
 pub mod level1;
 
