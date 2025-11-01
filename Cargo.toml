@@ -24,7 +24,6 @@ path = "src/lib.rs"
 [dependencies]
 blas-src = { version = "0.12", optional = true, default-features = false }
 
-# for comparison benchmarks 
 [features]
 default    = []
 accelerate = ["blas-src/accelerate"]
