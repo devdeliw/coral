@@ -12,6 +12,10 @@ repository  = "https://github.com/devdeliw/CORAL"
 categories  = ["science", "mathematics", "algorithms"]
 keywords    = ["linear-algebra", "algebra", "matrix", "vector", "math"] 
 
+exclude = [
+  "benches/**",
+  "*.png",
+]
 
 [lib]
 name = "coral"             
@@ -115,8 +119,3 @@ harness = false
 [[bench]] 
 name    = "level3_zgemm_cc" 
 harness = false 
-
-exclude = [
-  "benches/**",
-  "*.png",
-]
