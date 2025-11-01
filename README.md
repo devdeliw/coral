@@ -16,7 +16,8 @@
 
 ## Core Rust Architecture for Linear algebra. 
 
-A pure-Rust BLAS optimized for AArch64. Reaches competitive performance while remaining 100% Rust.
+A pure-Rust BLAS optimized for AArch64, reaching competitive performance while remaining 100% Rust.
+
 No dependencies. 
 
 ### Benchmarks 
