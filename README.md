@@ -18,3 +18,7 @@
 
 Reaching BLAS performance for AArch64 while remaining 100% Rust. 
 
+### Benchmarks 
+
+see the [benchmark page](https://dev-undergrad.dev/posts/benchmarks/) on my website. 
+
