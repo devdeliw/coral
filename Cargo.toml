@@ -16,6 +16,10 @@ keywords    = ["linear-algebra", "algebra", "matrix", "vector", "math"]
 name = "coral"             
 path = "src/lib.rs"
 
+[dependencies]
+blas-src = { version = "0.12", optional = true, default-features = false }
+
+# for comparison benchmarks 
 [features]
 default    = []
 accelerate = ["blas-src/accelerate"]
@@ -24,7 +28,6 @@ openblas   = ["blas-src/openblas"]
 [dev-dependencies]
 criterion = "0.5"   
 cblas-sys = "0.1" 
-blas-src = { version = "0.12", default-features = false }
 
 [package.metadata.docs.rs]
 features = ["default"]
@@ -112,3 +115,8 @@ harness = false
 name    = "level3_zgemm_cc" 
 harness = false 
 
+exclude = [
+  "benches/",
+  "plots/",
+  "*.png"
+]
