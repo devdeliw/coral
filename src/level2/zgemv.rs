@@ -24,10 +24,12 @@
 //! # Example
 //! ```rust
 //! use coral::level2::zgemv;
+//! use coral::enums::CoralTranspose;
 //!
 //! fn main() {
 //!     let m = 2;
 //!     let n = 2;
+//!     let op = CoralTranspose::NoTranspose;
 //!
 //!     let a = vec![
 //!         1.0, 0.0, 0.0, 1.0, // col 0 
@@ -44,7 +46,7 @@
 //!     let alpha = [1.0, 0.0];
 //!     let beta  = [0.0, 0.0];
 //!
-//!     zgemv(m, n, alpha, &a, lda, &x, incx, beta, &mut y, incy);
+//!     zgemv(op, m, n, alpha, &a, lda, &x, incx, beta, &mut y, incy);
 //! }
 //! ```
 

@@ -28,9 +28,9 @@
 //! use coral::enums::CoralTranspose;
 //!
 //! fn main() {
-//!     let m = 2;
-//!     let n = 2;
-//!     let trans = CoralTranspose::NoTranspose; 
+//!     let m  = 2;
+//!     let n  = 2;
+//!     let op = CoralTranspose::NoTranspose; 
 //!
 //!     let a = vec![
 //!         1.0, 4.0,  // col 0
@@ -45,7 +45,7 @@
 //!     let alpha = 1.0;
 //!     let beta  = 0.0;
 //!
-//!     dgemv(trans, m, n, alpha, &a, lda, &x, incx, beta, &mut y, incy);
+//!     dgemv(op, m, n, alpha, &a, lda, &x, incx, beta, &mut y, incy);
 //! }
 //! ```
 

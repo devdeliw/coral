@@ -41,7 +41,7 @@
 //!     ];
 //!
 //!     let lda   = n;
-//!     let mut x = vec[ 2.0, 1.0,  1.0, 0.0 ]; // b -> x
+//!     let mut x = vec![2.0, 1.0, 1.0, 0.0]; // b -> x
 //!     let incx  = 1;
 //!
 //!     ztrsv(uplo, transpose, diagonal, n, &a, lda, &mut x, incx);
