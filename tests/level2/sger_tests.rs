@@ -1,6 +1,6 @@
 use blas_src as _;
 use cblas_sys::{ cblas_sger, CBLAS_LAYOUT };
-use coral::level2::sger::sger;
+use coral::level2::sger;
 
 #[inline(always)]
 fn cblas_sger_ref(

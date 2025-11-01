@@ -1,6 +1,6 @@
 use blas_src as _;
 use cblas_sys::{ cblas_zgeru, cblas_zgerc, CBLAS_LAYOUT };
-use coral::level2::{ zgeru::zgeru, zgerc::zgerc };
+use coral::level2::{ zgeru, zgerc };
 
 fn cblas_zgeru_ref(
     m     : i32,

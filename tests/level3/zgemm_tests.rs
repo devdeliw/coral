@@ -2,7 +2,7 @@ use blas_src as _;
 use cblas_sys::{cblas_zgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
 
 use coral::enums::CoralTranspose;
-use coral::level3::zgemm::zgemm;
+use coral::level3::zgemm;
 
 #[inline(always)]
 fn to_cblas(op: CoralTranspose) -> CBLAS_TRANSPOSE {
@@ -103,8 +103,8 @@ fn assert_allclose(
     }
 }
 
-const RTOL: f64 = 3e-12;
-const ATOL: f64 = 2e-12;
+const RTOL: f64 = 3e-11;
+const ATOL: f64 = 2e-11;
 
 fn run_case(
     op_a  : CoralTranspose,

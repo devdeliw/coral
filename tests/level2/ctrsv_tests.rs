@@ -1,7 +1,7 @@
 use blas_src as _;
 use cblas_sys::{ CBLAS_LAYOUT, CBLAS_TRANSPOSE, CBLAS_DIAG, CBLAS_UPLO, cblas_ctrsv };
 use coral::enums::{ CoralDiagonal, CoralTranspose, CoralTriangular };
-use coral::level2::ctrsv::ctrsv;
+use coral::level2::ctrsv;
 
 #[inline(always)]
 fn to_cblas_uplo(

@@ -1,6 +1,6 @@
 use blas_src as _;
 use cblas_sys::{ cblas_cher2, CBLAS_LAYOUT, CBLAS_UPLO };
-use coral::level2::cher2::cher2;
+use coral::level2::cher2;
 use coral::enums::CoralTriangular;
 
 fn cblas_cher2_wrapper(

@@ -1,9 +1,9 @@
 use blas_src as _;
 use coral::level1::{
-    sswap::sswap,
-    dswap::dswap,
-    cswap::cswap,
-    zswap::zswap,
+    sswap,
+    dswap,
+    cswap,
+    zswap,
 };
 
 use cblas_sys::{

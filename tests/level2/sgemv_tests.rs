@@ -1,7 +1,7 @@
 use blas_src as _;
 use cblas_sys::{ cblas_sgemv, CBLAS_LAYOUT, CBLAS_TRANSPOSE };
 use coral::enums::CoralTranspose;
-use coral::level2::sgemv::sgemv;
+use coral::level2::sgemv;
 
 #[inline(always)]
 fn to_cblas(

@@ -1,6 +1,6 @@
 use blas_src as _;
 use cblas_sys::{ cblas_zgemv, CBLAS_LAYOUT, CBLAS_TRANSPOSE };
-use coral::level2::zgemv::zgemv;
+use coral::level2::zgemv;
 use coral::enums::CoralTranspose;
 
 #[inline(always)]

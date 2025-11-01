@@ -2,7 +2,7 @@ use blas_src as _;
 use cblas_sys::{cblas_cgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
 
 use coral::enums::CoralTranspose;
-use coral::level3::cgemm::cgemm;
+use coral::level3::cgemm;
 
 #[inline(always)]
 fn to_cblas(op: CoralTranspose) -> CBLAS_TRANSPOSE {
@@ -272,4 +272,3 @@ fn rectangular_all_ops() {
     run_all_ops(64, 192, 15, 64, 15, 15, 192, 64);
     run_all_ops(192, 64, 15, 192, 15, 15, 64, 192);
 }
-

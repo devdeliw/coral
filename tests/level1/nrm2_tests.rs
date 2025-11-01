@@ -1,9 +1,9 @@
 use blas_src as _;
 use coral::level1::{
-    snrm2::snrm2,
-    dnrm2::dnrm2,
-    scnrm2::scnrm2,
-    dznrm2::dznrm2,
+    snrm2,
+    dnrm2,
+    scnrm2,
+    dznrm2,
 };
 
 use cblas_sys::{

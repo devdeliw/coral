@@ -1,13 +1,13 @@
 use blas_src as _;
 use coral::level1::{
-    srot::srot,
-    srotg::srotg,
-    srotm::srotm,
-    srotmg::srotmg,
-    drot::drot,
-    drotg::drotg,
-    drotm::drotm,
-    drotmg::drotmg,
+    srot,
+    srotg,
+    srotm,
+    srotmg,
+    drot,
+    drotg,
+    drotm,
+    drotmg
 };
 
 use cblas_sys::{

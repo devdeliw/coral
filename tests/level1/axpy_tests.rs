@@ -1,9 +1,9 @@
 use blas_src as _;
 use coral::level1::{
-    saxpy::saxpy,
-    daxpy::daxpy,
-    caxpy::caxpy,
-    zaxpy::zaxpy,
+    saxpy,
+    daxpy,
+    caxpy,
+    zaxpy,
 };
 
 use cblas_sys::{

@@ -1,7 +1,7 @@
 use blas_src as _;
 use cblas_sys::{ cblas_ssymv, CBLAS_LAYOUT, CBLAS_UPLO };
 use coral::enums::CoralTriangular;
-use coral::level2::ssymv::ssymv;
+use coral::level2::ssymv;
 
 #[inline(always)]
 fn to_cblas_uplo(

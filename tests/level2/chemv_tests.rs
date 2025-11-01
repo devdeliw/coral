@@ -1,6 +1,6 @@
 use blas_src as _;
 use cblas_sys::{ cblas_chemv, CBLAS_LAYOUT, CBLAS_UPLO };
-use coral::level2::chemv::chemv;
+use coral::level2::chemv;
 use coral::enums::CoralTriangular;
 
 #[inline(always)]

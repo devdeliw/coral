@@ -1,11 +1,11 @@
 use blas_src as _;
 use coral::level1::{
-    sdot::sdot,
-    ddot::ddot,
-    cdotc::cdotc,
-    cdotu::cdotu,
-    zdotc::zdotc,
-    zdotu::zdotu,
+    sdot,
+    ddot,
+    cdotc,
+    cdotu,
+    zdotc,
+    zdotu,
 };
 
 use cblas_sys::{

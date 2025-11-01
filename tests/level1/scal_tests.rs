@@ -1,9 +1,9 @@
 use blas_src as _;
 use coral::level1::{
-    sscal::sscal,
-    dscal::dscal,
-    cscal::cscal,
-    zscal::zscal,
+    sscal,
+    dscal,
+    cscal,
+    zscal,
 };
 
 use cblas_sys::{
