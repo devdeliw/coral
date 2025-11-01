@@ -44,3 +44,7 @@ pub(crate) mod zgemm_cn;
 pub(crate) mod zgemm_ct;
 pub(crate) mod zgemm_cc;
 
+pub use sgemm::sgemm;
+pub use dgemm::dgemm;
+pub use cgemm::cgemm;
+pub use zgemm::zgemm;
