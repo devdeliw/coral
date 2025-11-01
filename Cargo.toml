@@ -15,7 +15,6 @@ autobenches = false
 
 exclude = [ 
   "benches/**",
-  "*.png",
 ]
 
 [lib]
