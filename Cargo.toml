@@ -15,6 +15,7 @@ autobenches = false
 
 exclude = [ 
   "benches/**",
+  "target/**", 
 ]
 
 [lib]
