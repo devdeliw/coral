@@ -16,9 +16,6 @@ autobenches = false
 exclude = [ 
   "benches/**",
   "*.png",
-  ".cargo/**",
-  ".cargo_vcs_info.json",
-  "Cargo.toml.orig",
 ]
 
 [lib]
