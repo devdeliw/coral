@@ -2,17 +2,17 @@
 pub enum CoralTranspose{
     NoTranspose,
     Transpose,  
-    ConjugateTranspose
+    ConjugateTranspose,
 }
 
 #[derive(Debug, Copy, Clone)]
 pub enum CoralTriangular { 
     UpperTriangular, 
-    LowerTriangular 
+    LowerTriangular,
 }   
 
 #[derive(Debug, Copy, Clone)]
 pub enum CoralDiagonal {
     UnitDiagonal, 
-    NonUnitDiagonal
+    NonUnitDiagonal,
 }
