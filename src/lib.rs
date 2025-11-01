@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 #[cfg(target_arch = "aarch64")]
 pub mod level1;
 
