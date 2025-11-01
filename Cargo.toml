@@ -11,6 +11,7 @@ repository  = "https://github.com/devdeliw/CORAL"
 
 categories  = ["science", "mathematics", "algorithms"]
 keywords    = ["linear-algebra", "algebra", "matrix", "vector", "math"] 
+autobenches = false
 
 exclude = [
   "benches/**",
