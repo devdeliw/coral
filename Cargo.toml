@@ -1,18 +1,34 @@
 [package]
-name    = "coral"
-version = "0.1.0"
-edition = "2024"
+name        = "coral-blas"
+version     = "0.1.0"
+edition     = "2024"
+authors     = ["deval deliwala <devaldeliwala@berkeley.edu>"]
 
-[dependencies]
-cblas-sys = "0.1" 
-blas-src  = { version = "0.12", default-features = false } 
+license     = "MIT"
+description = "a pure-rust blas implementation for aarch64."
+readme      = "README.md"
+repository  = "https://github.com/devdeliw/CORAL"
 
-[features] 
-accelerate = ["blas-src/accelerate"] 
-openblas   = ["blas-src/openblas"] 
+categories  = ["science", "mathematics", "algorithms"]
+keywords    = ["linear-algebra", "algebra", "matrix", "vector", "math"] 
+
+[lib]
+name = "coral"             
+path = "src/lib.rs"
+
+[features]
+default    = []
+accelerate = ["blas-src/accelerate"]
+openblas   = ["blas-src/openblas"]
 
 [dev-dependencies]
-criterion = "0.5"      
+criterion = "0.5"   
+cblas-sys = "0.1" 
+blas-src = { version = "0.12", default-features = false }
+
+[package.metadata.docs.rs]
+features = ["default"]
+rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex-header.html"]
 
 ## level 1 
 [[bench]] 
@@ -41,46 +57,58 @@ name    = "level1_dot"
 harness = false 
 
 ## level 2 
-# single precision 
 [[bench]] 
-name    = "level2_sgemv" 
+name    = "level2_gemv" 
 harness = false 
 [[bench]] 
-name    = "level2_strmv" 
+name    = "level2_trmv" 
 harness = false
 [[bench]] 
-name    = "level2_strsv" 
+name    = "level2_trsv" 
 harness = false 
 [[bench]]
-name    = "level2_sger" 
-harness = false
-[[bench]] 
-name    = "level2_ssyr" 
+name    = "level2_symv"
 harness = false 
-[[bench]] 
-name    = "level2_ssyr2"
-harness = false
-[[bench]] 
-name    = "level2_ssymv"
-harness = false 
-
-# double precision 
-[[bench]] 
-name    = "level2_dgemv" 
-harness = false
-
-# single complex precision 
-[[bench]] 
-name    = "level2_cgemv" 
-harness = false 
-
-# double complex precision 
 [[bench]]
-name    = "level2_zgemv"
+name    = "level2_hemv"
 harness = false
 
 ## level 3 
+# single precision 
+[[bench]] 
+name    = "level3_sgemm_nn" 
+harness = false 
+[[bench]] 
+name    = "level3_sgemm_tt" 
+harness = false 
+
 # double precision 
 [[bench]] 
 name    = "level3_dgemm_nn" 
 harness = false 
+[[bench]] 
+name    = "level3_dgemm_tt" 
+harness = false 
+
+# complex single precision 
+[[bench]] 
+name    = "level3_cgemm_nn" 
+harness = false 
+[[bench]] 
+name    = "level3_cgemm_tt" 
+harness = false 
+[[bench]] 
+name    = "level3_cgemm_cc" 
+harness = false
+
+# complex double precision
+[[bench]] 
+name    = "level3_zgemm_nn" 
+harness = false 
+[[bench]] 
+name    = "level3_zgemm_tt" 
+harness = false
+[[bench]] 
+name    = "level3_zgemm_cc" 
+harness = false 
+
