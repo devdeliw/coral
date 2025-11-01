@@ -37,3 +37,6 @@ cblas-sys = "0.1"
 [package.metadata.docs.rs]
 features = ["default"]
 rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex-header.html"]
+default-target = "aarch64-unknown-linux-gnu"
+targets = ["aarch64-unknown-linux-gnu"]
+
