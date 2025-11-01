@@ -3,10 +3,10 @@
 </p>
 
 <p align="center">
-  <a href="https://crates.io/crates/coral">
+  <a href="https://crates.io/crates/coral-blas">
     <img src="https://img.shields.io/crates/v/coral-blas.svg?style=flat-square" alt="crates.io">
   </a>
-  <a href="https://docs.rs/coral">
+  <a href="https://docs.rs/coral-blas">
     <img src="https://docs.rs/coral-blas/badge.svg?style=flat-square" alt="docs.rs">
   </a>
   <a href="https://opensource.org/licenses/MIT">
@@ -14,10 +14,11 @@
   </a>
 </p>
 
-## Core Rust Architecture for Linear-algebra. 
-A BLAS implementation. 
+## Core Rust Architecture for Linear algebra. 
+pure-Rust BLAS. 
 
-Reaching BLAS performance for AArch64 while remaining 100% Rust. 
+A pure-Rust BLAS optimized for AArch64, reaching competitive performance while remaining 100% Rust.
+No dependencies. 
 
 ### Benchmarks 
 
