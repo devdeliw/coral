@@ -22,7 +22,7 @@
 //! # Author
 //! Deval Deliwala
 
-
+#[cfg(target_arch = "aarch64")]
 use core::arch::aarch64::{ 
     vdupq_n_u64, vbslq_u64, vgetq_lane_u64, 
     vld1q_f64, vaddq_f64, vextq_f64, vdupq_n_f64, vabsq_f64, vceqq_f64, vmaxvq_f64, vbslq_f64, 
