@@ -14,7 +14,8 @@
   </a>
 </p>
 
-## Core Rust Architecture for Linear-algebra. A BLAS implementation. 
+## Core Rust Architecture for Linear-algebra. 
+A BLAS implementation. 
 
 Reaching BLAS performance for AArch64 while remaining 100% Rust. 
 
