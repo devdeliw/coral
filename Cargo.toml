@@ -14,8 +14,11 @@ keywords    = ["linear-algebra", "algebra", "matrix", "vector", "math"]
 autobenches = false
 
 exclude = [ 
-    "benches/**",
-    "*.png" 
+  "benches/**",
+  "*.png",
+  ".cargo/**",
+  ".cargo_vcs_info.json",
+  "Cargo.toml.orig",
 ]
 
 [lib]
