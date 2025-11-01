@@ -1,7 +1,7 @@
 use blas_src as _;
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 use cblas_sys::{cblas_zgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
-use coral::level3::zgemm::zgemm;
+use coral::level3::zgemm;
 use coral::enums::CoralTranspose;
 
 #[inline(always)]
@@ -101,7 +101,7 @@ pub fn bench_zgemm_nn_sweep(c: &mut Criterion) {
         let b  = make_matrix_colmajor_c64(k, n, ldb, [1.0, 0.0]);
         let c0 = make_matrix_colmajor_c64(m, n, ldc, [2.0, 0.0]);
 
-        group.bench_with_input(BenchmarkId::new("coral_zgemm_nn", n), &n, |bch, &_n| {
+        group.bench_with_input(BenchmarkId::new("coral", n), &n, |bch, &_n| {
             bch.iter_batched_ref(
                 || c0.clone(),
                 |c_buf| {
@@ -125,7 +125,7 @@ pub fn bench_zgemm_nn_sweep(c: &mut Criterion) {
             );
         });
 
-        group.bench_with_input(BenchmarkId::new("blas_zgemm_nn", n), &n, |bch, &_n| {
+        group.bench_with_input(BenchmarkId::new("blas", n), &n, |bch, &_n| {
             bch.iter_batched_ref(
                 || c0.clone(),
                 |c_buf| unsafe {

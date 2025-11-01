@@ -2,10 +2,10 @@ use blas_src as _;
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion, black_box};
 
 use coral::level1::{
-    isamax::isamax,
-    idamax::idamax,
-    icamax::icamax,
-    izamax::izamax,
+    isamax,
+    idamax,
+    icamax,
+    izamax,
 };
 
 use cblas_sys::{

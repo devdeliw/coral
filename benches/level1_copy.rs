@@ -2,10 +2,10 @@ use blas_src as _;
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion, black_box};
 
 use coral::level1::{
-    scopy::scopy,
-    dcopy::dcopy,
-    ccopy::ccopy,
-    zcopy::zcopy,
+    scopy,
+    dcopy,
+    ccopy,
+    zcopy,
 };
 
 use cblas_sys::{

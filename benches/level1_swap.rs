@@ -2,10 +2,10 @@ use blas_src as _;
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion, black_box};
 
 use coral::level1::{
-    sswap::sswap,
-    dswap::dswap,
-    cswap::cswap,
-    zswap::zswap,
+    sswap,
+    dswap,
+    cswap,
+    zswap,
 };
 
 use cblas_sys::{

@@ -1,7 +1,7 @@
 use blas_src as _;
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion, black_box};
 
-use coral::level2::ssyr2::ssyr2;
+use coral::level2::ssyr2;
 use coral::enums::CoralTriangular;
 
 use cblas_sys::{

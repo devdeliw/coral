@@ -3,7 +3,7 @@ use criterion::{black_box, criterion_group, criterion_main, BatchSize, Benchmark
 use cblas_sys::{cblas_zgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
 
 use coral::enums::CoralTranspose;
-use coral::level3::zgemm::zgemm;
+use coral::level3::zgemm;
 
 #[inline(always)]
 fn make_matrix_colmajor_c64(m: usize, n: usize, ld: usize, fill: [f64; 2]) -> Vec<f64> {

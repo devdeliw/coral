@@ -1,7 +1,7 @@
 use blas_src as _;
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 use cblas_sys::{cblas_sgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
-use coral::level3::sgemm::sgemm;
+use coral::level3::sgemm;
 use coral::enums::CoralTranspose;
 
 #[inline(always)]
