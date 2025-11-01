@@ -1,5 +1,4 @@
 //! `coral` is a BLAS implementation in pure rust for AArch64.
-//! Performance is comparable to OpenBLAS. 
 //! 
 //! - no dependencies.
 //! - column-major only. 
