@@ -16,6 +16,7 @@ autobenches = false
 exclude = [
   "benches/**",
   "*.png",
+  Cargo.lock
 ]
 
 [lib]
