@@ -10,7 +10,7 @@
 //!
 //! This function implements the BLAS [`dsymv`] routine, optimized for
 //! AArch64 NEON architectures with blocking and panel packing. For off-diagonal work
-//! it fuses a column-wise [`daxpyf`] stream with column-dots so each $A$ element is read
+//! it fuses a column-wise `daxpyf` stream with column-dots so each $A$ element is read
 //! exactly once.
 //!
 //! # Arguments
@@ -35,7 +35,7 @@
 //!   that touches each stored `A` element once without packing.
 //! - Otherwise, a blocked algorithm iterates over row panels of height `MC` and
 //!   column panels of width `NC`. Off-diagonal panels are handled with a fused
-//!   [`daxpyf`]/[`ddotf`] kernel on packed rectangles that lie entirely within the stored
+//!   `daxpyf`/`ddotf` kernel on packed rectangles that lie entirely within the stored
 //!   triangle; diagonal blocks are handled by a triangular microkernel.
 //!
 //! # Author

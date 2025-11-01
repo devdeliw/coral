@@ -11,7 +11,7 @@
 //!
 //! This function implements the BLAS [`zhemv`] routine, optimized for
 //! AArch64 NEON architectures with blocking and panel packing. For off-diagonal work
-//! it fuses a column-wise [`zaxpyf`] stream with column-dots via [`zdotcf`] so each `A` element
+//! it fuses a column-wise `zaxpyf` stream with column-dots via `zdotcf` so each `A` element
 //! is read exactly once.
 //!
 //! # Arguments
@@ -36,7 +36,7 @@
 //!   that touches each stored `A` element once without packing.
 //! - Otherwise, a blocked algorithm iterates over row panels of height `MC` and
 //!   column panels of width `NC`. Off-diagonal panels are handled with a fused
-//!   [`zaxpyf`]/[`zdotcf`] kernel on packed rectangles that lie entirely within the stored
+//!   `zaxpyf`/`zdotcf` kernel on packed rectangles that lie entirely within the stored
 //!   triangle; diagonal blocks are handled by a triangular microkernel.
 //!
 //! # Author
