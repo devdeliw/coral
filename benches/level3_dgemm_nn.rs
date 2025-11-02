@@ -1,11 +1,19 @@
-use blas_src as _; 
+use blas_src as _;
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 use cblas_sys::{cblas_dgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
 use coral::level3::dgemm;
 use coral::enums::CoralTranspose;
 
+use faer::{mat, Parallelism};
+use faer::linalg::matmul::matmul as faer_dgemm;
+
 #[inline(always)]
-fn make_matrix_colmajor(m: usize, n: usize, ld: usize, fill: f64) -> Vec<f64> {
+fn make_matrix_colmajor(
+    m   : usize, 
+    n   : usize,
+    ld  : usize, 
+    fill: f64
+) -> Vec<f64> {
     assert!(ld >= m);
     let mut a = vec![0.0f64; ld * n];
     for j in 0..n {
@@ -16,6 +24,30 @@ fn make_matrix_colmajor(m: usize, n: usize, ld: usize, fill: f64) -> Vec<f64> {
     a
 }
 
+#[inline(always)]
+fn faer_ref<'a>(
+    ptr: *const f64,
+    m  : usize, 
+    n  : usize, 
+    ld : usize
+) -> faer::MatRef<'a, f64> {
+    unsafe {
+        mat::from_raw_parts::<f64>(ptr, m, n, 1, ld as isize)
+    }
+}
+
+#[inline(always)]
+fn faer_mut<'a>(
+    ptr: *mut f64,
+    m  : usize, 
+    n  : usize, 
+    ld : usize
+) -> faer::MatMut<'a, f64> {
+    unsafe {
+        mat::from_raw_parts_mut::<f64>(ptr, m, n, 1, ld as isize) 
+    }
+}
+
 pub fn bench_dgemm_nn_fixed(c: &mut Criterion) {
     let n: usize = 1024;
     let (m, k) = (n, n);
@@ -24,15 +56,14 @@ pub fn bench_dgemm_nn_fixed(c: &mut Criterion) {
     let ldb = k;
     let ldc = m;
 
-    let alpha: f64 = 1.000123;
-    let beta:  f64 = 0.000321;
+    let alpha: f64 = 1.000_123;
+    let beta:  f64 = 0.000_321;
 
     let a  = make_matrix_colmajor(m, k, lda, 1.0);
     let b  = make_matrix_colmajor(k, n, ldb, 1.0);
     let c0 = make_matrix_colmajor(m, n, ldc, 2.0);
 
-    // coral
-    c.bench_function("coral_dgemm_nn", |bch| {
+    c.bench_function("coral_dgemm_nn_fixed", |bch| {
         bch.iter_batched_ref(
             || c0.clone(),
             |c_buf| {
@@ -56,7 +87,7 @@ pub fn bench_dgemm_nn_fixed(c: &mut Criterion) {
         );
     });
 
-    c.bench_function("blas_dgemm_nn", |bch| {
+    c.bench_function("blas_dgemm_nn_fixed", |bch| {
         bch.iter_batched_ref(
             || c0.clone(),
             |c_buf| unsafe {
@@ -80,11 +111,33 @@ pub fn bench_dgemm_nn_fixed(c: &mut Criterion) {
             BatchSize::SmallInput,
         );
     });
+
+    c.bench_function("faer_dgemm_nn_fixed", |bch| {
+        bch.iter_batched(
+            || {
+                let c_buf = c0.clone();
+                let a_ref = faer_ref(a.as_ptr(), m, k, lda);
+                let b_ref = faer_ref(b.as_ptr(), k, n, ldb);
+                (c_buf, a_ref, b_ref)
+            },
+            |(mut c_buf, a_ref, b_ref)| {
+                let mut c_mut = faer_mut(c_buf.as_mut_ptr(), m, n, ldc);
+                faer_dgemm(
+                    c_mut.as_mut(),
+                    a_ref,
+                    b_ref,
+                    Some(black_box(beta)),
+                    black_box(alpha),
+                    Parallelism::None,
+                );
+            }, 
+            BatchSize::SmallInput, 
+        ); 
+    });
 }
 
 pub fn bench_dgemm_nn_sweep(c: &mut Criterion) {
     let sizes: Vec<usize> = (128..=2048).step_by(128).collect();
-
     let mut group = c.benchmark_group("dgemm_nn");
 
     for &n in &sizes {
@@ -93,14 +146,13 @@ pub fn bench_dgemm_nn_sweep(c: &mut Criterion) {
         let ldb = k;
         let ldc = m;
 
-        let alpha: f64 = 1.000123;
-        let beta:  f64 = 0.000321;
+        let alpha: f64 = 1.000_123;
+        let beta:  f64 = 0.000_321;
 
         let a  = make_matrix_colmajor(m, k, lda, 1.0);
         let b  = make_matrix_colmajor(k, n, ldb, 1.0);
         let c0 = make_matrix_colmajor(m, n, ldc, 2.0);
 
-        // coral
         group.bench_with_input(BenchmarkId::new("coral", n), &n, |bch, &_n| {
             bch.iter_batched_ref(
                 || c0.clone(),
@@ -125,7 +177,6 @@ pub fn bench_dgemm_nn_sweep(c: &mut Criterion) {
             );
         });
 
-        // cblas
         group.bench_with_input(BenchmarkId::new("blas", n), &n, |bch, &_n| {
             bch.iter_batched_ref(
                 || c0.clone(),
@@ -150,6 +201,30 @@ pub fn bench_dgemm_nn_sweep(c: &mut Criterion) {
                 BatchSize::SmallInput,
             );
         });
+
+        group.bench_with_input(BenchmarkId::new("faer", n), &n, |bch, &_n| {
+            bch.iter_batched(
+                || {
+                    let c_buf = c0.clone();
+                    let a_ref = faer_ref(a.as_ptr(), m, k, lda);
+                    let b_ref = faer_ref(b.as_ptr(), k, n, ldb);
+                    (c_buf, a_ref, b_ref)
+                },
+                |(mut c_buf, a_ref, b_ref)| {
+                    let mut c_mut = faer_mut(c_buf.as_mut_ptr(), m, n, ldc);
+                    faer_dgemm(
+                        c_mut.as_mut(),
+                        a_ref,
+                        b_ref,
+                        Some(black_box(beta)),
+                        black_box(alpha),
+                        Parallelism::None, 
+                    );
+                    black_box(c_buf);
+                },
+                BatchSize::SmallInput, 
+            ); 
+        }); 
     }
 
     group.finish();

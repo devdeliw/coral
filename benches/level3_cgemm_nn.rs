@@ -5,8 +5,17 @@ use cblas_sys::{cblas_cgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
 use coral::enums::CoralTranspose;
 use coral::level3::cgemm;
 
+use faer::{mat, Parallelism};
+use faer::complex_native::c32;
+use faer::linalg::matmul::matmul as faer_cgemm;
+
 #[inline(always)]
-fn make_matrix_colmajor_c32(m: usize, n: usize, ld: usize, fill: [f32; 2]) -> Vec<f32> {
+fn make_matrix_colmajor_c32(
+    m   : usize, 
+    n   : usize, 
+    ld  : usize, 
+    fill: [f32; 2]
+) -> Vec<f32> {
     assert!(ld >= m);
     let mut a = vec![0.0; 2 * ld * n];
     for j in 0..n {
@@ -19,6 +28,29 @@ fn make_matrix_colmajor_c32(m: usize, n: usize, ld: usize, fill: [f32; 2]) -> Ve
     a
 }
 
+#[inline(always)]
+fn faer_ref<'a>(
+    ptr: *const f32,
+    m  : usize, 
+    n  : usize,
+    ld : usize
+) -> faer::MatRef<'a, c32> {
+    unsafe { 
+        mat::from_raw_parts::<c32>(ptr as *const c32, m, n, 1, ld as isize)
+    }
+}
+#[inline(always)]
+fn faer_mut<'a>(
+    ptr: *mut f32,
+    m  : usize,
+    n  : usize, 
+    ld : usize
+) -> faer::MatMut<'a, c32> {
+    unsafe { 
+        mat::from_raw_parts_mut::<c32>(ptr as *mut c32, m, n, 1, ld as isize)
+    }
+}
+
 pub fn bench_cgemm_nn_fixed(c: &mut Criterion) {
     let n: usize = 1024;
     let (m, k) = (n, n);
@@ -27,8 +59,8 @@ pub fn bench_cgemm_nn_fixed(c: &mut Criterion) {
     let ldb = k;
     let ldc = m;
 
-    let alpha = [1.000123, 0.000789];
-    let beta  = [0.000321, -0.000456];
+    let alpha = [1.000_123, 0.000_789];
+    let beta  = [0.000_321, -0.000_456];
 
     let a  = make_matrix_colmajor_c32(m, k, lda, [1.0, 0.0]);
     let b  = make_matrix_colmajor_c32(k, n, ldb, [1.0, 0.0]);
@@ -82,6 +114,34 @@ pub fn bench_cgemm_nn_fixed(c: &mut Criterion) {
             BatchSize::SmallInput,
         );
     });
+
+    c.bench_function("faer_cgemm_nn_fixed", |bch| {
+        bch.iter_batched(
+            || {
+                let c_buf  = c0.clone();
+                let a_ref  = faer_ref(a.as_ptr(), m, k, lda);
+                let b_ref  = faer_ref(b.as_ptr(), k, n, ldb);
+                let alpha_c = c32::new(alpha[0], alpha[1]);
+                let beta_c  = c32::new(beta[0],  beta[1]);
+                (c_buf, a_ref, b_ref, alpha_c, beta_c)
+            },
+            |(mut c_buf, a_ref, b_ref, alpha_c, beta_c)| {
+                let mut c_mut = faer_mut(c_buf.as_mut_ptr(), m, n, ldc);
+
+                faer_cgemm(
+                    c_mut.as_mut(),
+                    a_ref,
+                    b_ref,
+                    Some(black_box(beta_c)),
+                    black_box(alpha_c),
+                    Parallelism::None,
+                );
+
+                black_box(c_buf);
+            },
+            BatchSize::SmallInput,
+        );
+    });
 }
 
 pub fn bench_cgemm_nn_sweep(c: &mut Criterion) {
@@ -94,8 +154,8 @@ pub fn bench_cgemm_nn_sweep(c: &mut Criterion) {
         let ldb = k;
         let ldc = m;
 
-        let alpha = [1.000123, 0.000789];
-        let beta  = [0.000321, -0.000456];
+        let alpha = [1.000_123, 0.000_789];
+        let beta  = [0.000_321, -0.000_456];
 
         let a  = make_matrix_colmajor_c32(m, k, lda, [1.0, 0.0]);
         let b  = make_matrix_colmajor_c32(k, n, ldb, [1.0, 0.0]);
@@ -145,6 +205,34 @@ pub fn bench_cgemm_nn_sweep(c: &mut Criterion) {
                         black_box(c_buf.as_mut_ptr() as *mut [f32; 2]),
                         black_box(ldc as i32),
                     );
+                },
+                BatchSize::SmallInput,
+            );
+        });
+
+        c.bench_function("faer_cgemm_nn_fixed", |bch| {
+            bch.iter_batched(
+                || {
+                    let c_buf  = c0.clone();
+                    let a_ref  = faer_ref(a.as_ptr(), m, k, lda);
+                    let b_ref  = faer_ref(b.as_ptr(), k, n, ldb);
+                    let alpha_c = c32::new(alpha[0], alpha[1]);
+                    let beta_c  = c32::new(beta[0],  beta[1]);
+                    (c_buf, a_ref, b_ref, alpha_c, beta_c)
+                },
+                |(mut c_buf, a_ref, b_ref, alpha_c, beta_c)| {
+                    let mut c_mut = faer_mut(c_buf.as_mut_ptr(), m, n, ldc);
+
+                    faer_cgemm(
+                        c_mut.as_mut(),
+                        a_ref,
+                        b_ref,
+                        Some(black_box(beta_c)),
+                        black_box(alpha_c),
+                        Parallelism::None,
+                    );
+                    black_box(c_buf);
+
                 },
                 BatchSize::SmallInput,
             );
