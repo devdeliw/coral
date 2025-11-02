@@ -33,10 +33,37 @@ openblas   = ["blas-src/openblas"]
 [dev-dependencies]
 criterion = "0.5"   
 cblas-sys = "0.1" 
+faer = { version = "0.19", default-features = false } 
 
 [package.metadata.docs.rs]
 features = ["default"]
 rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex-header.html"]
 targets = ["aarch64-unknown-linux-gnu"]
 default-target = "aarch64-unknown-linux-gnu"
+
+[[bench]] 
+name    = "level3_sgemm_nn"
+harness = false 
+[[bench]] 
+name    = "level3_sgemm_tt" 
+harness = false 
+
+[[bench]] 
+name    = "level3_dgemm_nn"
+harness = false 
+[[bench]] 
+name    = "level3_dgemm_tt" 
+harness = false
+
+[[bench]] 
+name    = "level3_cgemm_nn"
+harness = false 
+[[bench]] 
+name    = "level3_cgemm_tt" 
+harness = false 
+[[bench]] 
+name    = "level3_cgemm_cc"
+harness = false 
+
+
 
