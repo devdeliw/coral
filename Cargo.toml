@@ -33,7 +33,7 @@ openblas   = ["blas-src/openblas"]
 [dev-dependencies]
 criterion = "0.5"   
 cblas-sys = "0.1" 
-faer = { version = "0.19", default-features = false } 
+faer = { version = "0.19" } 
 
 [package.metadata.docs.rs]
 features = ["default"]
