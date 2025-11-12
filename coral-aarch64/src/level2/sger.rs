@@ -32,7 +32,7 @@
 //!
 //! # Example
 //! ```rust
-//! use coral::level2::sger;
+//! use coral_aarch64::level2::sger;
 //!
 //! fn main() {
 //!     let m     = 2;

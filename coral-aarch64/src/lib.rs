@@ -15,8 +15,8 @@
 //! \\]
 //!
 //! ```
-//! use coral::level3::sgemm;
-//! use coral::enums::CoralTranspose;
+//! use coral_aarch64::level3::sgemm;
+//! use coral_aarch64::enums::CoralTranspose;
 //!
 //! fn main() {
 //!     // A = [[1, 3],

@@ -31,8 +31,8 @@
 //!
 //! # Example
 //! ```rust
-//! use coral::level3::zgemm;
-//! use coral::enums::CoralTranspose;
+//! use coral_aarch64::level3::zgemm;
+//! use coral_aarch64::enums::CoralTranspose;
 //!
 //! fn main() {
 //!     // A = [[1 + 2i, 3 + 4i],

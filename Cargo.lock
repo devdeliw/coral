@@ -212,6 +212,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7e8f1e641542c07631228b1e0dc04b69ae3c1d58ef65d5691a439711d805c698"
 
 [[package]]
+name = "coral-blas"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50bd2904fc3a8a0f42045850a45e5a164c57389590b500ece5595bc10aa9f245"
+
+[[package]]
 name = "coral-blas-aarch64"
 version = "0.2.1"
 dependencies = [
@@ -227,6 +233,7 @@ version = "0.1.0"
 dependencies = [
  "blas-src",
  "cblas-sys",
+ "coral-blas",
  "criterion",
  "faer",
 ]

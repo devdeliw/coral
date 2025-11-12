@@ -44,8 +44,8 @@
 //! 
 //! # Example
 //! ```rust
-//! use coral::level2::zhemv;
-//! use coral::enums::CoralTriangular;
+//! use coral_aarch64::level2::zhemv;
+//! use coral_aarch64::enums::CoralTriangular;
 //!
 //! fn main() {
 //!     let uplo  = CoralTriangular::LowerTriangular;

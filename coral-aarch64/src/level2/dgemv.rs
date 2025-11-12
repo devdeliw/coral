@@ -24,8 +24,8 @@
 //! 
 //! # Example
 //! ```rust
-//! use coral::level2::dgemv;
-//! use coral::enums::CoralTranspose;
+//! use coral_aarch64::level2::dgemv;
+//! use coral_aarch64::enums::CoralTranspose;
 //!
 //! fn main() {
 //!     let m  = 2;

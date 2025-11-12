@@ -34,8 +34,8 @@
 //! 
 //! # Example
 //! ```rust
-//! use coral::level2::cher2::cher2;
-//! use coral::enums::CoralTriangular;
+//! use coral_aarch64::level2::cher2::cher2;
+//! use coral_aarch64::enums::CoralTriangular;
 //!
 //! fn main() {
 //!     let uplo  = CoralTriangular::UpperTriangular;

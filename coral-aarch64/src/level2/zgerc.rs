@@ -30,7 +30,7 @@
 //! 
 //! # Example
 //! ```rust
-//! use coral::level2::zgerc;
+//! use coral_aarch64::level2::zgerc;
 //!
 //! fn main() {
 //!     let m = 2;

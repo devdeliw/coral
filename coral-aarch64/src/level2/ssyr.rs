@@ -30,8 +30,8 @@
 //! 
 //! # Example
 //! ```rust
-//! use coral::level2::ssyr;
-//! use coral::enums::CoralTriangular;
+//! use coral_aarch64::level2::ssyr;
+//! use coral_aarch64::enums::CoralTriangular;
 //!
 //! fn main() {
 //!     let uplo = CoralTriangular::UpperTriangular;

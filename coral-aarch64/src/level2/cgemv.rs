@@ -28,8 +28,8 @@
 //! 
 //! # Example
 //!```rust
-//! use coral::level2::cgemv;
-//! use coral::enums::CoralTranspose;
+//! use coral_aarch64::level2::cgemv;
+//! use coral_aarch64::enums::CoralTranspose;
 //!
 //! fn main() {
 //!     let m  = 2;

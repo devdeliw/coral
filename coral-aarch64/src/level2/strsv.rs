@@ -26,8 +26,8 @@
 //! 
 //! # Example
 //! ```rust
-//! use coral::level2::strsv;
-//! use coral::enums::{CoralTriangular, CoralTranspose, CoralDiagonal};
+//! use coral_aarch64::level2::strsv;
+//! use coral_aarch64::enums::{CoralTriangular, CoralTranspose, CoralDiagonal};
 //!
 //! fn main() {
 //!     let n    = 2;
