@@ -19,7 +19,13 @@
 
 A pure-Rust BLAS optimized for AArch64, reaching competitive performance while remaining 100% Rust.
 
-No dependencies. 
+No dependencies.
+
+However, this implementation is heavily `unsafe` to conform to the standard BLAS
+API and use AArch64 NEON intrinsics. 
+
+A more idiomatic, fully-safe, architecture-independent implementation is [being
+written](./coral-safe). However, it requires `nightly`. 
 
 ### Benchmarks 
 
