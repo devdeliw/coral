@@ -53,3 +53,6 @@ harness = false
 [[bench]] 
 name    = "level1_copy"
 harness = false
+[[bench]]
+name    = "level1_swap" 
+harness = false 

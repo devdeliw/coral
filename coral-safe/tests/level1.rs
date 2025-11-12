@@ -6,3 +6,5 @@ mod asum_tests;
 mod nrm2_tests;
 #[path = "level1/copy_tests.rs"] 
 mod copy_tests;
+#[path = "level1/swap_tests.rs"] 
+mod swap_tests;
