@@ -44,17 +44,18 @@ pub fn saxpy (
         }
     } else {
         // scalar fallback
-        let mut ix = x.offset(); 
-        let mut iy = y.offset(); 
+        let ix = x.offset(); 
+        let iy = y.offset(); 
         
         let xs = x.as_slice(); 
         let ys = y.as_mut_slice(); 
 
-        for _ in 0..n { 
-            ys[iy] += alpha * xs[ix]; 
+        let xs_it = xs[ix..].iter().step_by(incx).take(n);
+        let ys_it = ys[iy..].iter_mut().step_by(incy).take(n);
 
-            ix += incx; 
-            iy += incy; 
+        // let compiler know and avoid bound checks
+        for (&xv, yv) in xs_it.zip(ys_it) {
+            *yv += alpha * xv; 
         }
     }
 }

@@ -1,11 +1,15 @@
 use blas_src as _; 
-use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion, black_box};
-
+use criterion::{
+    criterion_group, 
+    criterion_main,
+    BatchSize, 
+    BenchmarkId, 
+    Criterion, 
+    black_box
+};
 use cblas_sys::cblas_saxpy;
-
 use coral_safe::types::{VectorMut, VectorRef};
 use coral_safe::level1::saxpy as saxpy_safe;
-
 use coral::level1::saxpy as saxpy_neon;
 
 #[inline]

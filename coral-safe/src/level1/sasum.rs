@@ -14,7 +14,7 @@ pub fn sasum (
     }
 
     if let Some(xs) = x.contiguous_slice() { 
-        const LANES: usize = 8; 
+        const LANES: usize = 32; 
         let mut acc = Simd::<f32, LANES>::splat(0.0);
 
         let (chunks, tail) = xs.as_chunks::<LANES>(); 
@@ -24,10 +24,7 @@ pub fn sasum (
         }
 
         // horizontal sum of accumulator 
-        let mut res: f32 = acc
-            .to_array()
-            .into_iter()
-            .sum(); 
+        let mut res: f32 = acc.reduce_sum(); 
 
         // scalar remainder tail 
         for &t in tail { 
@@ -38,12 +35,12 @@ pub fn sasum (
     }  
     // scalar fallback 
     let mut res = 0.0;
-    let mut ix  = x.offset(); 
-    let xs      = x.as_slice(); 
+    let ix  = x.offset(); 
+    let xs  = x.as_slice(); 
 
-    for _ in 0..n { 
-        res += xs[ix].abs();
-        ix += incx;
+    // let compiler know and avoid bound checks
+    for &v in xs[ix..].iter().step_by(incx).take(n) { 
+        res += v.abs();
     }
 
     res

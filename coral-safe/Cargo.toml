@@ -47,3 +47,6 @@ harness = false
 [[bench]]
 name    = "level1_asum" 
 harness = false 
+[[bench]] 
+name    = "level1_nrm2"
+harness = false 
