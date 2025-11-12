@@ -1,5 +1,6 @@
 use core::simd::Simd;
-use crate::types::{VectorRef, VectorMut}; 
+use crate::debug_assert_n_eq; 
+use crate::types::{VectorRef, VectorMut};
 
 #[inline(always)] 
 pub fn saxpy ( 
@@ -7,10 +8,7 @@ pub fn saxpy (
     x     : VectorRef<'_, f32>, 
     mut y : VectorMut<'_, f32>, 
 ) { 
-    debug_assert!(
-        x.n() == y.n(), 
-        "number of logical elements must be equal"
-    );
+    debug_assert_n_eq!(x, y);
 
     let n = x.n(); 
     let incx = x.stride(); 
@@ -48,12 +46,11 @@ pub fn saxpy (
         let iy = y.offset(); 
         
         let xs = x.as_slice(); 
-        let ys = y.as_mut_slice(); 
+        let ys = y.as_slice_mut(); 
 
         let xs_it = xs[ix..].iter().step_by(incx).take(n);
         let ys_it = ys[iy..].iter_mut().step_by(incy).take(n);
 
-        // let compiler know and avoid bound checks
         for (&xv, yv) in xs_it.zip(ys_it) {
             *yv += alpha * xv; 
         }

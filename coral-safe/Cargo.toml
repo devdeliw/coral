@@ -49,4 +49,7 @@ name    = "level1_asum"
 harness = false 
 [[bench]] 
 name    = "level1_nrm2"
-harness = false 
+harness = false
+[[bench]] 
+name    = "level1_copy"
+harness = false

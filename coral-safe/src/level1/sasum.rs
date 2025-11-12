@@ -33,12 +33,12 @@ pub fn sasum (
 
         return res;
     }  
+
     // scalar fallback 
     let mut res = 0.0;
     let ix  = x.offset(); 
     let xs  = x.as_slice(); 
 
-    // let compiler know and avoid bound checks
     for &v in xs[ix..].iter().step_by(incx).take(n) { 
         res += v.abs();
     }

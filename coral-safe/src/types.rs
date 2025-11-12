@@ -92,6 +92,12 @@ impl<'a, T> VectorRef<'a, T> {
     #[inline] pub fn contiguous_slice (&self) -> Option<&[T]> { 
         (self.stride == 1).then(|| &self.data[self.offset..self.offset+self.n])
     }
+
+    /// Checks whether the number `n` of logical elements is equal to a value
+    /// Used for asserting two Vector types have an equal `n` elements to parse
+    #[inline] pub fn compare_n (&self, n: usize) -> bool { 
+        self.n == n
+    }
 }
 
 
@@ -142,7 +148,7 @@ impl<'a, T> VectorMut<'a, T> {
     /// Returns full slice 
     #[inline] pub fn as_slice (&self) -> &[T] { self.data }
     /// Returns full mutable slice 
-    #[inline] pub fn as_mut_slice (&mut self) -> &mut [T] { self.data }
+    #[inline] pub fn as_slice_mut (&mut self) -> &mut [T] { self.data }
 
     /// Returns immutable contiguous logical window
     #[inline] pub fn contiguous_slice(&self) -> Option<&[T]> { 
@@ -153,6 +159,11 @@ impl<'a, T> VectorMut<'a, T> {
         (self.stride == 1).then(|| &mut self.data[self.offset..self.offset+self.n])
     }
 
+    /// Checks whether the number `n` of logical elements is equal to a value
+    /// Used for asserting two Vector types have an equal `n` elements to parse
+    #[inline] pub fn compare_n (&self, n: usize) -> bool { 
+        self.n == n
+    }
 }
 
 
@@ -277,7 +288,7 @@ impl<'a, T> MatrixMut<'a, T> {
     /// Returns full slice 
     #[inline] pub fn as_slice     (&self) -> &[T] { self.data }
     /// Returns full mutable slice 
-    #[inline] pub fn as_mut_slice (&mut self) -> &mut [T] { self.data }
+    #[inline] pub fn as_slice_mut (&mut self) -> &mut [T] { self.data }
 
     /// Returns immutable contiguous logical window
     #[inline] pub fn contiguous_slice (&self) -> Option<&[T]> { 
@@ -302,3 +313,14 @@ impl<'a, T> MatrixMut<'a, T> {
     }
 }
 
+/// Used to assert two any Vector have the same 
+/// number of logical elements to access 
+#[macro_export]
+macro_rules! debug_assert_n_eq {
+    ($x:expr, $y:expr) => {
+        debug_assert!(
+            $x.compare_n($y.n()),
+            "number of logical elements must be equal"
+        );
+    };
+}

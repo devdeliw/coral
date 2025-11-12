@@ -4,3 +4,5 @@ mod axpy_tests;
 mod asum_tests;
 #[path = "level1/nrm2_tests.rs"] 
 mod nrm2_tests;
+#[path = "level1/copy_tests.rs"] 
+mod copy_tests;
