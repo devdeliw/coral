@@ -25,7 +25,8 @@ However, this implementation is heavily `unsafe` to conform to the standard BLAS
 API and use AArch64 NEON intrinsics. 
 
 A more idiomatic, fully-safe, architecture-independent implementation is [being
-written](./coral-safe). However, it requires `nightly`. 
+written](./coral-safe). However, it requires `nightly` and uses a different API
+for all routines. 
 
 ### Benchmarks 
 
