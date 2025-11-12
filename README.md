@@ -14,6 +14,7 @@
   </a>
 </p>
 
+[coral-aarch64](./coral_aarch64)
 ## Core Rust Architecture for Linear algebra. 
 
 A pure-Rust BLAS optimized for AArch64, reaching competitive performance while remaining 100% Rust.
