@@ -1,0 +1,42 @@
+[package]
+name        = "coral-blas-safe"
+version     = "0.1.0"
+edition     = "2024"
+authors     = ["deval deliwala <devaldeliwala@berkeley.edu>"]
+
+license     = "MIT"
+description = "a pure-rust safe blas implementation"
+readme      = "README.md"
+repository  = "https://github.com/devdeliw/CORAL"
+
+categories  = ["science", "mathematics", "algorithms"]
+keywords    = ["linear-algebra", "algebra", "matrix", "vector", "math"] 
+autobenches = false
+
+exclude = [ 
+  "benches/**",
+  "target/**", 
+]
+
+[lib]
+name = "coral_safe"             
+path = "src/lib.rs"
+
+[dependencies]
+blas-src = { version = "0.12", optional = true, default-features = false }
+
+[features]
+default    = []
+accelerate = ["blas-src/accelerate"]
+openblas   = ["blas-src/openblas"]
+
+[dev-dependencies]
+criterion = "0.5"   
+cblas-sys = "0.1" 
+faer = { version = "0.19" } 
+
+[package.metadata.docs.rs]
+features = ["default"]
+rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex-header.html"]
+
+

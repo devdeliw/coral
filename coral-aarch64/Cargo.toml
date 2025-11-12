@@ -1,0 +1,69 @@
+[package]
+name        = "coral-blas-aarch64"
+version     = "0.2.1"
+edition     = "2024"
+authors     = ["deval deliwala <devaldeliwala@berkeley.edu>"]
+
+license     = "MIT"
+description = "a pure-rust blas implementation for aarch64."
+readme      = "README.md"
+repository  = "https://github.com/devdeliw/CORAL"
+
+categories  = ["science", "mathematics", "algorithms"]
+keywords    = ["linear-algebra", "algebra", "matrix", "vector", "math"] 
+autobenches = false
+
+exclude = [ 
+  "benches/**",
+  "target/**", 
+]
+
+[lib]
+name = "coral_aarch64"             
+path = "src/lib.rs"
+
+[dependencies]
+blas-src = { version = "0.12", optional = true, default-features = false }
+
+[features]
+default    = []
+accelerate = ["blas-src/accelerate"]
+openblas   = ["blas-src/openblas"]
+
+[dev-dependencies]
+criterion = "0.5"   
+cblas-sys = "0.1" 
+faer = { version = "0.19" } 
+
+[package.metadata.docs.rs]
+features = ["default"]
+rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex-header.html"]
+targets = ["aarch64-unknown-linux-gnu"]
+default-target = "aarch64-unknown-linux-gnu"
+
+[[bench]] 
+name    = "level3_sgemm_nn"
+harness = false 
+[[bench]] 
+name    = "level3_sgemm_tt" 
+harness = false 
+
+[[bench]] 
+name    = "level3_dgemm_nn"
+harness = false 
+[[bench]] 
+name    = "level3_dgemm_tt" 
+harness = false
+
+[[bench]] 
+name    = "level3_cgemm_nn"
+harness = false 
+[[bench]] 
+name    = "level3_cgemm_tt" 
+harness = false 
+[[bench]] 
+name    = "level3_cgemm_cc"
+harness = false 
+
+
+
