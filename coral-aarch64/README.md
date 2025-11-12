@@ -1,8 +1,4 @@
 <p align="center">
-  <img src="./coral_logo.png" width="75%">
-</p>
-
-<p align="center">
   <a href="https://crates.io/crates/coral-blas">
     <img src="https://img.shields.io/crates/v/coral-blas.svg?style=flat-square" alt="crates.io">
   </a>
@@ -14,12 +10,10 @@
   </a>
 </p>
 
-[coral-aarch64](./coral-aarch64)
-## Core Rust Architecture for Linear algebra. 
+### Optimized for AArch64
 
-A pure-Rust BLAS optimized for AArch64, reaching competitive performance while remaining 100% Rust.
-
-No dependencies. 
+But mostly `unsafe`. A fully-safe implementation (with a different BLAS API) is
+[being written](../coral-safe). 
 
 ### Benchmarks 
 
