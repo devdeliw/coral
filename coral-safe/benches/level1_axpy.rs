@@ -20,7 +20,7 @@ fn make_views<'a>(
 }
 
 pub fn bench_saxpy_big(c: &mut Criterion) {
-    let n: usize = 1_000_000;
+    let n: usize = 1000_000;
     let alpha: f32 = 1.000123;
 
     let x = vec![1.0f32; n];

@@ -7,7 +7,10 @@ pub fn saxpy (
     x     : VectorRef<'_, f32>, 
     mut y : VectorMut<'_, f32>, 
 ) { 
-    assert!(x.n() == y.n(), "number of logical elements must be equal");
+    debug_assert!(
+        x.n() == y.n(), 
+        "number of logical elements must be equal"
+    );
 
     let n = x.n(); 
     let incx = x.stride(); 

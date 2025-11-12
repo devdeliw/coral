@@ -44,3 +44,6 @@ rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex-header.html"]
 [[bench]]
 name    = "level1_axpy"
 harness = false 
+[[bench]]
+name    = "level1_asum" 
+harness = false 
