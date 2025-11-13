@@ -35,7 +35,7 @@ pub fn sdot (
         }
 
         let mut acc_tail = 0.0; 
-        for (&xf, &yf) in xt.iter().zip(yt.iter()) { 
+        for (xf, yf) in xt.iter().zip(yt.iter()) { 
             acc_tail += xf * yf; 
         }
 

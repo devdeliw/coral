@@ -1,5 +1,5 @@
-use core::simd::Simd; 
-use core::simd::num::SimdFloat;
+use std::simd::Simd; 
+use std::simd::num::SimdFloat;
 use crate::types::VectorRef; 
 
 #[inline(always)] 

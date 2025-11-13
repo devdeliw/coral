@@ -4,6 +4,7 @@ pub mod snrm2;
 pub mod scopy; 
 pub mod sswap;
 pub mod sdot; 
+pub mod isamax;
 
 
 
@@ -14,3 +15,4 @@ pub use snrm2::snrm2;
 pub use scopy::scopy;
 pub use sswap::sswap;
 pub use sdot::sdot;
+pub use isamax::isamax;
