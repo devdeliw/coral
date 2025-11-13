@@ -8,3 +8,5 @@ mod nrm2_tests;
 mod copy_tests;
 #[path = "level1/swap_tests.rs"] 
 mod swap_tests;
+#[path = "level1/dot_tests.rs" ]
+mod dot_tests; 

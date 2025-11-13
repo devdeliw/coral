@@ -56,3 +56,6 @@ harness = false
 [[bench]]
 name    = "level1_swap" 
 harness = false 
+[[bench]] 
+name    = "level1_dot" 
+harness = false

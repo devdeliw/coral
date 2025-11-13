@@ -1,4 +1,4 @@
-use core::simd::Simd;
+use std::simd::Simd;
 use crate::debug_assert_n_eq; 
 use crate::types::{VectorRef, VectorMut};
 
