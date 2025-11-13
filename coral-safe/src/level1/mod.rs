@@ -5,6 +5,7 @@ pub mod scopy;
 pub mod sswap;
 pub mod sdot; 
 pub mod isamax;
+pub mod srot; 
 
 
 
@@ -16,3 +17,4 @@ pub use scopy::scopy;
 pub use sswap::sswap;
 pub use sdot::sdot;
 pub use isamax::isamax;
+pub use srot::srot;

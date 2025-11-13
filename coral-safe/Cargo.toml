@@ -62,3 +62,6 @@ harness = false
 [[bench]] 
 name    = "level1_iamax"
 harness = false
+[[bench]] 
+name    = "level1_rot"
+harness = false

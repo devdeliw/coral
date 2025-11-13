@@ -20,7 +20,7 @@ fn make_view<'a>(x: &'a [f32]) -> VectorRef<'a, f32> {
 }
 
 pub fn bench_sdot_big(c: &mut Criterion) {
-    let n: usize = 1000_000;
+    let n: usize = 1000000;
 
     let x = vec![1.0f32; n];
     let y = vec![0.5f32; n];
