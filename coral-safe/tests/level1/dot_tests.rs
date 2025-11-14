@@ -93,7 +93,7 @@ fn sdot_strided() -> Result<(), BufferError> {
 }
 
 #[test]
-fn sdot_n_zero_returns_zero() -> Result<(), BufferError> {
+fn sdot_n_zero() -> Result<(), BufferError> {
     let n = 0;
 
     let xbuf = vec![2.0f32; 4];

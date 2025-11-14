@@ -6,7 +6,9 @@ pub mod sswap;
 pub mod sdot; 
 pub mod isamax;
 pub mod srot; 
-
+pub mod srotg;
+pub mod srotm; 
+pub mod srotmg;
 
 
 
@@ -18,3 +20,6 @@ pub use sswap::sswap;
 pub use sdot::sdot;
 pub use isamax::isamax;
 pub use srot::srot;
+pub use srotg::srotg;
+pub use srotm::srotm;
+pub use srotmg::srotmg;
