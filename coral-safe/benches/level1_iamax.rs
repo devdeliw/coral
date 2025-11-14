@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use blas_src as _;
 use criterion::{
     criterion_group,
@@ -20,9 +22,12 @@ fn make_view<'a>(x: &'a [f32]) -> VectorRef<'a, f32> {
 }
 
 pub fn bench_isamax_big(c: &mut Criterion) {
-    let n: usize = 1_000_000;
+    let n: usize = 1000000;
 
-    let x = vec![1.0f32; n];
+    let mut rng = rand::thread_rng();
+    let x: Vec<f32> = (0..n)
+        .map(|_| rng.gen_range(-1.0f32..1.0f32))
+        .collect();
 
     c.bench_function("isamax_coral_safe", |b| {
         let xv = make_view(&x);

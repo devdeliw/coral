@@ -35,6 +35,7 @@ criterion = "0.5"
 cblas-sys = "0.1" 
 faer = { version = "0.19" } 
 coral-blas = "0.2.1"
+rand = "0.8"
 
 [package.metadata.docs.rs]
 features = ["default"]
