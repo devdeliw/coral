@@ -1,4 +1,5 @@
-//! BLAS Level 1 `?ASUM` routine in single precision.
+//! BLAS Level 1 [`?ASUM`](https://www.netlib.org/lapack/explore-html/d5/d72/group__asum.html) 
+//! routine in single precision.
 //!
 //! \\[ 
 //! \sum\_{i=0}^{n-1} \lvert x_i \rvert
@@ -17,10 +18,10 @@ use crate::types::VectorRef;
 /// single precision [`VectorRef`].
 ///
 /// Arguments: 
-/// - `x`: [`VectorRef`] over `f32`
+/// - `x`: [`VectorRef`] over [`f32`]
 ///
 /// Returns: 
-/// - `f32` sum of abs values of logical vector elements. 
+/// - [`f32`] sum of abs values of logical vector elements. 
 #[inline] 
 pub fn sasum ( 
     x: VectorRef<'_, f32>

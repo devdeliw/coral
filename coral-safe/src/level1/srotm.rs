@@ -1,4 +1,5 @@
-//! BLAS Level 1 `?ROTM` routine in single precision. 
+//! BLAS Level 1 [`?ROTM`](https://www.netlib.org/lapack/explore-html/dc/d23/group__rotm.html)
+//! routine in single precision. 
 //!
 //! \\[
 //! \hat{G}\_{\text{modified}} \begin{pmatrix} x \\\\ y \end{pmatrix}

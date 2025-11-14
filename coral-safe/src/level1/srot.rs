@@ -1,4 +1,5 @@
-//! BLAS Level 1 `?ROT` routine in single precision
+//! BLAS Level 1 [`?ROT`](https://www.netlib.org/lapack/explore-html/d1/d45/group__rot.html)
+//! routine in single precision
 //!
 //! \\[ 
 //! x \leftarrow c x + s y 
@@ -21,10 +22,10 @@ use crate::debug_assert_n_eq;
 /// 2D Givens rotation. 
 ///
 /// Arguments: 
-/// - `x`: [`VectorMut`] over `f32` 
-/// - `y`: [`VectorMut`] over `f32`
-/// - `c`: `f32` 
-/// - `y`: `f32` 
+/// - `x`: [`VectorMut`] over [`f32`] 
+/// - `y`: [`VectorMut`] over [`f32`]
+/// - `c`: [`f32`] 
+/// - `y`: [`f32`] 
 ///
 /// Returns: 
 /// Nothing. `x` and `y` are overwritten. 

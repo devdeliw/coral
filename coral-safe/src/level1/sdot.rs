@@ -1,4 +1,5 @@
-//! BLAS Level 1 `?DOT` routine in single precision. 
+//! BLAS Level 1 [`?DOT`](https://www.netlib.org/lapack/explore-html/d1/dcc/group__dot.html)
+//! routine in single precision. 
 //!
 //! \\[ 
 //! \sum\_{i=0}^{n-1} x_i \\, y_i 
@@ -18,11 +19,11 @@ use crate::debug_assert_n_eq;
 /// `x` and `y`.
 ///
 /// Arguments: 
-/// - `x`: [`VectorRef`] over `f32`
-/// - `y`: [`VectorRef`] over `f32`
+/// - `x`: [`VectorRef`] over [`f32`]
+/// - `y`: [`VectorRef`] over [`f32`]
 /// 
 /// Returns: 
-/// - `f32` dot product.
+/// - [`f32`] dot product.
 #[inline] 
 pub fn sdot ( 
     x: VectorRef<'_, f32>, 

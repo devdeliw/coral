@@ -1,4 +1,5 @@
-//! BLAS Level 1 `?SWAP` routine in single precision 
+//! BLAS Level 1 [`?SWAP`](https://www.netlib.org/lapack/explore-html/d7/d51/group__swap.html)
+//! routine in single precision 
 //!
 //! \\[
 //! x\_i \;\leftrightarrow\; y\_i
@@ -15,8 +16,8 @@ use crate::types::VectorMut;
 /// Exchanges logical elements of two input [`VectorMut`]'s data. 
 ///
 /// Arguments:
-/// - `x`: [`VectorMut`] over `f32` 
-/// - `y`: [`VectorMut`] over `f32`
+/// - `x`: [`VectorMut`] over [`f32`] 
+/// - `y`: [`VectorMut`] over [`f32`]
 ///
 /// Returns: 
 /// - Nothing. `x` and `y` are swapped in place.

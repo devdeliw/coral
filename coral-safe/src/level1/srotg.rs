@@ -1,4 +1,5 @@
-//! BLAS Level 1 `?ROTG` routine in single precision. 
+//! BLAS Level 1 [`?ROTG`](https://www.netlib.org/lapack/explore-html/d7/dc5/group__rotg.html)
+//! routine in single precision. 
 //!
 //! \\[ 
 //! \begin{bmatrix} 
@@ -22,10 +23,10 @@
 /// Givens rotation given `r`. 
 ///
 /// Arguments: 
-/// - `a`: `&mut f32` - input scalar, overwritten with `r`
-/// - `b`: `&mut f32` - input scalar, overwritten with `z`
-/// - `c`: `&mut f32` - output scalar cosine component of Givens rot. 
-/// - `s`: `&mut f32` - output scalar sine component of Givens rot.
+/// - `a`: `&mut` [`f32`] - input scalar, overwritten with `r`
+/// - `b`: `&mut` [`f32`] - input scalar, overwritten with `z`
+/// - `c`: `&mut` [`f32`] - output scalar cosine component of Givens rot. 
+/// - `s`: `&mut` [`f32`] - output scalar sine component of Givens rot.
 ///
 /// Returns: 
 /// Nothing. The results overwrite `a`, `b`, `c`, and `s`. 

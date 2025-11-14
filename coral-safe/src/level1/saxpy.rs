@@ -1,4 +1,5 @@
-//! BLAS Level 1 `?AXPY` routine in single precision. 
+//! BLAS Level 1 [`?AXPY`](https://www.netlib.org/lapack/explore-html/d5/d4b/group__axpy.html)
+//! routine in single precision. 
 //!
 //! \\[ 
 //! y \leftarrow \alpha x + y
@@ -17,8 +18,8 @@ use crate::types::{VectorRef, VectorMut};
 ///
 /// Arguments: 
 /// - `alpha` f32 : scalar multiplier for `x` 
-/// - `x`: [`VectorRef`] over `f32` 
-/// - `y`: [`VectorMut`] over `f32`
+/// - `x`: [`VectorRef`] over [`f32`] 
+/// - `y`: [`VectorMut`] over [`f32`]
 ///
 /// Returns: 
 /// Nothing. `y.data` is overwritten. 

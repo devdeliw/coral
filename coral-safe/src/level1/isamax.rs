@@ -1,7 +1,8 @@
-//! BLAS Level 1 `I?AMAX` routine in single precision.
+//! BLAS Level 1 [`I?AMAX`](https://www.netlib.org/lapack/explore-html/dd/d52/group__iamax.html) 
+//! routine in single precision.
 //! 
 //! \\[ 
-//! \text{arg} \text{max}\_{0\leq i < n} \lvert x_i \rvert
+//! \text{arg} \max\_{0\leq i < n} \lvert x_i \rvert
 //! \\]
 //!
 //! # Author 
@@ -17,10 +18,10 @@ use crate::types::VectorRef;
 /// single precision [`VectorRef`].
 ///
 /// Arguments: 
-/// - `x`: [`VectorRef`] over `f32`
+/// - `x`: [`VectorRef`] over [`f32`]
 ///
 /// Returns: 
-/// - `usize` 0-based index of first element with maximum abs value.
+/// - [`usize`] 0-based index of first element with maximum abs value.
 #[inline] 
 pub fn isamax ( 
     x: VectorRef<'_, f32>

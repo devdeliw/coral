@@ -1,4 +1,5 @@
-//! BLAS Level 1 `?ROTMG` routine in single precision
+//! BLAS Level 1 [`?ROTMG`](https://www.netlib.org/lapack/explore-html/d3/dd5/group__rotmg.html)
+//! routine in single precision
 //!
 //! Generates transformation that zeros the second component of the 2-vector 
 //!
@@ -19,11 +20,11 @@
 /// The rotation operator is encoded in `param` with flag `param[0]`. 
 ///
 /// Arguments: 
-/// - `sd1`: `&mut f32` - input/output scalar, updated scaling factor for first component 
-/// - `sd2`: `&mut f32` - input/output scalar, updated scaling factor for second component 
-/// - `sx1`: `&mut f32` - input/output scalar, updated first vector componnet 
-/// - `sy1`: `f32` - input scalar, second vector component; not modified. 
-/// - `param`: `&mut [f32; 5]) - output array of 5 elements defining the modified Givesn rot. 
+/// - `sd1`: `&mut` [`f32`] - input/output scalar, updated scaling factor for first component 
+/// - `sd2`: `&mut` [`f32`] - input/output scalar, updated scaling factor for second component 
+/// - `sx1`: `&mut` [`f32`] - input/output scalar, updated first vector componnet 
+/// - `sy1`: [`f32`] - input scalar, second vector component; not modified. 
+/// - `param`: `&mut [f32; 5] - output array of 5 elements defining the modified Givesn rot. 
 ///
 /// Returns: 
 /// Nothing. overwrites `sd1`, `sd2`, `sx1`, and fills `param`.

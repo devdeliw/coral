@@ -1,4 +1,5 @@
-//! BLAS Level 1 `?COPY` routine in single precision. 
+//! BLAS Level 1 [`?COPY`](https://www.netlib.org/lapack/explore-html/d5/d2b/group__copy.html)
+//! routine in single precision. 
 //!
 //! \\[ 
 //! y_i = x_i \forall i \in \mathbb{Z}_n
@@ -16,8 +17,8 @@ use crate::debug_assert_n_eq;
 /// `y` [`VectorMut`]. 
 ///
 /// Arguments: 
-/// - `x`: [`VectorRef`] over `f32`
-/// - `y`: [`VectorMut`] over `f32`
+/// - `x`: [`VectorRef`] over [`f32`]
+/// - `y`: [`VectorMut`] over [`f32`]
 ///
 /// Returns: 
 /// Nothing. `y.data` is ovewritten. 
