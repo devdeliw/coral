@@ -1,6 +1,25 @@
+//! BLAS Level 1 `?SWAP` routine in single precision 
+//!
+//! \\[
+//! x\_i \;\leftrightarrow\; y\_i
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala 
+
+
 use crate::debug_assert_n_eq; 
 use crate::types::VectorMut; 
 
+
+/// Exchanges logical elements of two input [`VectorMut`]'s data. 
+///
+/// Arguments:
+/// - `x`: [`VectorMut`] over `f32` 
+/// - `y`: [`VectorMut`] over `f32`
+///
+/// Returns: 
+/// - Nothing. `x` and `y` are swapped in place.
 pub fn sswap ( 
     mut x: VectorMut<'_, f32>, 
     mut y: VectorMut<'_, f32>, 

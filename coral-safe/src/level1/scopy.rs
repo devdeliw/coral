@@ -1,8 +1,27 @@
+//! BLAS Level 1 `?COPY` routine in single precision. 
+//!
+//! \\[ 
+//! y_i = x_i \forall i \in \mathbb{Z}_n
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala
+
+
 use crate::types::{VectorRef, VectorMut}; 
 use crate::debug_assert_n_eq; 
 
 
-#[inline(always)] 
+/// Copys logical elements from `x` [`VectorRef`] into output 
+/// `y` [`VectorMut`]. 
+///
+/// Arguments: 
+/// - `x`: [`VectorRef`] over `f32`
+/// - `y`: [`VectorMut`] over `f32`
+///
+/// Returns: 
+/// Nothing. `y.data` is ovewritten. 
+#[inline] 
 pub fn scopy ( 
     x: VectorRef<'_, f32>, 
     mut y: VectorMut<'_, f32>, 

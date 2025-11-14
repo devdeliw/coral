@@ -1,8 +1,27 @@
+//! BLAS Level 1 `I?AMAX` routine in single precision.
+//! 
+//! \\[ 
+//! \text{arg} \text{max}\_{0\leq i < n} \lvert x_i \rvert
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala
+
+
 use std::simd::Simd; 
 use std::simd::num::SimdFloat; 
 use crate::types::VectorRef; 
 
-#[inline(always)] 
+
+/// Finds the index of the element with maximum absolute value in a
+/// single precision [`VectorRef`].
+///
+/// Arguments: 
+/// - `x`: [`VectorRef`] over `f32`
+///
+/// Returns: 
+/// - `usize` 0-based index of first element with maximum abs value.
+#[inline] 
 pub fn isamax ( 
     x: VectorRef<'_, f32>
 ) -> usize { 

@@ -1,7 +1,33 @@
+//! BLAS Level 1 `?ROT` routine in single precision
+//!
+//! \\[ 
+//! x \leftarrow c x + s y 
+//! \\] 
+//! \\[ 
+//! y \leftarrow c y - s x 
+//! \\] 
+//!
+//! # Author 
+//! Deval Deliwala 
+
+
 use std::simd::{Simd, StdFloat}; 
 use crate::types::VectorMut; 
 use crate::debug_assert_n_eq; 
 
+
+/// Replaces elements in [`VectorMut`] `x` and `y`
+/// with `x := cx + sy` and `y := cy - sx`; i.e. a 
+/// 2D Givens rotation. 
+///
+/// Arguments: 
+/// - `x`: [`VectorMut`] over `f32` 
+/// - `y`: [`VectorMut`] over `f32`
+/// - `c`: `f32` 
+/// - `y`: `f32` 
+///
+/// Returns: 
+/// Nothing. `x` and `y` are overwritten. 
 pub fn srot ( 
     mut x: VectorMut<'_, f32>, 
     mut y: VectorMut<'_, f32>, 

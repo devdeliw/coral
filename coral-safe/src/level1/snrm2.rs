@@ -1,8 +1,26 @@
+//! BLAS Level 1 `?NRM2` routine in single precision. 
+//!
+//! \\[ 
+//! \sqrt{\sum\_{i=0}^{n-1} x_i^2}
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala
+
+
 use std::simd::Simd;
 use std::simd::num::SimdFloat;
 use crate::types::VectorRef; 
 
-#[inline(always)] 
+
+/// Computes the Euclidean norm of a single precision [`VectorRef`]
+///
+/// Arguments: 
+/// `x`: [`VectorRef`] over `f32`
+///
+/// Returns: 
+/// - `f32` norm of the logical vector elements. 
+#[inline] 
 pub fn snrm2 ( 
     x: VectorRef<'_, f32>
 ) -> f32 { 

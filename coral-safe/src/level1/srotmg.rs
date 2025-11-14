@@ -1,3 +1,32 @@
+//! BLAS Level 1 `?ROTMG` routine in single precision
+//!
+//! Generates transformation that zeros the second component of the 2-vector 
+//!
+//! //! \\[
+//! \begin{bmatrix}
+//! \sqrt{sd_1}\\, sx_1 \\\\
+//! \sqrt{sd_2}\\, sy_1
+//! \end{bmatrix}
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala 
+
+
+/// Generates parameter array `param` that defines a modified Givens rotation 
+/// that zeros the 2-vector [`sqrt(sd_1) sx_1, sqrt(sd_2)sy_1`]. 
+///
+/// The rotation operator is encoded in `param` with flag `param[0]`. 
+///
+/// Arguments: 
+/// - `sd1`: `&mut f32` - input/output scalar, updated scaling factor for first component 
+/// - `sd2`: `&mut f32` - input/output scalar, updated scaling factor for second component 
+/// - `sx1`: `&mut f32` - input/output scalar, updated first vector componnet 
+/// - `sy1`: `f32` - input scalar, second vector component; not modified. 
+/// - `param`: `&mut [f32; 5]) - output array of 5 elements defining the modified Givesn rot. 
+///
+/// Returns: 
+/// Nothing. overwrites `sd1`, `sd2`, `sx1`, and fills `param`.
 #[inline] 
 pub fn srotmg ( 
     sd1: &mut f32, 

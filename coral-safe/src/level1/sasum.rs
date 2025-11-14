@@ -1,8 +1,27 @@
+//! BLAS Level 1 `?ASUM` routine in single precision.
+//!
+//! \\[ 
+//! \sum\_{i=0}^{n-1} \lvert x_i \rvert
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala 
+
+
 use std::simd::Simd; 
 use std::simd::num::SimdFloat;
 use crate::types::VectorRef; 
 
-#[inline(always)] 
+
+/// Computes the sum of absolute values of elements in a 
+/// single precision [`VectorRef`].
+///
+/// Arguments: 
+/// - `x`: [`VectorRef`] over `f32`
+///
+/// Returns: 
+/// - `f32` sum of abs values of logical vector elements. 
+#[inline] 
 pub fn sasum ( 
     x: VectorRef<'_, f32>
 ) -> f32 { 

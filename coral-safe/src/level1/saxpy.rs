@@ -1,8 +1,28 @@
+//! BLAS Level 1 `?AXPY` routine in single precision. 
+//!
+//! \\[ 
+//! y \leftarrow \alpha x + y
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala
+
+
 use std::simd::Simd;
 use crate::debug_assert_n_eq; 
 use crate::types::{VectorRef, VectorMut};
 
-#[inline(always)] 
+
+/// Updates [`VectorMut`] `y` by adding `alpha` * `x` [`VectorRef`] 
+///
+/// Arguments: 
+/// - `alpha` f32 : scalar multiplier for `x` 
+/// - `x`: [`VectorRef`] over `f32` 
+/// - `y`: [`VectorMut`] over `f32`
+///
+/// Returns: 
+/// Nothing. `y.data` is overwritten. 
+#[inline] 
 pub fn saxpy ( 
     alpha : f32, 
     x     : VectorRef<'_, f32>, 

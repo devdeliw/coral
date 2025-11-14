@@ -1,8 +1,28 @@
+//! BLAS Level 1 `?DOT` routine in single precision. 
+//!
+//! \\[ 
+//! \sum\_{i=0}^{n-1} x_i \\, y_i 
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala
+
+
 use std::simd::Simd;
 use std::simd::num::SimdFloat;
 use crate::types::VectorRef; 
 use crate::debug_assert_n_eq; 
 
+
+/// Takes the dot product over logical elements in [`VectorRef`] 
+/// `x` and `y`.
+///
+/// Arguments: 
+/// - `x`: [`VectorRef`] over `f32`
+/// - `y`: [`VectorRef`] over `f32`
+/// 
+/// Returns: 
+/// - `f32` dot product.
 #[inline] 
 pub fn sdot ( 
     x: VectorRef<'_, f32>, 

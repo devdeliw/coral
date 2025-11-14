@@ -1,3 +1,13 @@
+//! BLAS Level 1 `?ROTM` routine in single precision. 
+//!
+//! \\[
+//! \hat{G}\_{\text{modified}} \begin{pmatrix} x \\\\ y \end{pmatrix}
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala 
+
+
 use core::simd::Simd; 
 use std::simd::StdFloat; 
 use std::{slice::IterMut, iter::{StepBy, Take}};
@@ -61,6 +71,23 @@ fn apply_givens_scal (
     }
 }
 
+
+/// Updates vectors `x` and `y` using modified Givens transformation 
+/// based on given `param` `[f32; 5]`. The form of the transformation 
+/// depends on `param[0]`, or the "flag" as follows: 
+///
+/// `-2.0` - Identity (no op)
+/// `-1.0` - General 2x2 matrix `h11, h21, h12, h22` (param[1..5] col major)
+/// `0.0`  - Simplified form with implicit ones on diagonal 
+/// `+1.0` - Alternate simplified form with fixed off-diagonal ±1s. 
+///
+/// Arguments: 
+/// - `x`: [`VectorMut`] 
+/// - `y`: [`VectorMut`] 
+/// - `param`: `&[f32; 5]` - [`flag, h11, h21, h12, h22`] that define the modified rotation
+///
+/// Returns: 
+/// Nothing. `x.data` and `y.data` are overwritten. 
 #[inline] 
 pub fn srotm ( 
     mut x: VectorMut<'_, f32>, 
