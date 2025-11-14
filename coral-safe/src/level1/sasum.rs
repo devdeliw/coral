@@ -29,7 +29,7 @@ pub fn sasum (
     let n = x.n(); 
     let incx = x.stride();
 
-    if n == 0 || incx == 0 { 
+    if n == 0 { 
         return 0.0; 
     }
 
