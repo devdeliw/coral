@@ -40,7 +40,7 @@ pub fn sasum (
         let (chunks, tail) = xs.as_chunks::<LANES>(); 
         for &chunk in chunks { 
             let v = Simd::<f32, LANES>::from_array(chunk);
-            acc += v.abs();
+            acc  += v.abs();
         }
 
         // horizontal sum of accumulator 
@@ -56,8 +56,8 @@ pub fn sasum (
 
     // scalar fallback 
     let mut res = 0.0;
-    let ix  = x.offset(); 
-    let xs  = x.as_slice(); 
+    let ix = x.offset(); 
+    let xs = x.as_slice(); 
 
     for &v in xs[ix..].iter().step_by(incx).take(n) { 
         res += v.abs();

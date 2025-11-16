@@ -10,7 +10,8 @@
 
 
 use std::simd::Simd; 
-use std::simd::num::SimdFloat; 
+use std::simd::num::SimdFloat;
+use std::simd::cmp::SimdPartialOrd; 
 use crate::types::VectorRef; 
 
 
@@ -22,60 +23,73 @@ use crate::types::VectorRef;
 ///
 /// Returns: 
 /// - [`usize`] 0-based index of first element with maximum abs value.
-#[inline] 
-pub fn isamax ( 
+#[inline]
+pub fn isamax (
     x: VectorRef<'_, f32>
-) -> usize { 
-    let n = x.n(); 
-    let incx = x.stride(); 
+) -> usize {
+    let n = x.n();
 
-    if n == 0 { 
-        return 0; 
-    }   
+    if n == 0 {
+        return 0;
+    }
 
-    let mut max_val = 0.0; 
+    // fast path 
+    if let Some(xs) = x.contiguous_slice() {
+        const LANES: usize = 16;
 
-    // fast path
-    if let Some(xs) = x.contiguous_slice() { 
-        const LANES: usize = 16; 
+        let mut max_idx = 0;
+        let mut max_val = 0.0;
+
         let (chunks, tail) = xs.as_chunks::<LANES>();
-
-        for &chunk in chunks.iter() { 
-            let chunk_vec = Simd::from_array(chunk).abs();
-            let val = chunk_vec.reduce_max(); 
-            if val > max_val { 
-                max_val = val; 
-            }
-        }
-
-        for &xt in tail.iter() { 
-           let val = xt.abs(); 
-           if val > max_val { 
-                max_val = val; 
+        for (idx, chunk) in chunks.iter().enumerate() { 
+           let vec  = Simd::<f32, LANES>::from_array(*chunk).abs();
+           let mask = vec.simd_gt(Simd::splat(max_val));
+        
+           if mask.any() { 
+               for lane in 0..LANES { 
+                    let v = vec[lane]; 
+                    if v > max_val { 
+                        max_val = v; 
+                        max_idx = idx * LANES + lane
+                    }
+               }
            }
         }
 
-        for (idx, &val) in xs.iter().enumerate() { 
-            if val.abs() == max_val { 
-                return idx; 
+
+        let simd_len = chunks.len() * LANES; 
+        for (i, &v) in tail.iter().enumerate() {
+            let val = v.abs();
+            if val > max_val {
+                max_val = val;
+                max_idx = simd_len + i;
             }
         }
+
+        return max_idx;
     }
 
     // slow path 
-    let mut max_idx = 0;
-    let ix = x.offset(); 
-    let xs = x.as_slice();  
-    let xs_it = xs[ix..].iter().step_by(incx).take(n); 
+    let incx = x.stride(); 
+    let ix   = x.offset();
+    let xs   = x.as_slice();
 
-    for (idx, &xc) in xs_it.enumerate() { 
-        let val = xc.abs(); 
+    let mut max_idx = 0; 
+    let mut max_val = 0.0;
 
-        if val > max_val { 
-            max_val = val; 
+    let xs_iterator = xs[ix..]
+        .iter()
+        .step_by(incx)
+        .take(n); 
+
+    for (idx, v) in  xs_iterator.enumerate() { 
+        let v = v.abs(); 
+        if v > max_val { 
             max_idx = idx; 
+            max_val = v; 
         }
     }
-    
+
     max_idx
 }
+
