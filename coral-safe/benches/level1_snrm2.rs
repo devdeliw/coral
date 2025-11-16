@@ -1,38 +1,37 @@
-mod common;
+mod common; 
 use common::{make_strided_vec, bytes, make_view_ref}; 
 
-use criterion::{
+use criterion::{ 
     criterion_group, 
-    criterion_main,
-    Criterion,
+    criterion_main, 
+    Criterion, 
     Throughput, 
-    black_box,
+    black_box, 
 }; 
 
 use blas_src as _; 
-use cblas_sys::cblas_sasum; 
-use coral_safe::types::VectorRef; 
-use coral_safe::level1::sasum as sasum_safe; 
-use coral::level1::sasum as sasum_neon;
+use cblas_sys::cblas_snrm2; 
+use coral_safe::level1::snrm2 as snrm2_safe; 
+use coral::level1::snrm2 as snrm2_neon; 
 
-pub fn sasum_contiguous(c: &mut Criterion) { 
+pub fn snrm2_contiguous(c: &mut Criterion) { 
     let n = 1000000; 
     let inc = 1; 
     let xbuf = make_strided_vec(n, inc); 
     let xvec = make_view_ref(&xbuf, n, inc); 
 
-    let mut group = c.benchmark_group("sasum_contiguous");
+    let mut group = c.benchmark_group("snrm2_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n, 1))); 
 
-    group.bench_function("sasum_coral_safe", |b| { 
+    group.bench_function("snrm2_coral_safe", |b| { 
         b.iter(|| {
-            black_box(sasum_safe(black_box(xvec))); 
+            black_box(snrm2_safe(black_box(xvec))); 
         });
     });
 
-    group.bench_function("sasum_coral_neon", |b| { 
+    group.bench_function("snrm2_coral_neon", |b| { 
         b.iter(|| { 
-            black_box(sasum_neon(
+            black_box(snrm2_neon(
                 black_box(n), 
                 black_box(&xbuf), 
                 black_box(1)
@@ -40,9 +39,9 @@ pub fn sasum_contiguous(c: &mut Criterion) {
         });
     }); 
 
-    group.bench_function("sasum_cblas", |b| { 
+    group.bench_function("snrm2_cblas", |b| { 
         b.iter(|| unsafe { 
-            black_box(cblas_sasum(
+            black_box(cblas_snrm2(
                 black_box(n as i32),
                 black_box(xbuf.as_ptr()),
                 black_box(1),
@@ -51,24 +50,24 @@ pub fn sasum_contiguous(c: &mut Criterion) {
     });
 }
 
-pub fn sasum_strided(c: &mut Criterion) { 
+pub fn snrm2_strided(c: &mut Criterion) { 
     let n = 1000000; 
     let inc = 2;
     let xbuf = make_strided_vec(n, inc); 
     let xvec = make_view_ref(&xbuf, n, inc); 
 
-    let mut group = c.benchmark_group("sasum_strided"); 
+    let mut group = c.benchmark_group("snrm2_strided"); 
     group.throughput(Throughput::Bytes(bytes(n, 1))); 
 
-    group.bench_function("sasum_coral_safe", |b| { 
+    group.bench_function("snrm2_coral_safe", |b| { 
         b.iter(|| {
-            black_box(sasum_safe(black_box(xvec))); 
+            black_box(snrm2_safe(black_box(xvec))); 
         });
     });
 
-    group.bench_function("sasum_coral_neon", |b| { 
+    group.bench_function("snrm2_coral_neon", |b| { 
         b.iter(|| { 
-            black_box(sasum_neon(
+            black_box(snrm2_neon(
                 black_box(n), 
                 black_box(&xbuf), 
                 black_box(inc)
@@ -76,9 +75,9 @@ pub fn sasum_strided(c: &mut Criterion) {
         });
     }); 
 
-    group.bench_function("sasum_cblas", |b| { 
+    group.bench_function("snrm2_cblas", |b| { 
         b.iter(|| unsafe { 
-            black_box(cblas_sasum(
+            black_box(cblas_snrm2(
                 black_box(n as i32),
                 black_box(xbuf.as_ptr()),
                 black_box(inc as i32),
@@ -87,5 +86,9 @@ pub fn sasum_strided(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, sasum_contiguous, sasum_strided);
+criterion_group!(benches, snrm2_contiguous, snrm2_strided);
 criterion_main!(benches);
+
+
+
+

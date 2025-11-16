@@ -1,5 +1,5 @@
 mod common;
-use common::make_strided_vec; 
+use common::{make_strided_vec, bytes, make_view_ref}; 
 
 use criterion::{
     criterion_group, 
@@ -15,24 +15,15 @@ use coral_safe::types::VectorRef;
 use coral_safe::level1::isamax as isamax_safe; 
 use coral::level1::isamax as isamax_neon;
 
-#[inline]
-fn bytes(n: usize) -> u64 { 
-    (n * std::mem::size_of::<f32>()) as u64
-}
-
-#[inline] 
-fn make_view(x: &[f32]) -> VectorRef<'_, f32> { 
-    VectorRef::new(x, x.len(), 1, 0).expect("x view")
-}
 
 pub fn isamax_contiguous(c: &mut Criterion) { 
     let n = 1000000; 
     let inc = 1; 
     let xbuf = make_strided_vec(n, inc); 
-    let xvec = make_view(&xbuf); 
+    let xvec = make_view_ref(&xbuf, n, inc); 
 
     let mut group = c.benchmark_group("isamax_contiguous");
-    group.throughput(Throughput::Bytes(bytes(n))); 
+    group.throughput(Throughput::Bytes(bytes(n, 1))); 
 
     group.bench_function("isamax_coral_safe", |b| { 
         b.iter(|| {
@@ -65,10 +56,10 @@ pub fn isamax_strided(c: &mut Criterion) {
     let n = 1000000; 
     let inc = 2;
     let xbuf = make_strided_vec(n, inc); 
-    let xvec = make_view(&xbuf); 
+    let xvec = make_view_ref(&xbuf, n, inc); 
 
     let mut group = c.benchmark_group("isamax_strided"); 
-    group.throughput(Throughput::Bytes(bytes(n))); 
+    group.throughput(Throughput::Bytes(bytes(n, 1))); 
 
     group.bench_function("isamax_coral_safe", |b| { 
         b.iter(|| {
@@ -81,7 +72,7 @@ pub fn isamax_strided(c: &mut Criterion) {
             black_box(isamax_neon(
                 black_box(n), 
                 black_box(&xbuf), 
-                black_box(1)
+                black_box(inc)
             )); 
         });
     }); 
@@ -91,7 +82,7 @@ pub fn isamax_strided(c: &mut Criterion) {
             black_box(cblas_isamax(
                 black_box(n as i32),
                 black_box(xbuf.as_ptr()),
-                black_box(1),
+                black_box(inc as i32),
             )); 
         });
     });

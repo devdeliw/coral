@@ -1,5 +1,6 @@
 use rand::thread_rng;
 use rand::distributions::{Distribution, Standard}; 
+use coral_safe::types::{VectorMut, VectorRef};
 
 pub(crate) fn make_strided_vec (
     len: usize, 
@@ -21,3 +22,20 @@ pub(crate) fn make_strided_vec (
 
     buf
 }
+
+#[inline]
+pub(crate) fn bytes(n: usize, alpha: usize) -> u64 { 
+    (alpha * n * std::mem::size_of::<f32>()) as u64
+}
+
+#[inline] 
+pub(crate) fn make_view_ref<'a>(x: &'a[f32], n: usize, incx: usize) -> VectorRef<'a, f32> { 
+    VectorRef::new(x, n, incx, 0).expect("x view ref")
+}
+
+#[inline] 
+pub(crate) fn make_view_mut<'a>(x: &'a mut [f32], n: usize, incx: usize) -> VectorMut<'a, f32> { 
+    VectorMut::new(x, n, incx, 0).expect("x view ref")
+}
+
+
