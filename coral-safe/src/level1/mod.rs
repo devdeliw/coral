@@ -1,4 +1,5 @@
 pub mod saxpy; 
+pub mod sscal;
 pub mod sasum;
 pub mod snrm2;
 pub mod scopy; 
@@ -13,6 +14,7 @@ pub mod srotmg;
 
 
 pub use saxpy::saxpy;
+pub use sscal::sscal;
 pub use sasum::sasum;
 pub use snrm2::snrm2;
 pub use scopy::scopy;

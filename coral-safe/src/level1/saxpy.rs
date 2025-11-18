@@ -17,9 +17,9 @@ use crate::types::{VectorRef, VectorMut};
 /// Updates [`VectorMut`] `y` by adding `alpha` * `x` [`VectorRef`] 
 ///
 /// Arguments: 
-/// - `alpha` f32 : scalar multiplier for `x` 
-/// - `x`: [`VectorRef`] over [`f32`] 
-/// - `y`: [`VectorMut`] over [`f32`]
+/// * `alpha`: [f32] - scalar multiplier for `x` 
+/// * `x`: [`VectorRef`] - struct over [f32] 
+/// * `y`: [`VectorMut`] - struct over [f32]
 ///
 /// Returns: 
 /// Nothing. `y.data` is overwritten. 
@@ -61,19 +61,21 @@ pub fn saxpy (
         for (xt, yt) in xr.iter().zip(yr.iter_mut()) { 
             *yt += alpha * *xt; 
         }
-    } else {
-        // scalar fallback
-        let ix = x.offset(); 
-        let iy = y.offset(); 
-        
-        let xs = x.as_slice(); 
-        let ys = y.as_slice_mut(); 
 
-        let xs_it = xs[ix..].iter().step_by(incx).take(n);
-        let ys_it = ys[iy..].iter_mut().step_by(incy).take(n);
+        return; 
+    } 
+    
+    // slow path 
+    let ix = x.offset(); 
+    let iy = y.offset(); 
+    
+    let xs = x.as_slice(); 
+    let ys = y.as_slice_mut(); 
 
-        for (&xv, yv) in xs_it.zip(ys_it) {
-            *yv += alpha * xv; 
-        }
+    let xs_it = xs[ix..].iter().step_by(incx).take(n);
+    let ys_it = ys[iy..].iter_mut().step_by(incy).take(n);
+
+    for (&xv, yv) in xs_it.zip(ys_it) {
+        *yv += alpha * xv; 
     }
 }

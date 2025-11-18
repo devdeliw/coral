@@ -42,21 +42,6 @@ features = ["default"]
 rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex-header.html"]
 
 
-[[bench]]
-name    = "level1_axpy"
-harness = false 
-[[bench]] 
-name    = "level1_copy"
-harness = false
-[[bench]]
-name    = "level1_swap" 
-harness = false 
-[[bench]] 
-name    = "level1_dot" 
-harness = false
-[[bench]] 
-name    = "level1_iamax"
-harness = false
 [[bench]] 
 name    = "level1_rot"
 harness = false
@@ -69,5 +54,23 @@ name    = "level1_isamax"
 harness = false
 [[bench]] 
 name    = "level1_snrm2" 
+harness = false
+[[bench]]
+name    = "level1_sswap"
+harness = false 
+[[bench]]
+name    = "level1_saxpy"
+harness = false
+[[bench]]
+name    = "level1_sdot"
+harness = false
+[[bench]]
+name    = "level1_sscal"
+harness = false
+[[bench]]
+name    = "level1_scopy"
+harness = false 
+[[bench]]
+name    = "level1_srot"
 harness = false
 
