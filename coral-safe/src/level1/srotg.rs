@@ -25,8 +25,8 @@
 /// Arguments: 
 /// * `a`: `&mut` [f32] - input scalar, overwritten with `r`
 /// * `b`: `&mut` [f32] - input scalar, overwritten with `z`
-/// * `c`: `&mut` [f32] - output scalar cosine component of Givens rot. 
-/// * `s`: `&mut` [f32] - output scalar sine component of Givens rot.
+/// * `c`: `&mut` [f32] - output scalar cosine component of Givens rotation. 
+/// * `s`: `&mut` [f32] - output scalar sine component of Givens rotation.
 ///
 /// Returns: 
 /// Nothing. The results overwrite `a`, `b`, `c`, and `s`. 

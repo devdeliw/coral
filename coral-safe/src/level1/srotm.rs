@@ -74,12 +74,12 @@ fn apply_givens_scal (
 }
 
 
-/// Updates vectors `x` and `y` using modified Givens transformation 
-/// based on given `param` `[f32; 5]`. The form of the transformation 
+/// Updates vectors `x` and `y` using modified Givens rotation 
+/// based on given `param` `[f32; 5]`. The form of the rotation
 /// depends on `param[0]`, or the "flag" as follows: 
 ///
 /// `-2.0` - Identity (no op)
-/// `-1.0` - General 2x2 matrix `h11, h21, h12, h22` (param[1..5] col major)
+/// `-1.0` - General 2x2 matrix `h11, h21, h12, h22` (param[1..5] column major)
 /// `0.0`  - Simplified form with implicit ones on diagonal 
 /// `+1.0` - Alternate simplified form with fixed off-diagonal ±1s. 
 ///

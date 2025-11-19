@@ -24,7 +24,7 @@
 /// * `sd2`: `&mut` [f32] - input/output scalar, updated scaling factor for second component 
 /// * `sx1`: `&mut` [f32] - input/output scalar, updated first vector componnet 
 /// * `sy1`: [f32] - input scalar, second vector component; not modified. 
-/// * `param`: `&mut [f32; 5] - output array of 5 elements defining the modified Givesn rot. 
+/// * `param`: `&mut [f32; 5] - output array of 5 elements defining the modified Givesn rotation. 
 ///
 /// Returns: 
 /// Nothing. overwrites `sd1`, `sd2`, `sx1`, and fills `param`.

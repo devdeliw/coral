@@ -11,8 +11,6 @@ pub mod srotg;
 pub mod srotm; 
 pub mod srotmg;
 
-
-
 pub use saxpy::saxpy;
 pub use sscal::sscal;
 pub use sasum::sasum;
