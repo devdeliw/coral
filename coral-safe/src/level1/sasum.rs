@@ -1,4 +1,4 @@
-//! BLAS Level 1 [`?ASUM`](https://www.netlib.org/lapack/explore-html/d5/d72/group__asum.html) 
+//! Level 1 [`?ASUM`](https://www.netlib.org/lapack/explore-html/d5/d72/group__asum.html) 
 //! routine in single precision.
 //!
 //! \\[ 
@@ -15,13 +15,13 @@ use crate::types::VectorRef;
 
 
 /// Computes the sum of absolute values of elements in a 
-/// single precision [`VectorRef`].
+/// single precision [VectorRef].
 ///
 /// Arguments: 
-/// - `x`: [`VectorRef`] over [`f32`]
+/// * `x`: [VectorRef] - over [f32]
 ///
 /// Returns: 
-/// - [`f32`] sum of abs values of logical vector elements. 
+/// - [f32] sum of abs values of logical vector elements. 
 #[inline] 
 pub fn sasum ( 
     x: VectorRef<'_, f32>

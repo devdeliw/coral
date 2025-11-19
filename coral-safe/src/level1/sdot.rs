@@ -1,4 +1,4 @@
-//! BLAS Level 1 [`?DOT`](https://www.netlib.org/lapack/explore-html/d1/dcc/group__dot.html)
+//! Level 1 [`?DOT`](https://www.netlib.org/lapack/explore-html/d1/dcc/group__dot.html)
 //! routine in single precision. 
 //!
 //! \\[ 
@@ -15,15 +15,15 @@ use crate::types::VectorRef;
 use crate::debug_assert_n_eq; 
 
 
-/// Takes the dot product over logical elements in [`VectorRef`] 
+/// Takes the dot product over logical elements in [VectorRef] 
 /// `x` and `y`.
 ///
 /// Arguments: 
-/// - `x`: [`VectorRef`] over [`f32`]
-/// - `y`: [`VectorRef`] over [`f32`]
+/// * `x`: [VectorRef] - over [f32]
+/// * `y`: [VectorRef] - over [f32]
 /// 
 /// Returns: 
-/// - [`f32`] dot product.
+/// - [f32] dot product.
 #[inline] 
 pub fn sdot ( 
     x: VectorRef<'_, f32>, 

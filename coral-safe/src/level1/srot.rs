@@ -1,4 +1,4 @@
-//! BLAS Level 1 [`?ROT`](https://www.netlib.org/lapack/explore-html/d1/d45/group__rot.html)
+//! Level 1 [`?ROT`](https://www.netlib.org/lapack/explore-html/d1/d45/group__rot.html)
 //! routine in single precision
 //!
 //! \\[ 
@@ -17,15 +17,15 @@ use crate::types::VectorMut;
 use crate::debug_assert_n_eq; 
 
 
-/// Replaces elements in [`VectorMut`] `x` and `y`
+/// Replaces elements in [VectorMut] `x` and `y`
 /// with `x := cx + sy` and `y := cy - sx`; i.e. a 
 /// 2D Givens rotation. 
 ///
 /// Arguments: 
-/// - `x`: [`VectorMut`] over [`f32`] 
-/// - `y`: [`VectorMut`] over [`f32`]
-/// - `c`: [`f32`] 
-/// - `y`: [`f32`] 
+/// * `x`: [VectorMut] - over [f32] 
+/// * `y`: [VectorMut] - over [f32]
+/// * `c`: [f32] 
+/// * `y`: [f32] 
 ///
 /// Returns: 
 /// Nothing. `x` and `y` are overwritten. 

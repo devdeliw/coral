@@ -42,6 +42,11 @@ pub fn sswap_contiguous(c: &mut Criterion) {
 
     group.bench_function("sswap_coral_safe", |b| { 
         b.iter(|| {
+            // creation time is included
+            // unavoidable due to VectorMut<'_, f32> 
+            // owning a &'a mut [f32]
+            //
+            // basically negligible though
             let xcoral = make_view_mut(&mut xsafe, n, incx); 
             let ycoral = make_view_mut(&mut ysafe, n, incy); 
             black_box(sswap_safe(black_box(xcoral), black_box(ycoral))); 

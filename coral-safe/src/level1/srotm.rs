@@ -1,4 +1,4 @@
-//! BLAS Level 1 [`?ROTM`](https://www.netlib.org/lapack/explore-html/dc/d23/group__rotm.html)
+//! Level 1 [`?ROTM`](https://www.netlib.org/lapack/explore-html/dc/d23/group__rotm.html)
 //! routine in single precision. 
 //!
 //! \\[
@@ -17,6 +17,7 @@ use crate::debug_assert_n_eq;
 
 const LANES: usize = 8;
 type Vf32 = Simd<f32, LANES>;
+
 
 /// Organize the algebra for each flag into
 /// one helper function for simd 
@@ -83,9 +84,9 @@ fn apply_givens_scal (
 /// `+1.0` - Alternate simplified form with fixed off-diagonal ±1s. 
 ///
 /// Arguments: 
-/// - `x`: [`VectorMut`] 
-/// - `y`: [`VectorMut`] 
-/// - `param`: `&[f32; 5]` - [`flag, h11, h21, h12, h22`] that define the modified rotation
+/// * `x`: [VectorMut] - over [f32]
+/// * `y`: [VectorMut] - over [f32]
+/// * `param`: `&[f32; 5]` - [`flag, h11, h21, h12, h22`] that defines the modified rotation
 ///
 /// Returns: 
 /// Nothing. `x.data` and `y.data` are overwritten. 

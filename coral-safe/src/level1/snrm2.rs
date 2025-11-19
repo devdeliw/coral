@@ -1,4 +1,4 @@
-//! BLAS Level 1 [`?NRM2`](https://www.netlib.org/lapack/explore-html/d1/d2a/group__nrm2.html)
+//! Level 1 [`?NRM2`](https://www.netlib.org/lapack/explore-html/d1/d2a/group__nrm2.html)
 //! routine in single precision. 
 //!
 //! \\[ 
@@ -14,13 +14,13 @@ use std::simd::num::SimdFloat;
 use crate::types::VectorRef; 
 
 
-/// Computes the Euclidean norm of a single precision [`VectorRef`]
+/// Computes the Euclidean norm of a single precision [VectorRef]
 ///
 /// Arguments: 
-/// `x`: [`VectorRef`] over [`f32`]
+/// * `x`: [VectorRef] - over [f32]
 ///
 /// Returns: 
-/// - [`f32`] norm of the logical vector elements. 
+/// - [f32] norm of the logical vector elements. 
 #[inline] 
 pub fn snrm2 ( 
     x: VectorRef<'_, f32>

@@ -1,4 +1,4 @@
-//! BLAS Level 1 [`?ROTG`](https://www.netlib.org/lapack/explore-html/d7/dc5/group__rotg.html)
+//! Level 1 [`?ROTG`](https://www.netlib.org/lapack/explore-html/d7/dc5/group__rotg.html)
 //! routine in single precision. 
 //!
 //! \\[ 
@@ -17,16 +17,16 @@
 
 /// Computes parameters `c` and `s` that define a Givens 
 /// rotation such that the vector [a, b] -> [r, 0] under 
-/// the operator [ c s \\ -s c ].
+/// the operator [ c & s \\ -s & c ].
 ///
 /// `z` is an auxilary parameter related to re-constructing the 
 /// Givens rotation given `r`. 
 ///
 /// Arguments: 
-/// - `a`: `&mut` [`f32`] - input scalar, overwritten with `r`
-/// - `b`: `&mut` [`f32`] - input scalar, overwritten with `z`
-/// - `c`: `&mut` [`f32`] - output scalar cosine component of Givens rot. 
-/// - `s`: `&mut` [`f32`] - output scalar sine component of Givens rot.
+/// * `a`: `&mut` [f32] - input scalar, overwritten with `r`
+/// * `b`: `&mut` [f32] - input scalar, overwritten with `z`
+/// * `c`: `&mut` [f32] - output scalar cosine component of Givens rot. 
+/// * `s`: `&mut` [f32] - output scalar sine component of Givens rot.
 ///
 /// Returns: 
 /// Nothing. The results overwrite `a`, `b`, `c`, and `s`. 

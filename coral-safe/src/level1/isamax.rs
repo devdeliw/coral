@@ -1,4 +1,4 @@
-//! BLAS Level 1 [`I?AMAX`](https://www.netlib.org/lapack/explore-html/dd/d52/group__iamax.html) 
+//! Level 1 [`I?AMAX`](https://www.netlib.org/lapack/explore-html/dd/d52/group__iamax.html) 
 //! routine in single precision.
 //! 
 //! \\[ 
@@ -16,13 +16,13 @@ use crate::types::VectorRef;
 
 
 /// Finds the index of the element with maximum absolute value in a
-/// single precision [`VectorRef`].
+/// single precision [VectorRef].
 ///
 /// Arguments: 
-/// - `x`: [`VectorRef`] over [`f32`]
+/// * `x`: [VectorRef] - over [f32]
 ///
 /// Returns: 
-/// - [`usize`] 0-based index of first element with maximum abs value.
+/// - [usize] 0-based index of first element with maximum absolute value.
 #[inline]
 pub fn isamax (
     x: VectorRef<'_, f32>

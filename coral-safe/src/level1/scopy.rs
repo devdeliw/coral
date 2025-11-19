@@ -1,4 +1,4 @@
-//! BLAS Level 1 [`?COPY`](https://www.netlib.org/lapack/explore-html/d5/d2b/group__copy.html)
+//! Level 1 [`?COPY`](https://www.netlib.org/lapack/explore-html/d5/d2b/group__copy.html)
 //! routine in single precision. 
 //!
 //! \\[ 
@@ -13,12 +13,12 @@ use crate::types::{VectorRef, VectorMut};
 use crate::debug_assert_n_eq; 
 
 
-/// Copys logical elements from `x` [`VectorRef`] into output 
-/// `y` [`VectorMut`]. 
+/// Copys logical elements from `x` [VectorRef] into output 
+/// `y` [VectorMut]. 
 ///
 /// Arguments: 
-/// - `x`: [`VectorRef`] over [`f32`]
-/// - `y`: [`VectorMut`] over [`f32`]
+/// * `x`: [VectorRef] over [f32]
+/// * `y`: [VectorMut] over [f32]
 ///
 /// Returns: 
 /// Nothing. `y.data` is ovewritten. 

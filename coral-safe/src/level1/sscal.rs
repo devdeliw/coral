@@ -1,4 +1,4 @@
-//! BLAS Level 1 [`?SCAL`](https://www.netlib.org/lapack//explore-html/d2/de8/group__scal.html)
+//! Level 1 [`?SCAL`](https://www.netlib.org/lapack//explore-html/d2/de8/group__scal.html)
 //! routine in single precision. 
 //!
 //! \\[ 
@@ -13,11 +13,11 @@ use std::simd::Simd;
 use crate::types::VectorMut; 
 
 
-/// Updates [`VectorMut`] `x` in place via `x *= alpha`
+/// Updates [VectorMut] `x` in place via `x *= alpha`
 ///
 /// Arguments: 
 /// * `alpha`: f32 - scalar multiplier for `x` 
-/// * `x`: [`VectorMut`] - struct over [f32]. 
+/// * `x`: [VectorMut] - struct over [f32]. 
 ///
 /// Returns: 
 /// Nothing. `x.data` is overwritten. 

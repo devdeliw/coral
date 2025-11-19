@@ -21,14 +21,8 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::{cblas_srot, cblas_srotm};
-use coral_safe::level1::{
-    srot as srot_safe, 
-    srotm as srotm_safe, 
-}; 
-use coral::level1::{
-    srot as srot_neon, 
-    srotm as srotm_neon,
-}; 
+use coral_safe::level1::srot as srot_safe; 
+use coral::level1::srot as srot_neon; 
 
 pub fn srot_contiguous(c: &mut Criterion) { 
     let n = 1000000;
@@ -119,7 +113,6 @@ pub fn srot_strided(c: &mut Criterion) {
 
     group.bench_function("srot_coral_safe", |b| { 
         b.iter(|| {
-            // unavoidable egligible creation time
             let xcoral = make_view_mut(&mut xsafe, n, incx); 
             let ycoral = make_view_mut(&mut ysafe, n, incy); 
 
