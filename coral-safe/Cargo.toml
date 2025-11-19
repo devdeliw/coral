@@ -41,6 +41,9 @@ rand = "0.8"
 features = ["default"]
 rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex-header.html"]
 
+[[bench]]
+name    = "fused_saxpyf"
+harness = false
 
 [[bench]] 
 name    = "level1_sasum"

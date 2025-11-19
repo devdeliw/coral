@@ -51,31 +51,38 @@ pub fn saxpyf (
         for row_idx in (0..n_rows).step_by(MR) { 
             let mr = (n_rows - row_idx).min(MR); 
 
-            // gets updated 
-            let y_panel = &mut ys[row_idx .. row_idx + mr]; 
+            // values in y to be updated
+            // re-used across all columns
+            let y_panel = &mut ys[row_idx .. row_idx + mr];
 
             // block over cols 
             for col_idx in (0..n_cols).step_by(NR) { 
                 let nr = (n_cols - col_idx).min(NR); 
+                
+                // values in x to be used as alpha scale
+                // indexed across nr columns 
+                let xs_panel = &xs[col_idx .. col_idx + nr]; 
+                
+                // safe "pointer" to first element in 
+                // mr x nr block
+                let a_panel = a.panel(row_idx, col_idx, mr, nr);
 
-                // each column in col block
-                for j in 0..nr { 
-                    let col = col_idx + j; 
-
-                    let alpha = xs[col]; 
+                // each column in mr x nr block
+                // avoids bounds checks with x
+                for (j, &alpha) in xs_panel.iter().enumerate() { 
                     if alpha == 0.0 { 
                         continue; 
-                    } 
+                    }
 
-                    let col_beg = a_offs + row_idx + col * lda; 
-                    let col_end = col_beg + mr; 
-                    let abuf = &a_data[col_beg .. col_end]; 
+                    // gets the jth column in the mr x nr view 
+                    // as an immutable slice
+                    let acolumn = a_panel.get_column_slice(j); 
 
                     // `expect` is used to balance BLAS 
                     // with rust idiomacy. 
                     //
                     // GEMV should not return a Result. 
-                    let avec = VectorRef::new(abuf, mr, 1, 0)
+                    let avec = VectorRef::new(acolumn, mr, 1, 0)
                         .expect("a column view is out of bounds"); 
                     let yvec = VectorMut::new(y_panel, mr, 1, 0)
                         .expect("y panel view is out of bounds"); 
