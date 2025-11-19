@@ -42,6 +42,29 @@ pub struct MatrixMut<'a, T> {
     offset      : usize
 }
 
+/// Immutable Matrix Panel "view" 
+/// Points to the first element in the view 
+/// with metadata to parse over the view only
+pub(crate) struct PanelRef<'a, T> { 
+    mat     : &'a MatrixRef<'a, T>, 
+    row_idx : usize, 
+    col_idx : usize, 
+    mr      : usize, 
+    nr      : usize, 
+}
+
+
+/// Mutable Matrix Panel "view"
+/// Points to the first element in the view 
+/// with metadata to parse over the view only
+pub(crate) struct PanelMut<'a, T> { 
+    mat     : &'a MatrixMut<'a, T>, 
+    row_idx : usize, 
+    col_idx : usize, 
+    mr      : usize, 
+    nr      : usize, 
+}
+
 
 impl<'a, T> VectorRef<'a, T> { 
     /// Constructor
@@ -167,7 +190,7 @@ impl<'a, T> VectorMut<'a, T> {
 }
 
 
-impl<'a, T> MatrixRef<'a, T> {
+impl<'a, T: Copy> MatrixRef<'a, T> {
     /// Constructor
     pub fn new ( 
         data    : &'a [T], 
@@ -231,10 +254,32 @@ impl<'a, T> MatrixRef<'a, T> {
             ]
         )
     }
+
+    /// Returns the value of `Self[row_idx, col_idx]` 
+    #[inline] pub(crate) fn at (&self, row_idx: usize, col_idx: usize) -> T { 
+        self.data[col_idx * self.lda + row_idx]
+    }
+
+    /// Returns an immutable panel struct 
+    #[inline] pub(crate) fn panel (
+        &'a self, 
+        row_idx: usize, 
+        col_idx: usize, 
+        mr: usize, 
+        nr: usize, 
+    ) -> PanelRef<'a, T> { 
+        PanelRef { 
+            mat: self, 
+            row_idx, 
+            col_idx, 
+            mr, 
+            nr
+        }
+    }
 }
 
 
-impl<'a, T> MatrixMut<'a, T> { 
+impl<'a, T: Copy> MatrixMut<'a, T> { 
     /// Constructor
     pub fn new ( 
         data    : &'a mut [T], 
@@ -311,7 +356,37 @@ impl<'a, T> MatrixMut<'a, T> {
             ]
         )
     }
+    /// Returns the value of `Self[row_idx, col_idx]` 
+    #[inline] pub(crate) fn at (&self, row_idx: usize, col_idx: usize) -> T { 
+        self.data[col_idx * self.lda + row_idx]
+    }
+
+    /// Returns an mutable panel struct 
+    #[inline] pub(crate) fn panel_mut (
+        &'a self, 
+        row_idx: usize, 
+        col_idx: usize, 
+        mr: usize, 
+        nr: usize, 
+    ) -> PanelMut<'a, T> { 
+        PanelMut { 
+            mat: self, 
+            row_idx, 
+            col_idx, 
+            mr, 
+            nr
+        }
+    }
 }
+
+impl<'a, T: Copy> PanelRef<'a, T> { 
+    pub(crate) fn at(&self, i: usize, j: usize) -> T { 
+        let row = self.row_idx + i; 
+        let col = self.col_idx + j; 
+        self.mat.at(row, col)
+    }
+}
+
 
 /// Used to assert two any Vector have the same 
 /// number of logical elements to access 
