@@ -1,3 +1,15 @@
+//! Level 1.5 (fused)
+//! [`SAXPY`](https://www.netlib.org/lapack/explore-html/d5/d4b/group__axpy_gabe0745849954ad2106e633fd2ebfc920.html)
+//! routine. Essentially an SGEMV with $\alpha$, $\beta = 1.0$.  
+//!
+//! \\[ 
+//! y \leftarrow y + A x
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala
+
+
 use std::simd::{Simd, StdFloat};
 
 use crate::types::{MatrixRef, VectorRef, VectorMut}; 
@@ -5,6 +17,7 @@ use crate::level1::saxpy::saxpy;
 
 const MR:    usize = 256; 
 const LANES: usize = 32; 
+
 
 #[inline(always)]
 fn saxpyf_contiguous(
@@ -136,7 +149,18 @@ fn saxpyf_contiguous(
         row_base += mr; 
     }
 }
+ 
 
+/// Performs a matrix-vector multiply with 
+/// no scaling constants. 
+/// 
+/// Arguments: 
+/// - `a`: [MatrixRef] - over [f32] 
+/// - `x`: [VectorRef] - over [f32] 
+/// - `y`: [VectorMut] - over [f32] 
+///
+/// Returns: 
+/// Nothing. `y.data` is overwritten. 
 #[inline]
 pub fn saxpyf(
     a: MatrixRef<'_, f32>, 
