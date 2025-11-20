@@ -79,3 +79,7 @@ harness = false
 name    = "level1_srotm"
 harness = false
 
+[[bench]]
+name    = "level2_sgemv"
+harness = false
+
