@@ -15,6 +15,7 @@ use crate::types::{MatrixRef, VectorRef, VectorMut};
 use crate::level1::saxpy::saxpy;
 
 const MR    : usize = 256; 
+const NR    : usize = 4; 
 const LANES : usize = 32; 
 
 
@@ -27,9 +28,6 @@ fn saxpyf_contiguous(
     lda: usize,
     y: &mut [f32],
 ) {
-    // number of columns fused
-    const COL_BLOCK: usize = 4;
-
     // MR x n_cols
     let mut row_base = 0;
     while row_base < n_rows {
@@ -42,9 +40,9 @@ fn saxpyf_contiguous(
         let n_chunks = ychunks.len(); 
 
         if n_chunks > 0 { 
-            // LANES x COL_BLOCK
+            // LANES x NR
             let mut col = 0; 
-            while col + COL_BLOCK <= n_cols { 
+            while col + NR <= n_cols { 
                 let x0 = x[col]; 
                 let x1 = x[col + 1]; 
                 let x2 = x[col + 2]; 
@@ -65,7 +63,7 @@ fn saxpyf_contiguous(
                     let (col2_chunks, _) = col2.as_chunks::<LANES>(); 
                     let (col3_chunks, _) = col3.as_chunks::<LANES>();
 
-                    // fused FMAs across COL_BLOCK rows at a time 
+                    // fused FMAs across NR rows at a time 
                     // overwrites first n_rows - n_rows % MR elements of y_panel 
                     for (chunk_idx, ychunk) in ychunks.iter_mut().enumerate() { 
                         let mut yv = Simd::<f32, LANES>::from_array(*ychunk);
@@ -94,7 +92,7 @@ fn saxpyf_contiguous(
                     }
                 }
 
-                col += COL_BLOCK; 
+                col += NR; 
             }
 
             // 3 leftover columns 

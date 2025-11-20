@@ -17,6 +17,7 @@ use crate::types::{MatrixRef, VectorRef, VectorMut};
 use crate::level1::sdot; 
 
 const MR    : usize = 256; 
+const NR    : usize = 4; 
 const LANES : usize = 32; 
 
 
@@ -29,9 +30,6 @@ fn sdotf_contiguous(
     lda: usize, 
     y: &mut [f32], 
 ) { 
-    // number of columns fused 
-    const COL_BLOCK: usize = 4;
-
     // MR x n_cols
     let mut row_base = 0; 
     while row_base < n_rows { 
@@ -45,9 +43,9 @@ fn sdotf_contiguous(
         let n_chunks = xchunks.len(); 
 
         if n_chunks > 0 { 
-            // LANES x COL_BLOCK 
+            // LANES x NR 
             let mut col = 0; 
-            while col + COL_BLOCK <= n_cols { 
+            while col + NR <= n_cols { 
 
                 let mut acc0 = Simd::<f32, LANES>::splat(0.0); 
                 let mut acc1 = Simd::<f32, LANES>::splat(0.0); 
@@ -65,7 +63,7 @@ fn sdotf_contiguous(
                 let (col2_chunks, _) = col2.as_chunks::<LANES>(); 
                 let (col3_chunks, _) = col3.as_chunks::<LANES>(); 
 
-                // fused FMAs across COL_BLOCK columns at a time 
+                // fused FMAs across NR columns at a time 
                 // overwrites the first n_rows - n_rows % MR elements of y
                 for (chunk_idx, xchunk) in xchunks.iter().enumerate() { 
                     let xv = Simd::<f32, LANES>::from_array(*xchunk);
@@ -104,7 +102,7 @@ fn sdotf_contiguous(
                 y[col + 2] += sum2; 
                 y[col + 3] += sum3; 
 
-                col += COL_BLOCK;
+                col += NR;
             }
 
             // leftover columns 

@@ -42,30 +42,6 @@ pub struct MatrixMut<'a, T> {
     offset      : usize
 }
 
-/// Immutable Matrix Panel "view" 
-/// Points to the first element in the view 
-/// with metadata to parse over the view only
-pub(crate) struct PanelRef<'a, T> { 
-    mat     : &'a MatrixRef<'a, T>, 
-    row_idx : usize, 
-    col_idx : usize, 
-    mr      : usize, 
-    nr      : usize, 
-}
-
-
-/// Mutable Matrix Panel "view"
-/// Points to the first element in the view 
-/// with metadata to parse over the view only
-pub(crate) struct PanelMut<'a, T> { 
-    mat     : &'a mut MatrixMut<'a, T>, 
-    row_idx : usize, 
-    col_idx : usize, 
-    mr      : usize, 
-    nr      : usize, 
-}
-
-
 impl<'a, T> VectorRef<'a, T> { 
     /// Constructor
     pub fn new ( 
@@ -121,17 +97,7 @@ impl<'a, T> VectorRef<'a, T> {
     #[inline] pub fn compare_n (&self, n: usize) -> bool { 
         self.n == n
     }
-
-    #[inline] pub(crate) fn get_values (&self, beg: usize, end: usize) -> &[T] { 
-        debug_assert!(end <= self.n, "last idx must be <= n"); 
-        debug_assert!(beg <= end, "start idx must be before end idx"); 
-
-        let data = self.as_slice(); 
-        
-        &data[beg .. end]
-    }
 }
-
 
 impl<'a, T> VectorMut<'a, T> {
     /// Constructor
@@ -196,27 +162,7 @@ impl<'a, T> VectorMut<'a, T> {
     #[inline] pub fn compare_n (&self, n: usize) -> bool { 
         self.n == n
     }
-
-    #[inline] pub(crate) fn get_values (&self, beg: usize, end: usize) -> &[T] { 
-        debug_assert!(end <= self.n, "last idx must be <= n"); 
-        debug_assert!(beg <= end, "start idx must be before end idx"); 
-
-        let data = self.as_slice(); 
-        
-        &data[beg .. end]
-    }
-
-    #[inline] pub(crate) fn get_values_mut (&mut self, beg: usize, end: usize) -> &mut [T] { 
-        debug_assert!(end <= self.n, "last idx must be <= n"); 
-        debug_assert!(beg <= end, "start idx must be before end idx"); 
-
-        let data = self.as_slice_mut(); 
-        
-        &mut data[beg .. end]
-    }
-
 }
-
 
 impl<'a, T: Copy> MatrixRef<'a, T> {
     /// Constructor
@@ -282,30 +228,7 @@ impl<'a, T: Copy> MatrixRef<'a, T> {
             ]
         )
     }
-
-    /// Returns the value of `Self[row_idx, col_idx]` 
-    #[inline] pub(crate) fn at (&self, row_idx: usize, col_idx: usize) -> T { 
-        self.data[col_idx * self.lda + row_idx]
-    }
-
-    /// Returns an immutable panel struct 
-    #[inline] pub(crate) fn panel (
-        &'a self, 
-        row_idx: usize, 
-        col_idx: usize, 
-        mr: usize, 
-        nr: usize, 
-    ) -> PanelRef<'a, T> { 
-        PanelRef { 
-            mat: self, 
-            row_idx, 
-            col_idx, 
-            mr, 
-            nr
-        }
-    }
 }
-
 
 impl<'a, T: Copy> MatrixMut<'a, T> { 
     /// Constructor
@@ -383,72 +306,6 @@ impl<'a, T: Copy> MatrixMut<'a, T> {
                 self.n_rows
             ]
         )
-    }
-    /// Returns the value of `Self[row_idx, col_idx]` 
-    #[inline] pub(crate) fn at (&self, row_idx: usize, col_idx: usize) -> T { 
-        self.data[col_idx * self.lda + row_idx]
-    }
-
-    /// Returns an mutable panel struct 
-    #[inline] pub(crate) fn panel_mut (
-        &'a mut self, 
-        row_idx: usize, 
-        col_idx: usize, 
-        mr: usize, 
-        nr: usize, 
-    ) -> PanelMut<'a, T> { 
-        PanelMut { 
-            mat: self, 
-            row_idx, 
-            col_idx, 
-            mr, 
-            nr
-        }
-    }
-}
-
-impl<'a, T: Copy> PanelRef<'a, T> { 
-    pub(crate) fn at(&self, i: usize, j: usize) -> T { 
-        let row = self.row_idx + i; 
-        let col = self.col_idx + j; 
-        self.mat.at(row, col)
-    }
-
-    pub(crate) fn get_column_slice(&self, j: usize) -> &[T] { 
-       debug_assert!(j <= self.nr, "col index must be < self.nr");  
-
-        let lda = self.mat.lda(); 
-        let off = self.mat.offset(); 
-        let data = self.mat.as_slice(); 
-
-        let col = self.col_idx + j; 
-        let col_beg = off + self.row_idx + col * lda; 
-        let col_end = col_beg + self.mr; 
-
-        &data[col_beg .. col_end]
-    }
-}
-
-impl<'a, T: Copy> PanelMut<'a, T> { 
-    pub(crate) fn at(&self, i: usize, j: usize) -> T { 
-        let row = self.row_idx + i; 
-        let col = self.col_idx + j; 
-        
-        self.mat.at(row, col) 
-    }
-
-    pub(crate) fn get_column_slice(&mut self, j: usize) -> &mut [T] { 
-        debug_assert!(j <= self.nr, "col index must be < self.nr");
-
-        let lda = self.mat.lda(); 
-        let off = self.mat.offset(); 
-        let data = self.mat.as_slice_mut(); 
-
-        let col = self.col_idx + j; 
-        let col_beg = off + self.row_idx + col * lda; 
-        let col_end = col_beg + self.mr; 
-
-        &mut data[col_beg .. col_end]
     }
 }
 

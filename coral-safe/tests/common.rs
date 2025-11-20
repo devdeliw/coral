@@ -28,6 +28,7 @@ pub fn make_strided_vec (
     buf
 }
 
+#[allow(dead_code)]
 pub fn make_strided_mat ( 
     n_rows: usize, 
     n_cols: usize, 
