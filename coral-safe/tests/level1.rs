@@ -1,4 +1,4 @@
-#[path = "level1/common.rs"]
+#[path = "common.rs"]
 mod common;
 
 #[path = "level1/saxpy.rs" ]

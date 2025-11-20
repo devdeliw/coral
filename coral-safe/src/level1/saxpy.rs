@@ -53,7 +53,7 @@ pub fn saxpy (
 
             // no fma
             let out  = a * xvec + yvec; 
-
+            
             *yc = out.to_array();
         }
 

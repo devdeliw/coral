@@ -11,15 +11,14 @@
 
 
 use std::simd::{Simd, StdFloat};
-
 use crate::types::{MatrixRef, VectorRef, VectorMut}; 
 use crate::level1::saxpy::saxpy;
 
-const MR:    usize = 256; 
-const LANES: usize = 32; 
+const MR    : usize = 256; 
+const LANES : usize = 32; 
 
 
-#[inline(always)]
+#[inline]
 fn saxpyf_contiguous(
     n_rows: usize,
     n_cols: usize,
@@ -56,7 +55,7 @@ fn saxpyf_contiguous(
                 let x2v = Simd::<f32, LANES>::splat(x2); 
                 let x3v = Simd::<f32, LANES>::splat(x3); 
                 if x0 != 0.0 || x1 != 0.0 || x2 != 0.0 || x3 != 0.0 { 
-                    let col0 = &a[(col) * lda + row_base .. (col) * lda + row_base + mr];
+                    let col0 = &a[col * lda + row_base .. col * lda + row_base + mr];
                     let col1 = &a[(col + 1) * lda + row_base .. (col + 1) * lda + row_base + mr];
                     let col2 = &a[(col + 2) * lda + row_base .. (col + 2) * lda + row_base + mr];
                     let col3 = &a[(col + 3) * lda + row_base .. (col + 3) * lda + row_base + mr];
@@ -155,14 +154,14 @@ fn saxpyf_contiguous(
 /// no scaling constants. 
 /// 
 /// Arguments: 
-/// - `a`: [MatrixRef] - over [f32] 
-/// - `x`: [VectorRef] - over [f32] 
-/// - `y`: [VectorMut] - over [f32] 
+/// * `a`: [MatrixRef] - over [f32] 
+/// * `x`: [VectorRef] - over [f32] 
+/// * `y`: [VectorMut] - over [f32] 
 ///
 /// Returns: 
 /// Nothing. `y.data` is overwritten. 
 #[inline]
-pub fn saxpyf(
+pub fn saxpyf (
     a: MatrixRef<'_, f32>, 
     x: VectorRef<'_, f32>, 
     mut y: VectorMut<'_, f32>, 
@@ -185,11 +184,12 @@ pub fn saxpyf(
     // slow path 
     let incx = x.stride(); 
     let incy = y.stride(); 
+    let aoff = a.offset(); 
 
     for col_idx in 0..n_cols {
         let alpha = x.as_slice()[col_idx * incx];
         if alpha != 0.0 {
-            let col_start = col_idx * lda;
+            let col_start = aoff + col_idx * lda;
             let col = &a.as_slice()[col_start .. col_start + n_rows];
 
             let avec = VectorRef::new(col, n_rows, 1, 0)

@@ -1,3 +1,5 @@
 pub mod saxpyf; 
+pub mod sdotf; 
 
-pub(crate) use saxpyf::saxpyf; 
+pub use saxpyf::saxpyf; 
+pub use sdotf::sdotf; 

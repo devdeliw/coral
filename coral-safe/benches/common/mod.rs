@@ -33,6 +33,9 @@ pub(crate) fn make_strided_mat (
     n_cols: usize, 
     lda: usize, 
 ) -> Vec<f32> {
+
+    debug_assert!(n_rows <= lda, "# rows must be <= lda"); 
+
     if lda == 0 || n_cols == 0 { 
         return vec![1.0; 1]; 
     }
