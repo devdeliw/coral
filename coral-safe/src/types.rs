@@ -1,4 +1,14 @@
-use crate::errors::BufferError; 
+use crate::errors::BufferError;
+
+pub enum CoralTranspose { 
+    NoTrans, 
+    Trans 
+}
+
+pub enum CoralTriangular { 
+    Upper, 
+    Lower
+}
 
 
 /// Immutable Vector Type

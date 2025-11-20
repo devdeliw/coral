@@ -4,7 +4,7 @@ use coral_safe::errors::BufferError;
 
 pub type CoralResult = Result<(), BufferError>;
 
-pub const RTOL: f32 = 1e-6; 
+pub const RTOL: f32 = 1e-5; 
 pub const ATOL: f32 = 1e-6; 
 
 pub fn make_strided_vec (

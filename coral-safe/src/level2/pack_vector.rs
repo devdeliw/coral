@@ -20,19 +20,10 @@ pub(crate) fn pack_vector_f32 (
 
     check_len_f32(n, y); 
 
-    if incx == 1 { 
-        let xs_it = x.iter().take(n); 
-        let ys_it = y.iter_mut().take(n); 
+    let xs_it = x.iter().step_by(incx).take(n); 
+    let ys_it = y.iter_mut().take(n); 
 
-        for (xv, yv) in xs_it.zip(ys_it) { 
-            *yv = *xv * alpha; 
-        }
-    } else { 
-        let xs_it = x.iter().step_by(incx).take(n); 
-        let ys_it = y.iter_mut().take(n); 
-
-        for (xv, yv) in xs_it.zip(ys_it) { 
-            *yv = *xv * alpha; 
-        }
+    for (xv, yv) in xs_it.zip(ys_it) { 
+        *yv = *xv * alpha; 
     }
 }
