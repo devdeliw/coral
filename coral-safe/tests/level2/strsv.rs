@@ -15,7 +15,7 @@ use coral_safe::types::{CoralDiagonal, CoralTranspose, CoralTriangular, VectorMu
 
 #[test] 
 fn upper_nonunit_n() -> CoralResult { 
-    let n = 50; 
+    let n = 1024; 
     let incx = 1; 
     let lda = n; 
 
@@ -55,7 +55,7 @@ fn upper_nonunit_n() -> CoralResult {
 
 #[test] 
 fn upper_nonunit_t() -> CoralResult { 
-    let n = 50; 
+    let n = 1024; 
     let incx = 1; 
     let lda = n; 
 
@@ -94,7 +94,7 @@ fn upper_nonunit_t() -> CoralResult {
 
 #[test] 
 fn upper_unit_n() -> CoralResult { 
-    let n = 50; 
+    let n = 1024; 
     let incx = 1; 
     let lda = n; 
 
@@ -133,7 +133,7 @@ fn upper_unit_n() -> CoralResult {
 
 #[test] 
 fn upper_unit_t() -> CoralResult { 
-    let n = 50; 
+    let n = 1024; 
     let incx = 1; 
     let lda = n; 
 
@@ -172,7 +172,7 @@ fn upper_unit_t() -> CoralResult {
 
 #[test] 
 fn lower_nonunit_n() -> CoralResult { 
-    let n = 50; 
+    let n = 1024; 
     let incx = 1; 
     let lda = n; 
 
@@ -211,7 +211,7 @@ fn lower_nonunit_n() -> CoralResult {
 
 #[test] 
 fn lower_nonunit_t() -> CoralResult { 
-    let n = 50; 
+    let n = 1024; 
     let incx = 1; 
     let lda = n; 
 
@@ -250,7 +250,7 @@ fn lower_nonunit_t() -> CoralResult {
 
 #[test] 
 fn lower_unit_n() -> CoralResult { 
-    let n = 50; 
+    let n = 1024; 
     let incx = 1; 
     let lda = n; 
 
@@ -289,7 +289,7 @@ fn lower_unit_n() -> CoralResult {
 
 #[test] 
 fn lower_unit_t() -> CoralResult { 
-    let n = 50; 
+    let n = 1024; 
     let incx = 1; 
     let lda = n; 
 

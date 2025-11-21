@@ -73,15 +73,18 @@ pub fn make_triangular_mat(
 
     let mut rng = thread_rng();
 
-    let off_dist  = Uniform::new(-1.0, 1.0);
-    let diag_dist = Uniform::new(0.5, 1.5);
+    let diag_dist = Uniform::new(1.0, 2.0);
+
+    // keep well conditioned
+    let eps = 1e-3 / (n.max(1) as f32);
+    let off_dist = Uniform::new(-eps, eps);
 
     for j in 0..n {
         match uplo {
             CoralTriangular::Upper => {
-                for m in 0..=j {
-                    let idx = m + j * lda;
-                    if m == j {
+                for i in 0..=j {
+                    let idx = i + j * lda;
+                    if i == j {
                         buf[idx] = if unit {
                             1.0
                         } else {
@@ -93,9 +96,9 @@ pub fn make_triangular_mat(
                 }
             }
             CoralTriangular::Lower => {
-                for m in j..n {
-                    let idx = m + j * lda;
-                    if m == j {
+                for i in j..n {
+                    let idx = i + j * lda;
+                    if i == j {
                         buf[idx] = if unit {
                             1.0
                         } else {
