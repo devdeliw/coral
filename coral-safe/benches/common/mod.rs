@@ -5,6 +5,7 @@ use coral_safe::types::{VectorMut, VectorRef, MatrixMut, MatrixRef};
 /// Make a `Vec<f32>` buffer of length `len` 
 /// with stride `inc` with randomized elems
 #[inline]
+#[allow(dead_code)]
 pub(crate) fn make_strided_vec (
     len: usize, 
     inc: usize
@@ -28,6 +29,7 @@ pub(crate) fn make_strided_vec (
 
 
 #[inline] 
+#[allow(dead_code)]
 pub(crate) fn make_strided_mat (
     n_rows: usize,
     n_cols: usize, 
@@ -57,21 +59,25 @@ pub(crate) fn make_strided_mat (
 
 
 #[inline]
+#[allow(dead_code)]
 pub(crate) fn bytes(n: usize, alpha: usize) -> u64 { 
     (alpha * n * std::mem::size_of::<f32>()) as u64
 }
 
 #[inline] 
+#[allow(dead_code)]
 pub(crate) fn make_view_ref<'a>(x: &'a [f32], n: usize, incx: usize) -> VectorRef<'a, f32> { 
     VectorRef::new(x, n, incx, 0).expect("x view ref")
 }
 
 #[inline] 
+#[allow(dead_code)]
 pub(crate) fn make_view_mut<'a>(x: &'a mut [f32], n: usize, incx: usize) -> VectorMut<'a, f32> { 
     VectorMut::new(x, n, incx, 0).expect("x view ref")
 }
 
 #[inline] 
+#[allow(dead_code)]
 pub(crate) fn make_matview_ref<'a> (
     a: &'a [f32], 
     n_rows: usize,
@@ -82,6 +88,7 @@ pub(crate) fn make_matview_ref<'a> (
 }
 
 #[inline] 
+#[allow(dead_code)]
 pub(crate) fn make_matview_mut<'a> (
     a: &'a mut [f32], 
     n_rows: usize,

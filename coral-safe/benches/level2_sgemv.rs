@@ -33,11 +33,11 @@ pub fn sgemv_n_contiguous(c: &mut Criterion) {
     let alpha = 3.1415; 
     let beta  = 2.1828; 
 
-    let abuf = make_strided_mat(n, m, lda);
+    let abuf = make_strided_mat(m, n, lda);
     let xbuf = make_strided_vec(n, incx); 
     let mut ybuf = make_strided_vec(m, incy); 
 
-    let acoral = make_matview_ref(&abuf, n, m, lda);
+    let acoral = make_matview_ref(&abuf, m, n, lda);
     let xcoral = make_view_ref(&xbuf, n, incx); 
 
     let mut group = c.benchmark_group("sgemv_n_contiguous"); 
@@ -99,11 +99,11 @@ pub fn sgemv_t_contiguous(c: &mut Criterion) {
     let alpha = 3.1415; 
     let beta  = 2.1828; 
 
-    let abuf = make_strided_mat(n, m, lda);
+    let abuf = make_strided_mat(m, n, lda);
     let xbuf = make_strided_vec(n, incx); 
     let mut ybuf = make_strided_vec(m, incy); 
 
-    let acoral = make_matview_ref(&abuf, n, m, lda);
+    let acoral = make_matview_ref(&abuf, m, n, lda);
     let xcoral = make_view_ref(&xbuf, n, incx); 
 
     let mut group = c.benchmark_group("sgemv_t_contiguous"); 

@@ -3,3 +3,5 @@ mod common;
 
 #[path = "level2/sgemv.rs"] 
 mod sgemv; 
+#[path = "level2/sger.rs" ] 
+mod sger; 

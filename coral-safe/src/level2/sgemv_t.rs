@@ -20,6 +20,9 @@ pub(crate) fn sgemv_t (
     let n_cols = a.n_cols(); 
     let n_rows = a.n_rows(); 
 
+    debug_assert!(y.n() == n_cols, "logical length of y must equal n_cols"); 
+    debug_assert!(x.n() == n_rows, "logical length of x must equal n_rows"); 
+
     if n_cols == 0 || n_rows == 0 { 
         return; 
     } 
