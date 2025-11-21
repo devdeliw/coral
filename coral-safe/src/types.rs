@@ -1,15 +1,38 @@
 use crate::errors::BufferError;
 
+/// * [CoralTranspose::NoTrans] for no-transpose variants
+/// * [CoralTranspose::Trans] for transpose variants
+#[derive(Debug, Copy, Clone)]
 pub enum CoralTranspose { 
     NoTrans, 
     Trans 
 }
 
+/// * [CoralTriangular::Upper] for upper-triangular variants
+/// * [CoralTriangular::Lower] for lower-triangular variants
+#[derive(Debug, Copy, Clone)]
 pub enum CoralTriangular { 
     Upper, 
     Lower
 }
 
+/// * [CoralDiagonal::Unit] for unit diagonal variants
+/// * [CoralDiagonal::NonUnit] for non-unit diagonal variants
+#[derive(Debug, Copy, Clone)]
+pub enum CoralDiagonal { 
+    Unit, 
+    NonUnit, 
+}
+
+
+impl CoralDiagonal { 
+    pub fn is_unit ( &self ) -> bool { 
+        match self { 
+            CoralDiagonal::Unit    => true, 
+            CoralDiagonal::NonUnit => false, 
+        }
+    }
+}
 
 /// Immutable Vector Type
 #[derive(Debug, Copy, Clone)]
@@ -238,6 +261,12 @@ impl<'a, T: Copy> MatrixRef<'a, T> {
             ]
         )
     }
+
+    /// Checks whether `self.n_cols == self.n_rows` 
+    /// for square matrices 
+    #[inline] pub fn compare_m_n (&self) -> bool { 
+        self.n_rows == self.n_cols
+    }
 }
 
 impl<'a, T: Copy> MatrixMut<'a, T> { 
@@ -316,6 +345,12 @@ impl<'a, T: Copy> MatrixMut<'a, T> {
                 self.n_rows
             ]
         )
+    }
+
+    /// Checks whether `self.n_cols == self.n_rows` 
+    /// for square matrices 
+    #[inline] pub fn compare_m_n (&self) -> bool { 
+        self.n_rows == self.n_cols
     }
 }
 

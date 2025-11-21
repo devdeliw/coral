@@ -4,11 +4,6 @@ use crate::fused::{saxpyf, sdotf};
 const NB: usize = 8;
 
 
-#[inline]
-fn is_unit(diag: CoralDiagonal) -> bool {
-    matches!(diag, CoralDiagonal::Unit)
-}
-
 /// Solve NB x NB diagonal block for 
 /// upper-triangular no transpose A
 #[inline]
@@ -48,7 +43,7 @@ fn backward_block_contiguous(
 }
 
 /// Full backward substitution for upper-triangular
-/// no transpose A for generic incx.
+/// no transpose A for generic incx
 #[inline]
 fn backward_full(
     n: usize,
@@ -83,7 +78,7 @@ fn backward_full(
 }
 
 /// Solve NB x NB diagonal block for 
-/// lower-triangular transpose A
+/// upper-triangular transpose A
 #[inline]
 fn forward_block_contiguous(
     nb: usize,
@@ -121,7 +116,7 @@ fn forward_block_contiguous(
 }
 
 /// Full backward substitution for upper-triangular
-/// transpose A for generic incx.
+/// transpose A for generic incx
 #[inline]
 fn forward_full(
     n: usize,
@@ -320,11 +315,11 @@ pub(crate) fn strusv (
     a: MatrixRef<'_, f32>, 
     mut x: VectorMut<'_, f32>, 
 ) { 
-    let unit_diag = is_unit(diag); 
+    let unit_diag = diag.is_unit();  
     assert!(a.compare_m_n(), "n_cols must equal n_rows"); 
 
-    let n = a.n_rows(); 
-    let lda = a.lda();  
+    let n    = a.n_rows(); 
+    let lda  = a.lda();  
     let abuf = a.as_slice(); 
     let incx = x.stride();
     let xbuf = x.as_slice_mut(); 

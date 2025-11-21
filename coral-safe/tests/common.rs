@@ -1,6 +1,7 @@
 use rand::thread_rng;
-use rand::distributions::{Distribution, Standard}; 
+use rand::distributions::{Distribution, Standard, Uniform}; 
 use coral_safe::errors::BufferError;
+use coral_safe::types::{CoralTriangular, CoralDiagonal}; 
 
 pub type CoralResult = Result<(), BufferError>;
 
@@ -48,8 +49,63 @@ pub fn make_strided_mat (
     let dist = Standard; 
 
     for m in 0..n_rows { 
-        for j in 0..n_cols { 
-            buf[m + j * lda] = dist.sample(&mut rng); 
+        for n in 0..n_cols { 
+            buf[m + n * lda] = dist.sample(&mut rng); 
+        }
+    }
+
+    buf
+}
+
+#[allow(dead_code)]
+pub fn make_triangular_mat(
+    uplo: CoralTriangular,
+    diag: CoralDiagonal,
+    n: usize,
+    lda: usize,
+) -> Vec<f32> {
+    if n == 0 || lda == 0 {
+        return vec![1.0; 1];
+    }
+
+    let unit = diag.is_unit();
+    let mut buf = vec![0.0; lda * n];
+
+    let mut rng = thread_rng();
+
+    let off_dist  = Uniform::new(-1.0, 1.0);
+    let diag_dist = Uniform::new(0.5, 1.5);
+
+    for j in 0..n {
+        match uplo {
+            CoralTriangular::Upper => {
+                for m in 0..=j {
+                    let idx = m + j * lda;
+                    if m == j {
+                        buf[idx] = if unit {
+                            1.0
+                        } else {
+                            diag_dist.sample(&mut rng)
+                        };
+                    } else {
+                        buf[idx] = off_dist.sample(&mut rng);
+                    }
+                }
+            }
+            CoralTriangular::Lower => {
+                for m in j..n {
+                    let idx = m + j * lda;
+                    if m == j {
+                        buf[idx] = if unit {
+                            1.0
+                        } else {
+                            diag_dist.sample(&mut rng)
+                        };
+                    } else {
+                        buf[idx] = off_dist.sample(&mut rng);
+                    }
+                }
+            }
         }
     }
 
