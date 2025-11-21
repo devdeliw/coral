@@ -1,3 +1,14 @@
+//! Level 2 [`?GER`](https://www.netlib.org/lapack/explore-html/d8/d75/group__ger.html)
+//! routine in single precision. 
+//!
+//! \\[ 
+//! A \leftarrow A + \alpha x y^T
+//! \\]
+//!
+//! # Author 
+//! Deval Deliwala
+
+
 use std::simd::{Simd, StdFloat}; 
 use crate::types::{MatrixMut, VectorRef, VectorMut}; 
 use crate::level1::saxpy; 
@@ -194,6 +205,15 @@ fn sger_contiguous (
 }
 
 
+
+/// Performs a general rank-1 matrix update of the form 
+/// `A := A + alpha x y^T` 
+///
+/// Arguments: 
+/// * `alpha`: [f32] - scaling factor
+/// * `a`: [MatrixMut] - over [f32] 
+/// * `x`: [VectorRef] - over [f32] 
+/// * `y`: [VectorRef] - over [f32] 
 #[inline]
 pub fn sger(
     alpha: f32,
