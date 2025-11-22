@@ -1,7 +1,8 @@
 use crate::types::{CoralDiagonal, CoralTranspose, MatrixRef, VectorRef, VectorMut};
 use crate::fused::{saxpyf, sdotf};
 
-const NB: usize = 8;
+const NB_TRANS: usize = 64;
+const NB_NOTRANS: usize = 8;
 
 
 /// Solve NB x NB diagonal block for
@@ -93,16 +94,13 @@ fn backward_block_contiguous(
 
     debug_assert!(diag_idx + nb <= n);
 
-    // local li = 0..nb-1 ↔ global row/col i = diag_idx + li
     for li in (0..nb).rev() {
         let i = diag_idx + li;
         let mut sum = 0.0;
 
-        // sum over k in block with k > i:
-        // (L^T)[i, k] = L[k, i]
         for lk in (li + 1)..nb {
             let k  = diag_idx + lk;
-            let a_ki = a[k + i * lda]; // L[k, i]
+            let a_ki = a[k + i * lda]; 
             let xk   = x[k];
             sum += a_ki * xk;
         }
@@ -135,7 +133,6 @@ fn backward_full(
     for i in (0..n).rev() {
         let mut sum = 0.0;
 
-        // (L^T)[i, k] = L[k, i], k > i
         for k in (i + 1)..n {
             let a_ki = a[k + i * lda];
             let xk   = x[k * step];
@@ -173,10 +170,11 @@ fn update_tail_notrans(
 
     let x_block = &x[diag_idx .. diag_idx + nb];
 
-    let mut x_block_neg = [0.0f32; NB];
+    let mut x_block_neg = [0.0; NB_NOTRANS];
     x_block_neg[..nb].copy_from_slice(&x_block[..nb]);
-    for k in 0..nb {
-        x_block_neg[k] = -x_block_neg[k];
+
+    for xval in x_block_neg.iter_mut().take(nb) { 
+        *xval = -*xval; 
     }
 
     let y_tail = &mut x[next_idx .. next_idx + rows_below];
@@ -209,11 +207,12 @@ fn update_head_transpose(
 
     let x_block = &x[diag_idx .. diag_idx + nb];
 
-    let mut x_block_neg = [0.0f32; NB];
+    let mut x_block_neg = [0.0; NB_TRANS];
     x_block_neg[..nb].copy_from_slice(&x_block[..nb]);
-    for k in 0..nb {
-        x_block_neg[k] = -x_block_neg[k];
-    }
+
+    for xval in x_block_neg.iter_mut().take(nb) { 
+        *xval = -*xval; 
+    }   
 
     let x_head = &mut x[..head_len];
 
@@ -241,7 +240,7 @@ fn strlsv_lower_notrans(
     if n == 0 { return; }
 
     if incx == 1 {
-        let nb      = NB;
+        let nb = NB_NOTRANS;
         let nb_tail = n % nb;
 
         if n >= nb {
@@ -282,7 +281,7 @@ fn strlsv_lower_trans(
     if n == 0 { return; }
 
     if incx == 1 {
-        let nb      = NB;
+        let nb = NB_TRANS;
         let nb_tail = n % nb;
 
         if n >= nb {

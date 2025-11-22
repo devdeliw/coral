@@ -1,10 +1,11 @@
 use crate::types::{CoralDiagonal, CoralTranspose, MatrixRef, VectorRef, VectorMut}; 
 use crate::fused::{saxpyf, sdotf}; 
 
-const NB: usize = 8;
+const NB_TRANS: usize = 64; 
+const NB_NOTRANS: usize = 8;
 
 
-/// Solve NB x NB diagonal block for 
+/// Solve `nb x nb` diagonal block for 
 /// upper-triangular no transpose A
 #[inline]
 fn backward_block_contiguous(
@@ -16,7 +17,9 @@ fn backward_block_contiguous(
     diag_idx: usize, 
     x: &mut [f32],  
 ) {
-    if nb == 0 { return; }
+    if nb == 0 { 
+        return; 
+    }
 
     debug_assert!(diag_idx + nb <= n);
 
@@ -53,7 +56,9 @@ fn backward_full(
     x: &mut [f32],
     incx: usize,
 ) {
-    if n == 0 { return; }
+    if n == 0 {
+        return; 
+    }
 
     let step = incx;
     for i in (0..n).rev() {
@@ -77,7 +82,7 @@ fn backward_full(
     }
 }
 
-/// Solve NB x NB diagonal block for 
+/// Solve `nb x nb` diagonal block for 
 /// upper-triangular transpose A
 #[inline]
 fn forward_block_contiguous(
@@ -89,7 +94,9 @@ fn forward_block_contiguous(
     diag_idx: usize,
     x: &mut [f32],
 ) {
-    if nb == 0 { return; }
+    if nb == 0 { 
+        return; 
+    }
 
     debug_assert!(diag_idx + nb <= n);
 
@@ -126,7 +133,9 @@ fn forward_full(
     x: &mut [f32],
     incx: usize,
 ) {
-    if n == 0 { return; }
+    if n == 0 { 
+        return; 
+    }
 
     let step = incx;
     for i in 0..n {
@@ -169,10 +178,11 @@ fn update_head_notrans(
 
     let x_block = &x[diag_idx .. diag_idx + nb];
 
-    let mut x_block_neg = [0.0; NB];
+    let mut x_block_neg = [0.0; NB_NOTRANS];
     x_block_neg[..nb].copy_from_slice(&x_block[..nb]);
-    for k in 0..nb {
-        x_block_neg[k] = -x_block_neg[k];
+
+    for xval in x_block_neg.iter_mut().take(nb) { 
+        *xval = -*xval; 
     }
 
     let y_head = &mut x[..diag_idx];
@@ -208,11 +218,12 @@ fn update_tail_transpose(
 
     let x_block = &x[diag_idx .. diag_idx + nb];
 
-    let mut x_block_neg = [0.0; NB];
+    let mut x_block_neg = [0.0; NB_TRANS];
     x_block_neg[..nb].copy_from_slice(&x_block[..nb]);
-    for k in 0..nb {
-        x_block_neg[k] = -x_block_neg[k];
-    }
+
+    for xval in x_block_neg.iter_mut().take(nb) { 
+        *xval = -*xval; 
+    }   
 
     let x_tail = &mut x[next_idx .. next_idx + rows_below];
 
@@ -239,7 +250,7 @@ fn strusv_upper_notrans(
     if n == 0 { return; }
 
     if incx == 1 {
-        let nb      = NB;
+        let nb = NB_NOTRANS;
         let nb_tail = n % nb;
 
         if n >= nb {
@@ -279,7 +290,7 @@ fn strusv_upper_trans(
     if n == 0 { return; }
 
     if incx == 1 {
-        let nb      = NB;
+        let nb = NB_TRANS;
         let nb_tail = n % nb;
 
         if n >= nb {
