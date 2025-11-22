@@ -22,7 +22,6 @@ use coral::enums::{
     CoralTranspose as NeonTranspose, 
     CoralTriangular as NeonTriangular, 
 };
-
 use coral_safe::level2::strsv as strsv_safe; 
 use coral_safe::types::{CoralTriangular, CoralTranspose, CoralDiagonal};
 
