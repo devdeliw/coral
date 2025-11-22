@@ -1,6 +1,8 @@
 use rand::thread_rng;
-use rand::distributions::{Distribution, Standard}; 
+use rand::distributions::{Distribution, Standard, Uniform}; 
 use coral_safe::types::{VectorMut, VectorRef, MatrixMut, MatrixRef};
+use coral_safe::types::{CoralTriangular, CoralDiagonal}; 
+
 
 /// Make a `Vec<f32>` buffer of length `len` 
 /// with stride `inc` with randomized elems
@@ -57,11 +59,75 @@ pub(crate) fn make_strided_mat (
     buf 
 }
 
+#[allow(dead_code)]
+pub fn make_triangular_mat(
+    uplo: CoralTriangular,
+    diag: CoralDiagonal,
+    n: usize,
+    lda: usize,
+) -> Vec<f32> {
+    if n == 0 || lda == 0 {
+        return vec![1.0; 1];
+    }
+
+    let unit = diag.is_unit();
+    let mut buf = vec![0.0; lda * n];
+
+    let mut rng = thread_rng();
+
+    let diag_dist = Uniform::new(1.0, 2.0);
+
+    // keep well conditioned
+    let eps = 1e-3 / (n.max(1) as f32);
+    let off_dist = Uniform::new(-eps, eps);
+
+    for j in 0..n {
+        match uplo {
+            CoralTriangular::Upper => {
+                for i in 0..=j {
+                    let idx = i + j * lda;
+                    if i == j {
+                        buf[idx] = if unit {
+                            1.0
+                        } else {
+                            diag_dist.sample(&mut rng)
+                        };
+                    } else {
+                        buf[idx] = off_dist.sample(&mut rng);
+                    }
+                }
+            }
+            CoralTriangular::Lower => {
+                for i in j..n {
+                    let idx = i + j * lda;
+                    if i == j {
+                        buf[idx] = if unit {
+                            1.0
+                        } else {
+                            diag_dist.sample(&mut rng)
+                        };
+                    } else {
+                        buf[idx] = off_dist.sample(&mut rng);
+                    }
+                }
+            }
+        }
+    }
+
+    buf
+}
+
 
 #[inline]
 #[allow(dead_code)]
 pub(crate) fn bytes(n: usize, alpha: usize) -> u64 { 
     (alpha * n * std::mem::size_of::<f32>()) as u64
+}
+
+#[inline]
+#[allow(dead_code)]
+pub(crate) fn bytes_decimal(n: f32, alpha: f32) -> u64 { 
+    (alpha * n * (std::mem::size_of::<f32>() as f32)) as u64
 }
 
 #[inline] 

@@ -85,4 +85,7 @@ harness = false
 [[bench]] 
 name    = "level2_sger"
 harness = false
+[[bench]]
+name    = "level2_strsv"
+harness = false 
 
