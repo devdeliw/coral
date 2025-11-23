@@ -16,13 +16,11 @@ use criterion::{
 }; 
 
 use blas_src as _; 
-use cblas_sys::{cblas_ssymv, CBLAS_UPLO, CBLAS_LAYOUT};
-use coral::level2::ssymv as ssymv_neon; 
-use coral::enums::CoralTriangular as CoralNeonTriangular; 
+use cblas_sys::{cblas_ssymv, CBLAS_LAYOUT, CBLAS_UPLO};
 use coral_safe::level2::ssymv as ssymv_safe; 
 use coral_safe::types::CoralTriangular;
 
-pub fn ssymv_upper(c: &mut Criterion) { 
+pub fn ssymv_upper_contiguous(c: &mut Criterion) { 
     let n = 1024; 
     let lda = n;
 
@@ -49,28 +47,11 @@ pub fn ssymv_upper(c: &mut Criterion) {
         }); 
     }); 
 
-    group.bench_function("ssymv_upper_coral_neon", |b| { 
-        b.iter(|| { 
-            ssymv_neon (
-                CoralNeonTriangular::UpperTriangular,
-                n, 
-                alpha, 
-                &abuf, 
-                lda, 
-                &xbuf, 
-                incx, 
-                beta, 
-                &mut ybuf, 
-                incy, 
-            ); 
-        }); 
-    });
-
     group.bench_function("ssymv_upper_cblas", |b| { 
         b.iter(|| unsafe { 
             cblas_ssymv (
                 CBLAS_LAYOUT::CblasColMajor,
-                CBLAS_UPLO::CblasUpper,  
+                CBLAS_UPLO::CblasUpper, 
                 n as i32, 
                 alpha, 
                 abuf.as_ptr(), 
@@ -85,7 +66,7 @@ pub fn ssymv_upper(c: &mut Criterion) {
     }); 
 }
 
-pub fn ssymv_lower(c: &mut Criterion) { 
+pub fn ssymv_lower_contiguous(c: &mut Criterion) { 
     let n = 1024; 
     let lda = n;
 
@@ -112,28 +93,11 @@ pub fn ssymv_lower(c: &mut Criterion) {
         }); 
     }); 
 
-    group.bench_function("ssymv_lower_coral_neon", |b| { 
-        b.iter(|| { 
-            ssymv_neon (
-                CoralNeonTriangular::LowerTriangular,
-                n, 
-                alpha, 
-                &abuf, 
-                lda, 
-                &xbuf, 
-                incx, 
-                beta, 
-                &mut ybuf, 
-                incy, 
-            ); 
-        }); 
-    });
-
-    group.bench_function("ssymv_upper_cblas", |b| { 
+    group.bench_function("ssymv_lower_cblas", |b| { 
         b.iter(|| unsafe { 
             cblas_ssymv (
                 CBLAS_LAYOUT::CblasColMajor,
-                CBLAS_UPLO::CblasLower,  
+                CBLAS_UPLO::CblasLower, 
                 n as i32, 
                 alpha, 
                 abuf.as_ptr(), 
@@ -148,5 +112,5 @@ pub fn ssymv_lower(c: &mut Criterion) {
     }); 
 }
 
-criterion_group!(benches, ssymv_upper, ssymv_lower);
-criterion_main!(benches);
+criterion_group!(benches, ssymv_upper_contiguous, ssymv_lower_contiguous); 
+criterion_main!(benches); 

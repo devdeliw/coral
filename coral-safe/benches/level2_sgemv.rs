@@ -16,13 +16,13 @@ use criterion::{
 }; 
 
 use blas_src as _; 
-use cblas_sys::{cblas_ssymv, CBLAS_TRANSPOSE, CBLAS_LAYOUT};
-use coral::level2::ssymv as ssymv_neon; 
+use cblas_sys::{cblas_sgemv, CBLAS_TRANSPOSE, CBLAS_LAYOUT};
+use coral::level2::sgemv as sgemv_neon; 
 use coral::enums::CoralTranspose as CoralNeonTranspose; 
-use coral_safe::level2::ssymv as ssymv_safe; 
+use coral_safe::level2::sgemv as sgemv_safe; 
 use coral_safe::types::CoralTranspose;
 
-pub fn ssymv_n_contiguous(c: &mut Criterion) { 
+pub fn sgemv_n_contiguous(c: &mut Criterion) { 
     let n = 1024; 
     let m = 1024; 
     let lda = m;
@@ -40,19 +40,19 @@ pub fn ssymv_n_contiguous(c: &mut Criterion) {
     let acoral = make_matview_ref(&abuf, m, n, lda);
     let xcoral = make_view_ref(&xbuf, n, incx); 
 
-    let mut group = c.benchmark_group("ssymv_n_contiguous"); 
+    let mut group = c.benchmark_group("sgemv_n_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n * m, 1))); 
 
-    group.bench_function("ssymv_n_coral_safe", |b| { 
+    group.bench_function("sgemv_n_coral_safe", |b| { 
         b.iter(|| { 
             let ycoral = make_view_mut(&mut ybuf, m, incy);   
-            ssymv_safe(CoralTranspose::NoTrans, alpha, beta, acoral, xcoral, ycoral); 
+            sgemv_safe(CoralTranspose::NoTrans, alpha, beta, acoral, xcoral, ycoral); 
         }); 
     }); 
 
-    group.bench_function("ssymv_n_coral_neon", |b| { 
+    group.bench_function("sgemv_n_coral_neon", |b| { 
         b.iter(|| { 
-            ssymv_neon (
+            sgemv_neon (
                 CoralNeonTranspose::NoTranspose,
                 m, 
                 n, 
@@ -68,9 +68,9 @@ pub fn ssymv_n_contiguous(c: &mut Criterion) {
         }); 
     });
 
-    group.bench_function("ssymv_n_cblas", |b| { 
+    group.bench_function("sgemv_n_cblas", |b| { 
         b.iter(|| unsafe { 
-            cblas_ssymv (
+            cblas_sgemv (
                 CBLAS_LAYOUT::CblasColMajor,
                 CBLAS_TRANSPOSE::CblasNoTrans, 
                 m as i32, 
@@ -88,7 +88,7 @@ pub fn ssymv_n_contiguous(c: &mut Criterion) {
     }); 
 }
 
-pub fn ssymv_t_contiguous(c: &mut Criterion) { 
+pub fn sgemv_t_contiguous(c: &mut Criterion) { 
     let n = 1024; 
     let m = 1024; 
     let lda = m;
@@ -106,19 +106,19 @@ pub fn ssymv_t_contiguous(c: &mut Criterion) {
     let acoral = make_matview_ref(&abuf, m, n, lda);
     let xcoral = make_view_ref(&xbuf, n, incx); 
 
-    let mut group = c.benchmark_group("ssymv_t_contiguous"); 
+    let mut group = c.benchmark_group("sgemv_t_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n * m, 1))); 
 
-    group.bench_function("ssymv_t_coral_safe", |b| { 
+    group.bench_function("sgemv_t_coral_safe", |b| { 
         b.iter(|| { 
             let ycoral = make_view_mut(&mut ybuf, m, incy);   
-            ssymv_safe(CoralTranspose::Trans, alpha, beta, acoral, xcoral, ycoral); 
+            sgemv_safe(CoralTranspose::Trans, alpha, beta, acoral, xcoral, ycoral); 
         }); 
     }); 
 
-    group.bench_function("ssymv_t_coral_neon", |b| { 
+    group.bench_function("sgemv_t_coral_neon", |b| { 
         b.iter(|| { 
-            ssymv_neon (
+            sgemv_neon (
                 CoralNeonTranspose::Transpose,
                 m, 
                 n, 
@@ -134,9 +134,9 @@ pub fn ssymv_t_contiguous(c: &mut Criterion) {
         }); 
     });
 
-    group.bench_function("ssymv_t_cblas", |b| { 
+    group.bench_function("sgemv_t_cblas", |b| { 
         b.iter(|| unsafe { 
-            cblas_ssymv (
+            cblas_sgemv (
                 CBLAS_LAYOUT::CblasColMajor,
                 CBLAS_TRANSPOSE::CblasTrans, 
                 m as i32, 
@@ -154,5 +154,5 @@ pub fn ssymv_t_contiguous(c: &mut Criterion) {
     }); 
 }
 
-criterion_group!(benches, ssymv_n_contiguous, ssymv_t_contiguous); 
+criterion_group!(benches, sgemv_n_contiguous, sgemv_t_contiguous); 
 criterion_main!(benches); 
