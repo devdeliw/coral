@@ -7,3 +7,5 @@ mod sgemv;
 mod sger; 
 #[path = "level2/strsv.rs"] 
 mod strsv; 
+#[path = "level2/strmv.rs"] 
+mod strmv;

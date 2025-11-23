@@ -8,7 +8,7 @@ const NB_NOTRANS: usize = 8;
 /// Solve `nb x nb` diagonal block for 
 /// upper-triangular no transpose A
 #[inline]
-fn backward_block_contiguous(
+fn backward_block_contiguous (
     nb: usize,
     unit_diag: bool,
     n: usize,
@@ -30,7 +30,7 @@ fn backward_block_contiguous(
         for lk in (li + 1)..nb {
             let j = diag_idx + lk;
             let a_ij = a[i + j * lda];
-            let xj   = x[j];
+            let xj = x[j];
             sum += a_ij * xj;
         }
 
@@ -48,7 +48,7 @@ fn backward_block_contiguous(
 /// Full backward substitution for upper-triangular
 /// no transpose A for generic incx
 #[inline]
-fn backward_full(
+fn backward_full (
     n: usize,
     unit_diag: bool,
     a: &[f32],
@@ -66,7 +66,7 @@ fn backward_full(
 
         for j in (i + 1)..n {
             let a_ij = a[i + j * lda];
-            let xj   = x[j * step];
+            let xj = x[j * step];
             sum += a_ij * xj;
         }
 
@@ -85,7 +85,7 @@ fn backward_full(
 /// Solve `nb x nb` diagonal block for 
 /// upper-triangular transpose A
 #[inline]
-fn forward_block_contiguous(
+fn forward_block_contiguous (
     nb: usize,
     unit_diag: bool,
     n: usize,
@@ -107,7 +107,7 @@ fn forward_block_contiguous(
         for lk in 0..li {
             let k  = diag_idx + lk;
             let a_ki = a[k + i * lda]; 
-            let xk   = x[k];
+            let xk = x[k];
             sum += a_ki * xk;
         }
 
@@ -125,7 +125,7 @@ fn forward_block_contiguous(
 /// Full backward substitution for upper-triangular
 /// transpose A for generic incx
 #[inline]
-fn forward_full(
+fn forward_full (
     n: usize,
     unit_diag: bool,
     a: &[f32],
@@ -143,7 +143,7 @@ fn forward_full(
 
         for k in 0..i {
             let a_ki = a[k + i * lda]; 
-            let xk   = x[k * step];
+            let xk = x[k * step];
             sum += a_ki * xk;
         }
 
@@ -161,7 +161,7 @@ fn forward_full(
 
 
 #[inline]
-fn update_head_notrans(
+fn update_head_notrans (
     diag_idx: usize,
     nb: usize,
     a: &[f32],
@@ -199,7 +199,7 @@ fn update_head_notrans(
 
 
 #[inline]
-fn update_tail_transpose(
+fn update_tail_trans (
     rows_below: usize,
     nb: usize,
     a: &[f32],
@@ -239,7 +239,7 @@ fn update_tail_transpose(
 
 
 #[inline]
-fn strusv_upper_notrans(
+fn notrans (
     n: usize,
     unit_diag: bool,
     a: &[f32],
@@ -279,7 +279,7 @@ fn strusv_upper_notrans(
 }
 
 #[inline]
-fn strusv_upper_trans(
+fn trans (
     n: usize,
     unit_diag: bool,
     a: &[f32],
@@ -302,7 +302,7 @@ fn strusv_upper_trans(
                 let next_idx = diag_idx + nb;
                 if next_idx < n {
                     let rows_below = n - next_idx;
-                    update_tail_transpose(rows_below, nb, a, lda, diag_idx, next_idx, x);
+                    update_tail_trans(rows_below, nb, a, lda, diag_idx, next_idx, x);
                 }
 
                 diag_idx += nb;
@@ -321,7 +321,7 @@ fn strusv_upper_trans(
 
 #[inline] 
 pub(crate) fn strusv ( 
-    trans: CoralTranspose, 
+    transpose: CoralTranspose, 
     diag: CoralDiagonal, 
     a: MatrixRef<'_, f32>, 
     mut x: VectorMut<'_, f32>, 
@@ -335,8 +335,8 @@ pub(crate) fn strusv (
     let incx = x.stride();
     let xbuf = x.as_slice_mut(); 
 
-    match trans { 
-        CoralTranspose::NoTrans => strusv_upper_notrans(n, unit_diag, abuf, lda, xbuf, incx), 
-        CoralTranspose::Trans   => strusv_upper_trans(n, unit_diag, abuf, lda, xbuf, incx), 
+    match transpose { 
+        CoralTranspose::NoTrans => notrans(n, unit_diag, abuf, lda, xbuf, incx), 
+        CoralTranspose::Trans   => trans(n, unit_diag, abuf, lda, xbuf, incx), 
     }   
 }

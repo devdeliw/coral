@@ -15,7 +15,7 @@ use crate::level2::{strusv, strlsv};
 use crate::types::{CoralDiagonal, CoralTranspose, CoralTriangular, MatrixRef, VectorMut}; 
 
 
-/// Performs a triangular solve, where `a` is either upper or lower triangular. 
+/// Performs a triangular solve. 
 ///
 /// Arguments: 
 /// * `uplo`: [CoralTriangular] - whether `a` upper or lower triangular 

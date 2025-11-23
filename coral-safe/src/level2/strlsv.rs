@@ -5,10 +5,10 @@ const NB_TRANS: usize = 64;
 const NB_NOTRANS: usize = 8;
 
 
-/// Solve NB x NB diagonal block for
+/// Solve `nb x nb` diagonal block for
 /// lower-triangular no transpose A
 #[inline]
-fn forward_block_contiguous(
+fn forward_block_contiguous (
     nb: usize,
     unit_diag: bool,
     n: usize,
@@ -28,7 +28,7 @@ fn forward_block_contiguous(
         for lk in 0..li {
             let j = diag_idx + lk;
             let a_ij = a[i + j * lda];
-            let xj   = x[j];
+            let xj = x[j];
             sum += a_ij * xj;
         }
 
@@ -46,7 +46,7 @@ fn forward_block_contiguous(
 /// Full forward substitution for lower-triangular 
 /// no transpose A for generic incx
 #[inline]
-fn forward_full(
+fn forward_full (
     n: usize,
     unit_diag: bool,
     a: &[f32],
@@ -62,7 +62,7 @@ fn forward_full(
 
         for j in 0..i {
             let a_ij = a[i + j * lda]; 
-            let xj   = x[j * step];
+            let xj = x[j * step];
             sum += a_ij * xj;
         }
 
@@ -78,10 +78,10 @@ fn forward_full(
     }
 }
 
-/// Solve NB x NB diagonal block for 
-/// lower-triangular transpoe A 
+/// Solve `nb x nb` diagonal block for 
+/// lower-triangular transpose A 
 #[inline]
-fn backward_block_contiguous(
+fn backward_block_contiguous (
     nb: usize,
     unit_diag: bool,
     n: usize,
@@ -101,7 +101,7 @@ fn backward_block_contiguous(
         for lk in (li + 1)..nb {
             let k  = diag_idx + lk;
             let a_ki = a[k + i * lda]; 
-            let xk   = x[k];
+            let xk = x[k];
             sum += a_ki * xk;
         }
 
@@ -116,10 +116,10 @@ fn backward_block_contiguous(
     }
 }
 
-/// Full backward substitution for lower-triangular 
-/// transpose A for generic incx 
+/// Full backward substitution for
+/// lower-triangular transpose A for generic incx 
 #[inline]
-fn backward_full(
+fn backward_full (
     n: usize,
     unit_diag: bool,
     a: &[f32],
@@ -135,7 +135,7 @@ fn backward_full(
 
         for k in (i + 1)..n {
             let a_ki = a[k + i * lda];
-            let xk   = x[k * step];
+            let xk = x[k * step];
             sum += a_ki * xk;
         }
 
@@ -153,7 +153,7 @@ fn backward_full(
 
 
 #[inline]
-fn update_tail_notrans(
+fn update_tail_notrans (
     rows_below: usize,
     nb: usize,
     a: &[f32],
@@ -166,7 +166,7 @@ fn update_tail_notrans(
 
     let a_panel_off = next_idx + diag_idx * lda;
     let a_panel_len = (nb - 1) * lda + rows_below;
-    let a_panel     = &a[a_panel_off .. a_panel_off + a_panel_len];
+    let a_panel = &a[a_panel_off .. a_panel_off + a_panel_len];
 
     let x_block = &x[diag_idx .. diag_idx + nb];
 
@@ -191,7 +191,7 @@ fn update_tail_notrans(
 
 
 #[inline]
-fn update_head_transpose(
+fn update_head_trans (
     head_len: usize,
     nb: usize,
     a: &[f32],
@@ -203,7 +203,7 @@ fn update_head_transpose(
 
     let a_view_off = diag_idx; 
     let a_view_len = (head_len - 1) * lda + nb;
-    let a_view     = &a[a_view_off .. a_view_off + a_view_len];
+    let a_view = &a[a_view_off .. a_view_off + a_view_len];
 
     let x_block = &x[diag_idx .. diag_idx + nb];
 
@@ -229,7 +229,7 @@ fn update_head_transpose(
 
 
 #[inline]
-fn strlsv_lower_notrans(
+fn notrans (
     n: usize,
     unit_diag: bool,
     a: &[f32],
@@ -270,7 +270,7 @@ fn strlsv_lower_notrans(
 
 
 #[inline]
-fn strlsv_lower_trans(
+fn trans (
     n: usize,
     unit_diag: bool,
     a: &[f32],
@@ -291,7 +291,7 @@ fn strlsv_lower_trans(
 
                 if diag_idx > 0 {
                     let head_len = diag_idx;
-                    update_head_transpose(head_len, nb, a, lda, diag_idx, x);
+                    update_head_trans(head_len, nb, a, lda, diag_idx, x);
                 }
 
                 if diag_idx >= nb {
@@ -312,8 +312,8 @@ fn strlsv_lower_trans(
 
 
 #[inline]
-pub(crate) fn strlsv(
-    trans: CoralTranspose,
+pub(crate) fn strlsv (
+    transpose: CoralTranspose,
     diag: CoralDiagonal,
     a: MatrixRef<'_, f32>,
     mut x: VectorMut<'_, f32>,
@@ -327,9 +327,9 @@ pub(crate) fn strlsv(
     let incx = x.stride();
     let xbuf = x.as_slice_mut();
 
-    match trans {
-        CoralTranspose::NoTrans => strlsv_lower_notrans(n, unit_diag, abuf, lda, xbuf, incx),
-        CoralTranspose::Trans   => strlsv_lower_trans(n, unit_diag, abuf, lda, xbuf, incx),
+    match transpose {
+        CoralTranspose::NoTrans => notrans(n, unit_diag, abuf, lda, xbuf, incx),
+        CoralTranspose::Trans   => trans(n, unit_diag, abuf, lda, xbuf, incx),
     }
 }
 

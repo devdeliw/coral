@@ -88,4 +88,6 @@ harness = false
 [[bench]]
 name    = "level2_strsv"
 harness = false 
-
+[[bench]] 
+name    = "level2_strmv"
+harness = false
