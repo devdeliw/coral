@@ -6,6 +6,7 @@ const NB_TRANS: usize = 8;
 
 
 /// Parses contiguous `nb x nb` diagonal block 
+/// for upper-triangular no transpose A
 #[inline]
 fn notrans_contiguous(
     nb: usize,
@@ -87,6 +88,8 @@ fn update_tail_notrans (
     saxpyf(abuf, xbuf, ybuf);
 }
 
+/// Full multiply for no transpose 
+/// upper-triangular A for generic incx
 #[inline]
 fn notrans_full (
     n: usize,
@@ -122,6 +125,8 @@ fn notrans_full (
     }
 }
 
+/// Parses contiguous `nb x nb` contiguous 
+/// block for upper-triangular transpose A 
 #[inline]
 fn trans_contiguous (
     nb: usize,
@@ -205,7 +210,8 @@ fn update_head_trans (
     sdotf(abuf, xbuf, ybuf);
 }
 
-
+/// Full multiply for transpose
+/// upper-triangular A for generic incx 
 #[inline]
 fn trans_full (
     n: usize,

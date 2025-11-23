@@ -4,6 +4,9 @@ use crate::fused::{saxpyf, sdotf};
 const NB_NOTRANS: usize = 32;
 const NB_TRANS:   usize = 8;
 
+
+/// Parses contiguouso `nb x nb` diagonal block 
+/// for lower-triangular no transpose A 
 #[inline]
 fn notrans_contiguous(
     nb: usize,
@@ -83,6 +86,9 @@ fn update_head_notrans(
     saxpyf(abuf, xbuf, ybuf);
 }
 
+
+/// Full multiply for no transpose
+/// lower-triangular A for generic incx 
 #[inline]
 fn notrans_full(
     n: usize,
@@ -120,6 +126,9 @@ fn notrans_full(
     }
 }
 
+
+/// Parses contiguous `nb x nb` diagonal block 
+/// for transpose lower-triangular A 
 #[inline]
 fn trans_contiguous(
     nb: usize,
@@ -204,6 +213,9 @@ fn update_tail_trans(
     sdotf(abuf, xbuf, ybuf);
 }
 
+
+/// Full multiply for transpose 
+/// lower-triangular A for generic incx 
 #[inline]
 fn trans_full(
     n: usize,
