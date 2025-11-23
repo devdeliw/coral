@@ -23,7 +23,10 @@ pub(crate) mod strumv;
 pub(crate) mod strlmv;
 pub use strmv::strmv; 
 pub(crate) use strumv::strumv; 
-pub(crate) use strlmv::strlmv; 
+pub(crate) use strlmv::strlmv;
+
+pub mod ssymv;
+pub use ssymv::ssymv; 
 
 
 

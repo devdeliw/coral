@@ -214,6 +214,9 @@ fn sger_contiguous (
 /// * `a`: [MatrixMut] - over [f32] 
 /// * `x`: [VectorRef] - over [f32] 
 /// * `y`: [VectorRef] - over [f32] 
+///
+/// Returns: 
+/// Nothing. `a.data` is updated in place. 
 #[inline]
 pub fn sger(
     alpha: f32,

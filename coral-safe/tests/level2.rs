@@ -9,3 +9,5 @@ mod sger;
 mod strsv; 
 #[path = "level2/strmv.rs"] 
 mod strmv;
+#[path = "level2/ssymv.rs"] 
+mod ssymv;

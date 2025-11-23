@@ -16,8 +16,8 @@ use coral_safe::types::{CoralDiagonal, CoralTranspose, CoralTriangular, VectorMu
 #[test] 
 fn upper_nonunit_n() -> CoralResult { 
     let n = 1024; 
-    let incx = 1; 
-    let lda = n; 
+    let incx = 3; 
+    let lda = n + 32; 
 
     let uplo = CoralTriangular::Upper; 
     let diag = CoralDiagonal::NonUnit;

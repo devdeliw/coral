@@ -23,6 +23,9 @@ use crate::types::{CoralDiagonal, CoralTranspose, CoralTriangular, MatrixRef, Ve
 /// * `diag`: [CoralDiagonal] - whether `a` has a unit-diagonal or not 
 /// * `a`: [MatrixRef] - over [f32] 
 /// * `x`: [VectorMut] - over [f32], input as `b`, output as solved `x` 
+///
+/// Returns: 
+/// Nothing. `x.data` is updated in place. 
 #[inline]
 pub fn strsv ( 
     uplo:  CoralTriangular,
