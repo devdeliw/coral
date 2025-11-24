@@ -3,7 +3,7 @@ use common::{
     make_view_ref, 
     make_view_mut, 
     make_matview_ref, 
-    bytes,
+    bytes_decimal,
     make_strided_vec, 
     make_strided_mat, 
 }; 
@@ -38,7 +38,7 @@ pub fn ssymv_upper_contiguous(c: &mut Criterion) {
     let xcoral = make_view_ref(&xbuf, n, incx); 
 
     let mut group = c.benchmark_group("ssymv_upper_contiguous"); 
-    group.throughput(Throughput::Bytes(bytes(n * n, 1))); 
+    group.throughput(Throughput::Bytes(bytes_decimal((n * n) as f32, 0.5)));
 
     group.bench_function("ssymv_upper_coral_safe", |b| { 
         b.iter(|| { 
@@ -84,7 +84,7 @@ pub fn ssymv_lower_contiguous(c: &mut Criterion) {
     let xcoral = make_view_ref(&xbuf, n, incx); 
 
     let mut group = c.benchmark_group("ssymv_lower_contiguous"); 
-    group.throughput(Throughput::Bytes(bytes(n * n, 1))); 
+    group.throughput(Throughput::Bytes(bytes_decimal((n * n) as f32, 0.5))); 
 
     group.bench_function("ssymv_lower_coral_safe", |b| { 
         b.iter(|| { 

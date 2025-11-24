@@ -1,9 +1,3 @@
-//! SAXPY updates the input `y` in place. The benchmarks below do 
-//! not reset `y` (clone) before a run. They all use the same `y` buffer, 
-//! but with new values. 
-//!
-//! This is not an issue though. Everything is [f32]; same amount of work. 
-
 mod common; 
 use common::{make_strided_vec, bytes, make_view_ref, make_view_mut}; 
 

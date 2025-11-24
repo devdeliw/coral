@@ -2,7 +2,7 @@ mod common;
 use common::{ 
     make_matview_mut, 
     make_view_ref, 
-    bytes_decimal, 
+    bytes, 
     make_strided_vec, 
     make_strided_mat, 
 };
@@ -41,7 +41,7 @@ pub fn ssyr2_upper_contiguous(c: &mut Criterion) {
     let yview = make_view_ref(&ybuf, n, incy); 
 
     let mut group = c.benchmark_group("ssyr2_upper_contiguous"); 
-    group.throughput(Throughput::Bytes(bytes_decimal((n * n) as f32, 0.5))); 
+    group.throughput(Throughput::Bytes(bytes(n * n, 1))); 
 
     group.bench_function("ssyr2_upper_coral_safe", |b| { 
         b.iter(|| { 
@@ -103,7 +103,7 @@ pub fn ssyr2_lower_contiguous(c: &mut Criterion) {
     let yview = make_view_ref(&ybuf, n, incy); 
 
     let mut group = c.benchmark_group("ssyr2_lower_contiguous"); 
-    group.throughput(Throughput::Bytes(bytes_decimal((n * n) as f32, 0.5))); 
+    group.throughput(Throughput::Bytes(bytes(n * n, 1)));
 
     group.bench_function("ssyr2_lower_coral_safe", |b| { 
         b.iter(|| { 

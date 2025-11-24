@@ -11,7 +11,6 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::cblas_sasum; 
-use coral_safe::types::VectorRef; 
 use coral_safe::level1::sasum as sasum_safe; 
 use coral::level1::sasum as sasum_neon;
 

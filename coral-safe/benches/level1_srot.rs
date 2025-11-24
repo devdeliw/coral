@@ -1,13 +1,3 @@
-//! `VectorMut` creation times are included 
-//! in the timed-part of the `safe` benchmark. 
-//! This is because the `VectorMut`s are <'a, T> 
-//! with `self.data<&'a mut [f32]>. Consequently 
-//! they can not be pre-allocated in a closure.
-//!
-//! This is almost negligible though. Additionally, 
-//! buffers aren't refreshed after each iteration. 
-//! However, everything is [f32]; same amount of work. 
-
 mod common; 
 use common::{make_strided_vec, bytes, make_view_mut}; 
 
@@ -20,7 +10,7 @@ use criterion::{
 };
 
 use blas_src as _; 
-use cblas_sys::{cblas_srot, cblas_srotm};
+use cblas_sys::cblas_srot;
 use coral_safe::level1::srot as srot_safe; 
 use coral::level1::srot as srot_neon; 
 

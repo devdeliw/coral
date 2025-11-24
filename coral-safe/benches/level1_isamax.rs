@@ -11,7 +11,6 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::cblas_isamax; 
-use coral_safe::types::VectorRef; 
 use coral_safe::level1::isamax as isamax_safe; 
 use coral::level1::isamax as isamax_neon;
 

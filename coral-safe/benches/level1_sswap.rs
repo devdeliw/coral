@@ -1,13 +1,3 @@
-//! `VectorMut` creation times are included 
-//! in the timed-part of the `safe` benchmark. 
-//! This is because the `VectorMut`s are <'a, T> 
-//! with `self.data<&'a mut [f32]>. Consequently 
-//! they can not be pre-allocated in a closure.
-//!
-//! This is almost negligible though. The `safe` 
-//! benchmark still outperforms over the `unsafe` NEON 
-//! implementation for contiguous buffers.  
-
 mod common; 
 use common::{make_strided_vec, bytes, make_view_mut}; 
 
