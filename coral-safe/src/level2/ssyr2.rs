@@ -1,3 +1,17 @@
+//! Level 2 [`?SYR2`](https://netlib.org/lapack/explore-html//dd/de5/group__her2_ga6741f2ac8fe025042fd994ccc6625b45.html)
+//! routine in single precision. 
+//!
+//!
+//! \\[ 
+//! A \leftarrow \alpha (x y^T + y x^T) + A. 
+//! \\]
+//!
+//! where $A$ symmetric $n \times n$ matrix. 
+//!
+//! # Author 
+//! Deval Deliwala
+
+
 use crate::level1::saxpy; 
 use crate::types::{MatrixMut, VectorRef, VectorMut, CoralTriangular}; 
 
@@ -79,7 +93,18 @@ fn lower (
 }
 
 
-
+/// Performs a symmetric rank 2 update. 
+/// `A += alpha (xy^T + yx^T)` 
+///
+/// Arguments: 
+/// `uplo`: [CoralTriangular] - indicates which triangle is referenced 
+/// `alpha`: [f32] - scalar for `alpha (xy^T + yx^T)`
+/// `a`: [MatrixMut] - over [f32], symmetric `n x n`
+/// `x`: [VectorRef] - over [f32] 
+/// `y`: [VectorRef] - over [f32]
+///
+/// Returns: 
+/// Nothing. `a.data` is updated in place. 
 #[inline] 
 pub fn ssyr2 ( 
     uplo: CoralTriangular, 
