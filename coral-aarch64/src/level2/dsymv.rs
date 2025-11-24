@@ -4,71 +4,11 @@
 //! y := \alpha A x + \beta y.
 //! \\]
 //!
-//! where $A$ is an $n \times n$ **symmetric** column-major matrix. Only the triangle
-//! indicated by `uplo` is referenced. $x$ is a vector of length $n$, and `y` is a
-//! vector of length $n$.
-//!
-//! This function implements the BLAS [`dsymv`] routine, optimized for
-//! AArch64 NEON architectures with blocking and panel packing. For off-diagonal work
-//! it fuses a column-wise `daxpyf` stream with column-dots so each $A$ element is read
-//! exactly once.
-//!
-//! # Arguments
-//! - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
-//! - `n`      (usize)           : Dimension of the matrix $A$.
-//! - `alpha`  (f64)             : Scalar multiplier applied to $A x$.
-//! - `matrix` (&[f64])          : Input slice containing the matrix $A$.
-//! - `lda`    (usize)           : Leading dimension of $A$.
-//! - `x`      (&[f64])          : Input vector of length $n$.
-//! - `incx`   (usize)           : Stride between consecutive elements of $x$.
-//! - `beta`   (f64)             : Scalar multiplier applied to $y$ prior to accumulation.
-//! - `y`      (&mut [f64])      : Input/output vector of length $n$.
-//! - `incy`   (usize)           : Stride between consecutive elements of $y$.
-//!
-//! # Returns
-//! - Nothing. The contents of $y$ are updated in place. 
-//!
-//! # Notes
-//! - If `n == 0`, the function returns immediately.
-//! - If `alpha == 0.0 && beta == 1.0`, the function returns immediately (no change).
-//! - A fast path is taken when `lda == n`, using an in-place triangular microkernel
-//!   that touches each stored `A` element once without packing.
-//! - Otherwise, a blocked algorithm iterates over row panels of height `MC` and
-//!   column panels of width `NC`. Off-diagonal panels are handled with a fused
-//!   `daxpyf`/`ddotf` kernel on packed rectangles that lie entirely within the stored
-//!   triangle; diagonal blocks are handled by a triangular microkernel.
+//! where $A$ is an $n \times n$ symmetric matrix, $x$ is a vector of length $n$,
+//! and `y` is a vector of length $n$.
 //!
 //! # Author
 //! Deval Deliwala
-//!
-//! # Example
-//! ```rust
-//! use coral_aarch64::level2::dsymv;
-//! use coral_aarch64::enums::CoralTriangular;
-//!
-//! fn main() {
-//!     let uplo  = CoralTriangular::UpperTriangular;
-//!
-//!     let n = 3;
-//!     let alpha = 2.0;
-//!
-//!     // symmetric
-//!     let a = vec![
-//!         1.0, 2.0, 3.0,   // col 0
-//!         2.0, 4.0, 5.0,   // col 1
-//!         3.0, 5.0, 6.0,   // col 2
-//!     ];
-//!
-//!     let lda   = n;
-//!     let x     = vec![1.0, 1.0, 1.0]; // length n
-//!     let incx  = 1;
-//!     let beta  = 0.0;
-//!     let mut y = vec![0.0, 0.0, 0.0]; // length n
-//!     let incy  = 1;
-//!
-//!     dsymv(uplo, n, alpha, &a, lda, &x, incx, beta, &mut y, incy);
-//! }
-//! ```
 
 
 use core::slice;
@@ -94,6 +34,52 @@ use crate::level2::{
 const MC: usize = 128;
 const NC: usize = 128;
 
+/// Symmetric matrix-vector multiply 
+///
+/// # Arguments
+/// - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
+/// - `n`      (usize)           : Dimension of the matrix $A$.
+/// - `alpha`  (f64)             : Scalar multiplier applied to $A x$.
+/// - `matrix` (&[f64])          : Input slice containing the matrix $A$.
+/// - `lda`    (usize)           : Leading dimension of $A$.
+/// - `x`      (&[f64])          : Input vector of length $n$.
+/// - `incx`   (usize)           : Stride between consecutive elements of $x$.
+/// - `beta`   (f64)             : Scalar multiplier applied to $y$ prior to accumulation.
+/// - `y`      (&mut [f64])      : Input/output vector of length $n$.
+/// - `incy`   (usize)           : Stride between consecutive elements of $y$.
+///
+/// # Returns
+/// - Nothing. The contents of $y$ are updated in place. 
+///
+///
+/// # Example
+/// ```rust
+/// use coral_aarch64::level2::dsymv;
+/// use coral_aarch64::enums::CoralTriangular;
+///
+/// fn main() {
+///     let uplo  = CoralTriangular::UpperTriangular;
+///
+///     let n = 3;
+///     let alpha = 2.0;
+///
+///     // symmetric
+///     let a = vec![
+///         1.0, 2.0, 3.0,   // col 0
+///         2.0, 4.0, 5.0,   // col 1
+///         3.0, 5.0, 6.0,   // col 2
+///     ];
+///
+///     let lda   = n;
+///     let x     = vec![1.0, 1.0, 1.0]; // length n
+///     let incx  = 1;
+///     let beta  = 0.0;
+///     let mut y = vec![0.0, 0.0, 0.0]; // length n
+///     let incy  = 1;
+///
+///     dsymv(uplo, n, alpha, &a, lda, &x, incx, beta, &mut y, incy);
+/// }
+/// ```
 #[inline]
 #[cfg(target_arch = "aarch64")]
 pub fn dsymv(

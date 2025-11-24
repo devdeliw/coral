@@ -1,35 +1,3 @@
-//! Performs a double precision triangular matrix–vector multiply (TRMV) with 
-//! a lower triangular matrix.
-//!
-//! This function implements the BLAS [`crate::level2::dtrmv`] routine for **lower triangular** matrices,
-//! computing the in-place product `x := op(A) * x`, where `op(A)` is either `A` or `A^T`.
-//!
-//! [`dtrlmv`] function is crate visible and is implemented via [`crate::level2::dtrmv`] routine. 
-//!
-//! # Arguments
-//! - `n`          (usize)           : Dimension of the square matrix `A`.
-//! - `diagonal`   (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
-//! - `transpose`  (CoralTranspose)  : Specifies whether to use `A` or `A^T`.
-//! - `matrix`     (&[f64])          : Input slice containing the lower triangular matrix `A`.
-//! - `lda`        (usize)           : Leading dimension  of `A`.
-//! - `x`          (&mut [f64])      : Input/output slice containing the vector `x`
-//!                                  | updated in place.
-//! - `incx`       (usize)           : Stride between consecutive elements of `x`.
-//!
-//! # Returns
-//! - Nothing. The contents of `x` are updated in place. 
-//!
-//! # Notes
-//! - The implementation uses block decomposition with a block size of `NB = 64`.
-//! - Fused level-1 routines ([`daxpyf`] and [`ddotf`]) are used for panel updates.
-//! - The kernel is optimized for AArch64 NEON targets and assumes column-major memory layout.
-//!
-//! # Visibility 
-//! - pub(crate)
-//!
-//! # Author
-//! Deval Deliwala
-
 use core::slice;
 use crate::enums::{CoralTranspose, CoralDiagonal};  
 
@@ -46,19 +14,6 @@ use crate::level2::matrix_ij::a_ij_immutable_f64;
 
 const NB: usize = 64; 
 
-/// Computes the product of a lower `buf_len x buf_len` diagonal block (no transpose)
-/// with a contiguous `x_block`, writing the result to `y_block`.
-///
-/// This handles the bottom-right square block `A[idx..idx+buf_len, idx..idx+buf_len]`
-/// during the `NoTranspose` traversal.
-///
-/// # Arguments
-/// - `buf_len`     (usize)      : Size of the block to process.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f64) : Pointer to the first element of the block.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*const f64) : Pointer to the input `x` subvector.
-/// - `y_block`     (*mut f64)   : Pointer to the output subvector (overwrites `x_block` contents).
 #[inline(always)]
 fn compute_lower_block_notranspose( 
     buf_len     : usize,
@@ -110,19 +65,6 @@ fn compute_lower_block_notranspose(
     }
 }
 
-/// Computes the product of a lower `buf_len x buf_len` diagonal block (transpose)
-/// with a contiguous `x_block`, writing the result to `y_block`.
-///
-/// This handles the bottom-right square block `A[idx..idx+buf_len, idx..idx+buf_len]`
-/// during the `Transpose` traversal.
-///
-/// # Arguments
-/// - `buf_len`     (usize)      : Size of the block to process.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f64) : Pointer to the first element of the block.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*const f64) : Pointer to the input `x` subvector.
-/// - `y_block`     (*mut f64)   : Pointer to the output subvector (overwrites `x_block` contents).
 #[inline(always)]
 fn compute_lower_block_transpose( 
     buf_len     : usize,
@@ -181,7 +123,7 @@ fn compute_lower_block_transpose(
     }
 }
 
-/// Scalar fallback kernel for a small lower triangular tail block (no transpose).
+/// Scalar fallback kernel for a small lower triangular tail block
 ///
 /// Used when fewer than `NB` rows remain, or for non-unit stride.
 #[inline(always)]
@@ -216,7 +158,7 @@ fn compute_lower_block_tail_notranspose(
     }
 }
 
-/// Scalar fallback kernel for a small lower triangular tail block (transpose).
+/// Scalar fallback kernel for a small lower triangular tail block 
 ///
 /// Used when fewer than `NB` rows remain, or for non-unit stride.
 #[inline(always)]

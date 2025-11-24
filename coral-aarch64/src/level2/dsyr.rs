@@ -6,48 +6,10 @@
 //! A := \alpha x x^{T} + A. 
 //! \\]
 //!
-//! where $A$ is an $n \times n$ **symmetric** column-major matrix and only the triangle
-//! indicated by `uplo` is referenced/updated. $x$ is a vector of length $n$.
-//!
-//! Internally, this uses a fast path for the unit-stride case (`incx == 1`)
-//! that applies a triangular [`daxpy`] into each column, and falls back to a general
-//! pointer-walk loop for arbitrary strides.
-//!
-//! # Arguments
-//! - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
-//! - `n`      (usize)           : Dimension of the matrix $A$.
-//! - `alpha`  (f64)             : Scalar multiplier applied to the outer product $x x^T$.
-//! - `x`      (&[f64])          : Input slice containing the vector $x$.
-//! - `incx`   (usize)           : Stride between consecutive elements of $x$.
-//! - `matrix` (&mut [f64])      : Input/output slice containing the matrix $A$.
-//! - `lda`    (usize)           : Leading dimension of $A$.
-//!
-//! # Returns
-//! - Nothing. The contents of `matrix` are updated in place within the specified triangle.
+//! where $A$ is an $n \times n$ symmetric matrix and $x$ is a vector of length $n$.
 //!
 //! # Author
 //! Deval Deliwala
-//! 
-//! # Example
-//! ```
-//! use coral_aarch64::level2::dsyr;
-//! use coral_aarch64::enums::CoralTriangular;
-//!
-//! fn main() {
-//!     let uplo  = CoralTriangular::LowerTriangular;
-//!     let n     = 2;
-//!     let alpha = 1.0;
-//!
-//!     let x     = vec![1.0, 2.0];
-//!     let incx  = 1;
-//!
-//!     let mut a = vec![0.0; n * n];
-//!     let lda   = n;
-//!
-//!     dsyr(uplo, n, alpha, &x, incx, &mut a, lda);
-//! }
-//! ```
-
 
 use crate::level1::daxpy::daxpy;
 
@@ -56,6 +18,41 @@ use crate::level1::assert_length_helpers::required_len_ok;
 use crate::level2::assert_length_helpers::required_len_ok_matrix;
 use crate::enums::CoralTriangular;
 
+
+/// Symmetric rank-1 update 
+///
+/// # Arguments
+/// - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
+/// - `n`      (usize)           : Dimension of the matrix $A$.
+/// - `alpha`  (f64)             : Scalar multiplier applied to the outer product $x x^T$.
+/// - `x`      (&[f64])          : Input slice containing the vector $x$.
+/// - `incx`   (usize)           : Stride between consecutive elements of $x$.
+/// - `matrix` (&mut [f64])      : Input/output slice containing the matrix $A$.
+/// - `lda`    (usize)           : Leading dimension of $A$.
+///
+/// # Returns
+/// - Nothing. The contents of `matrix` are updated in place within the specified triangle.
+///
+/// 
+/// # Example
+/// ```
+/// use coral_aarch64::level2::dsyr;
+/// use coral_aarch64::enums::CoralTriangular;
+///
+/// fn main() {
+///     let uplo  = CoralTriangular::LowerTriangular;
+///     let n = 2;
+///     let alpha = 1.0;
+///
+///     let x = vec![1.0, 2.0];
+///     let incx = 1;
+///
+///     let mut a = vec![0.0; n * n];
+///     let lda = n;
+///
+///     dsyr(uplo, n, alpha, &x, incx, &mut a, lda);
+/// }
+//. ```
 #[inline]
 #[cfg(target_arch = "aarch64")]
 pub fn dsyr(
