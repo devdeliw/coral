@@ -1,39 +1,3 @@
-//! Performs a double precision triangular solve (TRSV) with an upper triangular matrix.
-//!
-//! This function implements the BLAS [`crate::level2::dtrsv`] routine for **upper triangular** matrices,
-//! solving the system `op(A) * x = b` in place for `x`, where `op(A)` is either `A` or `A^T`.
-//!
-//! The [`dtrusv`] function is crate-visible and is implemented via 
-//! [`crate::level2::dtrsv`] using block back/forward substitution kernels.
-//!
-//! # Arguments
-//! - `n`          (usize)           : Order of the square matrix `A`.
-//! - `transpose`  (CoralTranspose)  : Specifies whether to use `A` or `A^T`.
-//! - `diagonal`   (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
-//! - `matrix`     (&[f64])          : Input slice containing the upper triangular matrix `A`.
-//! - `lda`        (usize)           : Leading dimension of `A`.
-//! - `x`          (&mut [f64])      : Input/output slice containing the right-hand side vector `x`,
-//!                                  | which is overwritten with the solution.
-//! - `incx`       (usize)           : Stride between consecutive elements of `x`.
-//!
-//! # Returns
-//! - Nothing. The contents of `x` are updated in place.
-//!
-//! # Notes
-//! - The implementation uses block decomposition with a block size of `NB`.
-//! - For the no-transpose case, diagonal blocks are solved using a **backward substitution** kernel,
-//!   and previously solved elements are propagated with a fused [`daxpyf`] update.
-//! - For the transpose case, diagonal blocks are solved using a **forward substitution** kernel,
-//!   and remaining elements are updated via fused [`ddotf`] dot-product panels.
-//! - The kernel is optimized for AArch64 NEON targets. 
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub(crate)
-//!
-//! # Author
-//! Deval Deliwala
-
 use core::slice; 
 use crate::enums::{CoralTranspose, CoralDiagonal}; 
 
@@ -46,18 +10,6 @@ use crate::level2::assert_length_helpers::required_len_ok_matrix;
 
 const NB: usize = 8; 
 
-/// Solves a small `nb x nb` upper triangular diagonal block using
-/// **backward substitution**; for no transpose only 
-///
-/// Used as the core kernel for the `NoTranspose` path.
-///
-/// # Arguments
-/// - `nb`          (usize)      : Size of the block to solve.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f64) : Pointer to the block `A[i.., i..]`.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*mut f64)   : Pointer to the subvector `x[i..]` to solve in place.
-/// - `incx`        (usize)      : Stride between consecutive elements of `x_block`.
 #[inline(always)] 
 fn backward_substitution( 
     nb          : usize, 
@@ -134,18 +86,6 @@ fn backward_substitution(
     }
 }  
 
-/// Solves a small `nb x nb` upper triangular diagonal block using 
-/// **forward substitution**; for transpose only 
-///
-/// Used as the core kernel for the `Transpose` path.
-///
-/// # Arguments
-/// - `nb`          (usize)      : Size of the block to solve.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f64) : Pointer to the block `A[i.., i..]`.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*mut f64)   : Pointer to the subvector `x[i..]` to solve in place.
-/// - `incx`        (usize)      : Stride between consecutive elements of `x_block`.
 #[inline(always)] 
 fn forward_substitution( 
     nb          : usize, 
@@ -197,10 +137,6 @@ fn forward_substitution(
     }
 } 
 
-/// Applies the contribution of a solved diagonal block to the remaining
-/// entries of `x` below it; for transpose only 
-///
-/// Implements `x_tail := x_tail - A_view^T * x_block` using a fused dot kernel.
 #[inline(always)] 
 fn update_tail_transpose( 
     rows_below  : usize, 
@@ -270,7 +206,7 @@ fn dtrusv_notranspose(
 
                     // only first nb values used; faster memory alloc 
                     // LLVM vectorizes 
-                    let mut x_block_neg = [0.0f64; NB];
+                    let mut x_block_neg = [0.0; NB];
                     for k in 0..nb { 
                        x_block_neg[k] = -(*x_block.add(k));  
                     }
