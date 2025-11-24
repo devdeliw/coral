@@ -1,42 +1,3 @@
-//! Performs a single precision complex triangular solve (TRSV) with a lower triangular matrix.
-//!
-//! This function implements the BLAS [`crate::level2::ctrsv`] routine for **lower triangular** matrices,
-//! solving the system 
-//!
-//! \\[ \operatorname{op}(L) x = b, \quad \operatorname{op}(L) \in \{L, L^{T}, L^{H}\}. \\]
-//!
-//!
-//! The [`ctrlsv`] function is crate-visible and is implemented via
-//! [`crate::level2::ctrsv`] using block forward/back substitution kernels.
-//!
-//! # Arguments
-//! - `n`          (usize)           : Order of the square matrix `L`.
-//! - `transpose`  (CoralTranspose)  : Specifies whether to use `L`, `L^T`, or `L^H`.
-//! - `diagonal`   (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
-//! - `matrix`     (&[f32])          : Input slice containing the interleaved lower triangular matrix `L`.
-//! - `lda`        (usize)           : Leading dimension of `L`.
-//! - `x`          (&mut [f32])      : Input/output slice containing the right-hand side vector `x`.
-//!                                  | updated in place.
-//! - `incx`       (usize)           : Stride between consecutive complex elements of `x`.
-//!
-//! # Returns
-//! - Nothing. The contents of `x` are updated in place.
-//!
-//! # Notes
-//! - The implementation uses block decomposition. 
-//! - For the no-transpose case, diagonal blocks are solved using a **forward substitution** kernel,
-//!   and remaining elements are updated with a fused [`caxpyf`] panel update.
-//! - For the transpose/conjugate-transpose case, diagonal blocks are solved using a **backward substitution** kernel,
-//!   and previously solved elements are propagated with a fused [`cdotuf`]/[`cdotcf`] update.
-//! - The kernel is optimized for AArch64 NEON targets 
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub(crate)
-//!
-//! # Author
-//! Deval Deliwala
-
 use core::slice;
 use crate::enums::{CoralTranspose, CoralDiagonal};
 
@@ -49,18 +10,6 @@ use crate::level2::assert_length_helpers::required_len_ok_matrix_cplx;
 
 const NB: usize = 8;
 
-/// Solves a small `nb x nb` lower triangular diagonal block using
-/// **forward substitution**; for no transpose only
-///
-/// Used as the core kernel for the `NoTranspose` path.
-///
-/// # Arguments
-/// - `nb`          (usize)      : Size of the block to solve.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f32) : Pointer to the block `A[i.., i..]` (interleaved).
-/// - `lda`         (usize)      : Leading dimension of the full matrix (in complex elements).
-/// - `x_block`     (*mut f32)   : Pointer to the subvector `x[i..]` (interleaved) to solve in place.
-/// - `incx`        (usize)      : Stride between consecutive complex elements of `x_block`.
 #[inline(always)]
 fn forward_substitution_c(
     nb:       usize,
@@ -150,19 +99,6 @@ fn forward_substitution_c(
     }
 }
 
-/// Solves a small `nb x nb` lower triangular diagonal block using
-/// **backward substitution**; for transpose only
-///
-/// Used as the core kernel for the `Transpose` path.
-///
-/// # Arguments
-/// - `nb`          (usize)      : Size of the block to solve.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `conj`        (bool)       : Whether to conjugate `L` (for conjugate-transpose).
-/// - `mat_block`   (*const f32) : Pointer to the block `A[i.., i..]` (interleaved).
-/// - `lda`         (usize)      : Leading dimension of the full matrix (in complex elements).
-/// - `x_block`     (*mut f32)   : Pointer to the subvector `x[i..]` (interleaved) to solve in place.
-/// - `incx`        (usize)      : Stride between consecutive complex elements of `x_block`.
 #[inline(always)]
 fn backward_substitution_c(
     nb:       usize,
@@ -261,10 +197,6 @@ fn backward_substitution_c(
     }
 }
 
-/// Applies the contribution of a solved diagonal block to the remaining
-/// entries of `x` below it; no transpose only
-///
-/// Implements `x_tail := x_tail - A_view * x_block` using a fused axpy kernel.
 #[inline(always)]
 fn update_tail_notranspose_c(
     rows_below: usize,
@@ -290,10 +222,6 @@ fn update_tail_notranspose_c(
     }
 }
 
-/// Applies the contribution of a solved diagonal block to the remaining
-/// entries of `x` above it; transpose only
-///
-/// Implements `x_head := x_head - A_left^T/H * x_block` using a fused dot kernel.
 #[inline(always)]
 fn update_head_transpose_c(
     head_len: usize,

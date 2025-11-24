@@ -1,42 +1,3 @@
-//! Performs a single precision complex triangular solve (TRSV) with an upper triangular matrix.
-//!
-//! This function implements the BLAS [`crate::level2::ctrsv`] routine for **upper triangular** matrices,
-//! solving the system 
-//!
-//! \\[ \operatorname{op}(U) x = b, \quad \operatorname{op}(U) \in \{U, U^{T}, U^{H}\}. \\]
-//!
-//!
-//! The [`ctrusv`] function is crate-visible and is implemented via 
-//! [`crate::level2::ctrsv`] using block back/forward substitution kernels.
-//!
-//! # Arguments
-//! - `n`          (usize)           : Order of the square matrix `A`.
-//! - `transpose`  (CoralTranspose)  : Specifies whether to use `A`, `A^T`, or `A^H`.
-//! - `diagonal`   (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
-//! - `matrix`     (&[f32])          : Input slice containing the interleaved upper triangular matrix `A`
-//! - `lda`        (usize)           : Leading dimension of `A`. 
-//! - `x`          (&mut [f32])      : Input/output slice containing the right-hand side vector `x`
-//!                                  | updated with solution. 
-//! - `incx`       (usize)           : Stride between consecutive complex elements of `x`.
-//!
-//! # Returns
-//! - Nothing. `x` is updated in place with the solution. 
-//!
-//! # Notes
-//! - The implementation uses block decomposition with a block size of `NB`.
-//! - For the no-transpose case, diagonal blocks are solved using a **backward substitution** kernel,
-//!   and previously solved elements are propagated with a fused [`caxpyf`] update.
-//! - For the transpose/conjugate-transpose case, diagonal blocks are solved using a **forward substitution** kernel,
-//!   and remaining elements are updated via fused [`cdotuf`]/[`cdotcf`] dot-product panels.
-//! - The kernel is optimized for AArch64 NEON targets 
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub(crate)
-//!
-//! # Author
-//! Deval Deliwala
-
 use core::slice; 
 use crate::enums::{CoralTranspose, CoralDiagonal}; 
 
@@ -46,18 +7,6 @@ use crate::level2::assert_length_helpers::required_len_ok_matrix_cplx;
 
 const NB: usize = 8; 
 
-/// Solves a small `nb x nb` upper triangular diagonal block using
-/// **backward substitution**; for no transpose only 
-///
-/// Used as the core kernel for the `NoTranspose` path.
-///
-/// # Arguments
-/// - `nb`          (usize)      : Size of the block to solve.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f32) : Pointer to the block `A[i.., i..]`.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*mut f32)   : Pointer to the subvector `x[i..]` to solve in place.
-/// - `incx`        (usize)      : Stride between consecutive complex elements of `x_block`.
 #[inline(always)] 
 fn backward_substitution_c( 
     nb          : usize, 
@@ -150,19 +99,6 @@ fn backward_substitution_c(
     }
 }  
 
-/// Solves a small `nb x nb` upper triangular diagonal block using 
-/// **forward substitution**; for transpose only 
-///
-/// Used as the core kernel for the `Transpose` path.
-///
-/// # Arguments
-/// - `nb`          (usize)      : Size of the block to solve.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `conj`        (bool)       : Whether to conjugate `A`.
-/// - `mat_block`   (*const f32) : Pointer to the block `A[i.., i..]`.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*mut f32)   : Pointer to the subvector `x[i..]` to solve in place.
-/// - `incx`        (usize)      : Stride between consecutive complex elements of `x_block`.
 #[inline(always)] 
 fn forward_substitution_c( 
     nb          : usize, 
@@ -257,10 +193,6 @@ fn forward_substitution_c(
     }
 } 
 
-/// Applies the contribution of a solved diagonal block to the remaining
-/// entries of `x` below it; for transpose only 
-///
-/// Implements `x_tail := x_tail - A_view^T/H * x_block` using a fused dot kernel.
 #[inline(always)] 
 fn update_tail_transpose_c( 
     rows_below  : usize, 

@@ -1,35 +1,3 @@
-//! Performs a single precision triangular matrix–vector multiply (TRMV) with 
-//! an upper triangular matrix.
-//!
-//! This function implements the BLAS [`crate::level2::strmv`] routine for **upper triangular** matrices,
-//! computing the in-place product `x := op(A) * x`, where `op(A)` is either `A` or `A^T`
-//!
-//! Function is crate visible and is implemented via [`crate::level2::strmv`] routine. 
-//!
-//! # Arguments
-//! - `n`          (usize)           : Order of the square matrix `A`.
-//! - `diagonal`   (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
-//! - `transpose`  (CoralTranspose)  : Specifies whether to use `A` or `A^T`.
-//! - `matrix`     (&[f32])          : Input slice containing the upper triangular matrix `A`.
-//! - `lda`        (usize)           : Leading dimension of `A`.
-//! - `x`          (&mut [f32])      : Input/output slice containing the vector `x`.
-//! - `incx`       (usize)           : Stride between consecutive elements of `x`.
-//!
-//! # Returns
-//! - Nothing. The contents of `x` are updated in place.
-//!
-//! # Notes
-//! - The implementation uses block decomposition with a block size of `NB = 64`.
-//! - Fused level-1 routines ([`saxpyf`] and [`sdotf`]) are used for panel updates.
-//! - The kernel is optimized for AArch64 NEON targets.
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility 
-//! - pub(crate)
-//!
-//! # Author
-//! Deval Deliwala
-
 use core::slice;
 use crate::enums::{CoralTranspose, CoralDiagonal};  
 
@@ -46,19 +14,6 @@ use crate::level2::matrix_ij::a_ij_immutable_f32;
 
 const NB: usize = 64; 
 
-/// Computes the product of an upper `buf_len x buf_len` diagonal block (no transpose)
-/// with a contiguous `x_block`, writing the result to `y_block`.
-///
-/// This handles the top-left square block `A[idx..idx+buf_len, idx..idx+buf_len]`
-/// during the `NoTranspose` traversal.
-///
-/// # Arguments
-/// - `buf_len`     (usize)      : Size of the block to process.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f32) : Pointer to the first element of the block.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*const f32) : Pointer to the input `x` subvector.
-/// - `y_block`     (*mut f32)   : Pointer to the output subvector (overwrites `x_block` contents).
 #[inline(always)]
 fn compute_upper_block_notranspose( 
     buf_len     : usize,
@@ -101,19 +56,6 @@ fn compute_upper_block_notranspose(
     }
 }
 
-/// Computes the product of an upper `buf_len x buf_len` diagonal block (transpose)
-/// with a contiguous `x_block`, writing the result to `y_block`.
-///
-/// This handles the top-left square block `A[idx..idx+buf_len, idx..idx+buf_len]`
-/// during the `Transpose` traversal.
-///
-/// # Arguments
-/// - `buf_len`     (usize)      : Size of the block to process.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f32) : Pointer to the first element of the block.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*const f32) : Pointer to the input `x` subvector.
-/// - `y_block`     (*mut f32)   : Pointer to the output subvector (overwrites `x_block` contents).
 #[inline(always)]
 fn compute_upper_block_transpose( 
     buf_len     : usize,
