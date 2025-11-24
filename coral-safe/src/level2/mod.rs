@@ -28,6 +28,12 @@ pub(crate) use strlmv::strlmv;
 pub mod ssymv;
 pub use ssymv::ssymv; 
 
+pub mod ssyr; 
+pub use ssyr::ssyr; 
+
+pub mod ssyr2; 
+pub use ssyr2::ssyr2; 
+
 
 
 

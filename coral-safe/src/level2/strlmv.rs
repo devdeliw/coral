@@ -343,7 +343,7 @@ pub(crate) fn strlmv(
     mut x: VectorMut<'_, f32>,
 ) {
     let unit_diag = diag.is_unit();
-    assert!(a.compare_m_n(), "n_cols must equal n_rows");
+    debug_assert!(a.compare_m_n(), "n_cols must equal n_rows");
 
     let n    = a.n_rows();
     let lda  = a.lda();

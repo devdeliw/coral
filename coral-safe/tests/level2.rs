@@ -11,3 +11,7 @@ mod strsv;
 mod strmv;
 #[path = "level2/ssymv.rs"] 
 mod ssymv;
+#[path = "level2/ssyr.rs" ] 
+mod ssyr; 
+#[path = "level2/ssyr2.rs"] 
+mod ssyr2; 

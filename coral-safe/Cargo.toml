@@ -94,3 +94,9 @@ harness = false
 [[bench]] 
 name    = "level2_ssymv"
 harness = false
+[[bench]] 
+name    = "level2_ssyr" 
+harness = false
+[[bench]] 
+name    = "level2_ssyr2"
+harness = false 

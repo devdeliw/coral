@@ -17,11 +17,11 @@ use std::simd::num::SimdFloat;
 use crate::level2::pack_vector::pack_vector_f32;
 use crate::types::{MatrixRef, VectorRef, VectorMut, CoralTriangular};
 
-const LANES: usize = 8;
+const LANES: usize = 16;
 
 
-#[inline(always)]
-fn upper_kernel(
+#[inline]
+fn upper_kernel (
     j: usize,
     temp1: f32,
     col: &[f32],
@@ -43,73 +43,26 @@ fn upper_kernel(
     debug_assert_eq!(a_chunks.len(), x_chunks.len());
     debug_assert_eq!(a_chunks.len(), y_chunks.len());
 
-    let mut acc0 = Simd::<f32, LANES>::splat(0.0);
-    let mut acc1 = Simd::<f32, LANES>::splat(0.0);
+    let mut acc = Simd::<f32, LANES>::splat(0.0);
     let alpha_simd = Simd::<f32, LANES>::splat(temp1);
 
-    let mut k = 0;
-    let n_chunks = a_chunks.len();
+    for ((achunk, xchunk), ychunk) in
+        a_chunks.iter().zip(x_chunks.iter()).zip(y_chunks.iter_mut())
+    {
+        let a = Simd::<f32, LANES>::from_array(*achunk);
+        let x = Simd::<f32, LANES>::from_array(*xchunk);
+        let mut y = Simd::<f32, LANES>::from_array(*ychunk);
 
-    while k + 1 < n_chunks {
-        // chunk k
-        {
-            let a_arr = a_chunks[k];
-            let x_arr = x_chunks[k];
-            let mut y_arr = y_chunks[k];
-
-            let a = Simd::<f32, LANES>::from_array(a_arr);
-            let x = Simd::<f32, LANES>::from_array(x_arr);
-            let mut y = Simd::<f32, LANES>::from_array(y_arr);
-
-            // y[i] += temp1 * a[i,j]
-            y = a.mul_add(alpha_simd, y);
-            y_arr = y.to_array();
-            y_chunks[k] = y_arr;
-
-            // temp2 += a[i,j] * x[i]
-            acc0 = a.mul_add(x, acc0);
-        }
-
-        // chunk k + 1
-        {
-            let a_arr = a_chunks[k + 1];
-            let x_arr = x_chunks[k + 1];
-            let mut y_arr = y_chunks[k + 1];
-
-            let a = Simd::<f32, LANES>::from_array(a_arr);
-            let x = Simd::<f32, LANES>::from_array(x_arr);
-            let mut y = Simd::<f32, LANES>::from_array(y_arr);
-
-            y = a.mul_add(alpha_simd, y);
-            y_arr = y.to_array();
-            y_chunks[k + 1] = y_arr;
-
-            acc1 = a.mul_add(x, acc1);
-        }
-
-        k += 2;
-    }
-
-    // leftover chunk
-    if k < n_chunks {
-        let a_arr = a_chunks[k];
-        let x_arr = x_chunks[k];
-        let mut y_arr = y_chunks[k];
-
-        let a = Simd::<f32, LANES>::from_array(a_arr);
-        let x = Simd::<f32, LANES>::from_array(x_arr);
-        let mut y = Simd::<f32, LANES>::from_array(y_arr);
-
+        // y[i] += temp1 * a[i,j]
         y = a.mul_add(alpha_simd, y);
-        y_arr = y.to_array();
-        y_chunks[k] = y_arr;
+        *ychunk = y.to_array();
 
-        acc0 = a.mul_add(x, acc0);
+        // temp2 += a[i,j] * x[i]
+        acc = a.mul_add(x, acc);
     }
 
-    let mut temp2 = (acc0 + acc1).reduce_sum();
+    let mut temp2 = acc.reduce_sum();
 
-    // tail
     for ((&aij, &xi), yi) in a_tail.iter().zip(x_tail.iter()).zip(y_tail.iter_mut()) {
         *yi += temp1 * aij;
         temp2 += aij * xi;
@@ -118,8 +71,8 @@ fn upper_kernel(
     temp2
 }
 
-#[inline(always)]
-fn lower_kernel(
+#[inline]
+fn lower_kernel (
     j: usize,
     n: usize,
     temp1: f32,
@@ -143,73 +96,26 @@ fn lower_kernel(
     debug_assert_eq!(a_chunks.len(), x_chunks.len());
     debug_assert_eq!(a_chunks.len(), y_chunks.len());
 
-    let mut acc0 = Simd::<f32, LANES>::splat(0.0);
-    let mut acc1 = Simd::<f32, LANES>::splat(0.0);
+    let mut acc = Simd::<f32, LANES>::splat(0.0);
     let alpha_simd = Simd::<f32, LANES>::splat(temp1);
 
-    let mut k = 0;
-    let n_chunks = a_chunks.len();
+    for ((achunk, xchunk), ychunk) in
+        a_chunks.iter().zip(x_chunks.iter()).zip(y_chunks.iter_mut())
+    {
+        let a = Simd::<f32, LANES>::from_array(*achunk);
+        let x = Simd::<f32, LANES>::from_array(*xchunk);
+        let mut y = Simd::<f32, LANES>::from_array(*ychunk);
 
-    while k + 1 < n_chunks {
-        // chunk k
-        {
-            let a_arr = a_chunks[k];
-            let x_arr = x_chunks[k];
-            let mut y_arr = y_chunks[k];
-
-            let a = Simd::<f32, LANES>::from_array(a_arr);
-            let x = Simd::<f32, LANES>::from_array(x_arr);
-            let mut y = Simd::<f32, LANES>::from_array(y_arr);
-
-            // y[i] += temp1 * a[i,j]
-            y = a.mul_add(alpha_simd, y);
-            y_arr = y.to_array();
-            y_chunks[k] = y_arr;
-
-            // temp2 += a[i,j] * x[i]
-            acc0 = a.mul_add(x, acc0);
-        }
-
-        // chunk k + 1
-        {
-            let a_arr = a_chunks[k + 1];
-            let x_arr = x_chunks[k + 1];
-            let mut y_arr = y_chunks[k + 1];
-
-            let a = Simd::<f32, LANES>::from_array(a_arr);
-            let x = Simd::<f32, LANES>::from_array(x_arr);
-            let mut y = Simd::<f32, LANES>::from_array(y_arr);
-
-            y = a.mul_add(alpha_simd, y);
-            y_arr = y.to_array();
-            y_chunks[k + 1] = y_arr;
-
-            acc1 = a.mul_add(x, acc1);
-        }
-
-        k += 2;
-    }
-
-    // leftover chunk
-    if k < n_chunks {
-        let a_arr = a_chunks[k];
-        let x_arr = x_chunks[k];
-        let mut y_arr = y_chunks[k];
-
-        let a = Simd::<f32, LANES>::from_array(a_arr);
-        let x = Simd::<f32, LANES>::from_array(x_arr);
-        let mut y = Simd::<f32, LANES>::from_array(y_arr);
-
+        // y[i] += temp1 * a[i,j]
         y = a.mul_add(alpha_simd, y);
-        y_arr = y.to_array();
-        y_chunks[k] = y_arr;
+        *ychunk = y.to_array();
 
-        acc0 = a.mul_add(x, acc0);
+        // temp2 += a[i,j] * x[i]
+        acc = a.mul_add(x, acc);
     }
 
-    let mut temp2 = (acc0 + acc1).reduce_sum();
+    let mut temp2 = acc.reduce_sum();
 
-    // tail
     for ((&aij, &xi), yi) in a_tail.iter().zip(x_tail.iter()).zip(y_tail.iter_mut()) {
         *yi += temp1 * aij;
         temp2 += aij * xi;
@@ -217,7 +123,6 @@ fn lower_kernel(
 
     temp2
 }
-
 
 #[inline]
 fn upper (
@@ -255,11 +160,7 @@ fn upper (
     let mut xbuf = Vec::new();
     let mut ybuf = Vec::new();
     pack_vector_f32(alpha, n, xdata, incx, &mut xbuf);
-    if beta == 0.0 {
-        ybuf.resize(n, 0.0);
-    } else {
-        pack_vector_f32(beta, n, ydata, incy, &mut ybuf);
-    }
+    pack_vector_f32(beta,  n, ydata, incy, &mut ybuf);
 
     let lda = a.lda();
     let aoff = a.offset();
@@ -329,11 +230,7 @@ fn lower (
     let mut xbuf = Vec::new();
     let mut ybuf = Vec::new();
     pack_vector_f32(alpha, n, xdata, incx, &mut xbuf);
-    if beta == 0.0 {
-        ybuf.resize(n, 0.0);
-    } else {
-        pack_vector_f32(beta, n, ydata, incy, &mut ybuf);
-    }
+    pack_vector_f32(beta,  n, ydata, incy, &mut ybuf);
 
     let lda = a.lda();
     let aoff = a.offset();
@@ -368,19 +265,6 @@ fn lower (
     }
 }
 
-
-/// Performs symmetric matrix-vector multiply. 
-///
-/// Arguments: 
-/// * `uplo`: [CoralTriangular] - indicates which triangle to use 
-/// * `alpha`: [f32] - scalar for `alpha * A x `
-/// * `beta`: [f32] - scalar for `beta y` 
-/// * `a`: [MatrixRef] - over [f32], symmetric `n x n` 
-/// * `x`: [VectorRef] - over [f32] 
-/// * `y`: [VectorMut] - over [f32]
-///
-/// Returns: 
-/// Nothing. `y.data` is updated in place. 
 #[inline]
 pub fn ssymv(
     uplo: CoralTriangular,
