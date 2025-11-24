@@ -8,6 +8,7 @@ pub type CoralResult = Result<(), BufferError>;
 pub const RTOL: f32 = 1e-5; 
 pub const ATOL: f32 = 1e-6; 
 
+#[allow(dead_code)]
 pub fn make_strided_vec (
     len: usize, 
     inc: usize

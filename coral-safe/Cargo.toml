@@ -1,13 +1,13 @@
 [package]
-name        = "coral-blas-safe"
-version     = "0.1.0"
+name        = "coral-blas"
+version     = "0.3.0"
 edition     = "2024"
 authors     = ["deval deliwala <devaldeliwala@berkeley.edu>"]
 
 license     = "MIT"
 description = "a pure-rust safe blas implementation"
 readme      = "README.md"
-repository  = "https://github.com/devdeliw/CORAL"
+repository  = "https://github.com/devdeliw/coral/tree/main/coral-safe"
 
 categories  = ["science", "mathematics", "algorithms"]
 keywords    = ["linear-algebra", "algebra", "matrix", "vector", "math"] 
@@ -99,4 +99,8 @@ name    = "level2_ssyr"
 harness = false
 [[bench]] 
 name    = "level2_ssyr2"
+harness = false
+
+[[bench]]
+name    = "level3_sgemm"
 harness = false 

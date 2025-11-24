@@ -6,4 +6,5 @@ pub(crate) mod sgemm_nn;
 pub(crate) mod sgemm_nt;
 pub(crate) mod sgemm_tn; 
 pub(crate) mod sgemm_tt; 
-pub mod sgemm; 
+pub mod sgemm;
+pub use sgemm::sgemm; 
