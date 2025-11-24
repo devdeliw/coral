@@ -56,11 +56,11 @@ fn pack_panel<T: Copy>(
 ///
 /// - `panel`       : Destination buffer; resized to `2 * n_rows * n_cols`.
 /// - `matrix`      : Source complex matrix. 
-/// - `n_rows`      : Number of *complex* rows in the panel.
+/// - `n_rows`      : Number of complex rows in the panel.
 /// - `col_idx`     : Starting column index in *complex* columns.
-/// - `n_cols`      : Number of *complex* columns in the panel.
-/// - `row_stride`  : Stride between consecutive *complex* elements within a column.
-/// - `col_stride`  : Stride between consecutive *complex* columns.
+/// - `n_cols`      : Number of complex columns in the panel.
+/// - `row_stride`  : Stride between consecutive complex elements within a column.
+/// - `col_stride`  : Stride between consecutive complex columns.
 #[inline(always)]
 fn pack_panel_cplx<T: Copy>(
     panel      : &mut Vec<T>,

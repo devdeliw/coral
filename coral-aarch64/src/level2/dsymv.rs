@@ -7,6 +7,8 @@
 //! where $A$ is an $n \times n$ symmetric matrix, $x$ is a vector of length $n$,
 //! and `y` is a vector of length $n$.
 //!
+//! This is **not** optimized
+//!
 //! # Author
 //! Deval Deliwala
 
@@ -34,7 +36,7 @@ use crate::level2::{
 const MC: usize = 128;
 const NC: usize = 128;
 
-/// Symmetric matrix-vector multiply 
+/// Symmetric matrix-vector multiply. This is not optimized and slow. 
 ///
 /// # Arguments
 /// - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.

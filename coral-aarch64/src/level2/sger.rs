@@ -9,52 +9,8 @@
 //! where $A$ is an `n_rows x n_cols` column-major matrix, $x$ is a vector of length `n_rows`,
 //! and $y$ is a vector of length `n_cols`.  
 //!
-//! Internally, this uses a fast path for the unit-stride case (`incx == 1` and `incy == 1`)
-//! that applies a scaled [`saxpy`] into each column, and falls back to a general pointer-walk
-//! loop with FMA for arbitrary strides.
-//!
-//! # Arguments
-//! - `n_rows` (usize)      : Number of rows ($m$) in the matrix $A$.
-//! - `n_cols` (usize)      : Number of columns ($n$) in the matrix $A$.
-//! - `alpha`  (f32)        : Scalar multiplier applied to the outer product $x y^T$.
-//! - `x`      (&[f32])     : Input slice containing the vector $x$.
-//! - `incx`   (usize)      : Stride between consecutive elements of $x$.
-//! - `y`      (&[f32])     : Input slice containing the vector $y$.
-//! - `incy`   (usize)      : Stride between consecutive elements of $y$.
-//! - `matrix` (&mut [f32]) : Input/output slice containing the matrix $A$.
-//! - `lda`    (usize)      : Leading dimension of $A$.
-//!
-//! # Returns
-//! - Nothing. The contents of `matrix` are updated in place. 
-//!
 //! # Author
 //! Deval Deliwala
-//!
-//! # Example
-//! ```rust
-//! use coral_aarch64::level2::sger;
-//!
-//! fn main() {
-//!     let m     = 2;
-//!     let n     = 3;
-//!
-//!     let alpha = 2.0;
-//!     let x     = vec![1.0, 2.0];      // length m
-//!     let incx  = 1;
-//!     let y     = vec![3.0, 4.0, 5.0]; // length n
-//!     let incy  = 1;
-//!
-//!     let mut a = vec![
-//!         1.0, 2.0,   // column 0
-//!         3.0, 4.0,   // column 1
-//!         5.0, 6.0,   // column 2
-//!     ];
-//!
-//!     let lda = m;
-//!
-//!     sger(m, n, alpha, &x, incx, &y, incy, &mut a, lda);
-//! }
-//! ```
 
 
 use crate::level1::saxpy::saxpy;
@@ -63,6 +19,47 @@ use crate::level1::saxpy::saxpy;
 use crate::level1::assert_length_helpers::required_len_ok; 
 use crate::level2::assert_length_helpers::required_len_ok_matrix; 
 
+/// General rank-1 matrix update. 
+///
+/// # Arguments
+/// - `n_rows` (usize)      : Number of rows ($m$) in the matrix $A$.
+/// - `n_cols` (usize)      : Number of columns ($n$) in the matrix $A$.
+/// - `alpha`  (f32)        : Scalar multiplier applied to the outer product $x y^T$.
+/// - `x`      (&[f32])     : Input slice containing the vector $x$.
+/// - `incx`   (usize)      : Stride between consecutive elements of $x$.
+/// - `y`      (&[f32])     : Input slice containing the vector $y$.
+/// - `incy`   (usize)      : Stride between consecutive elements of $y$.
+/// - `matrix` (&mut [f32]) : Input/output slice containing the matrix $A$.
+/// - `lda`    (usize)      : Leading dimension of $A$.
+///
+/// # Returns
+/// - Nothing. The contents of `matrix` are updated in place. 
+///
+/// # Example
+/// ```rust
+/// use coral_aarch64::level2::sger;
+///
+/// fn main() {
+///     let m = 2;
+///     let n = 3;
+///
+///     let alpha = 2.0;
+///     let x     = vec![1.0, 2.0];      // length m
+///     let incx  = 1;
+///     let y     = vec![3.0, 4.0, 5.0]; // length n
+///     let incy  = 1;
+///
+///     let mut a = vec![
+///        1.0, 2.0,   // column 0
+///        3.0, 4.0,   // column 1
+///         5.0, 6.0,   // column 2
+///     ];
+///
+///     let lda = m;
+///
+///     sger(m, n, alpha, &x, incx, &y, incy, &mut a, lda);
+/// }
+/// ```
 #[inline] 
 #[cfg(target_arch = "aarch64")]
 pub fn sger( 

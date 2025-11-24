@@ -4,56 +4,57 @@
 //! A := \alpha (x y^{T} + y x^{T}) + A. 
 //! \\]
 //!
-//! where $A$ is an $n \times n$ **symmetric** column-major matrix and only the triangle
-//! indicated by `uplo` is referenced/updated.
-//!
-//! # Arguments
-//! - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
-//! - `n`      (usize)           : Order of the matrix $A$.
-//! - `alpha`  (f32)             : Scalar multiplier applied to the outer product $x x^T$.
-//! - `x`      (&[f32])          : Input slice containing the vector $x$.
-//! - `incx`   (usize)           : Stride between consecutive elements of $x$.
-//! - `y`      (&[f32])          : Input slice containing the vector $y$.
-//! - `incy`   (usize)           : Stride between consecutive elements of $y$.
-//! - `matrix` (&mut [f32])      : Input/output slice containing the matrix $A$. 
-//! - `lda`    (usize)           : Leading dimension of $A$.
-//!
-//! # Returns
-//! - Nothing. The contents of `matrix` are updated in place
-//!   within the specified triangle.
+//! where $A$ is an $n \times n$ symmetric matrix.
 //!
 //! # Author
 //! Deval Deliwala
-//! 
-//! # Example
-//! ```rust
-//! use coral_aarch64::level2::ssyr2;
-//! use coral_aarch64::enums::CoralTriangular;
-//!
-//! fn main() {
-//!     let uplo  = CoralTriangular::UpperTriangular;
-//!
-//!     let n = 3;
-//!     let alpha = 0.5;
-//!
-//!     let x = vec![1.0, 2.0, 3.0];
-//!     let incx = 1;
-//!     let y = vec![2.0, -1.0, 0.5];
-//!     let incy = 1;
-//! 
-//!     // only upper triangle is referenced
-//!     let mut a = vec![0.0; n * n];
-//!     let lda = n;
-//!
-//!     ssyr2(uplo, n, alpha, &x, incx, &y, incy, &mut a, lda);
-//! }
-//! ```
 
 use crate::level1::saxpy::saxpy;
 use crate::level1::assert_length_helpers::required_len_ok;
 use crate::level2::assert_length_helpers::required_len_ok_matrix;
 use crate::enums::CoralTriangular;
 
+/// Symmetric rank-2 update 
+///
+/// # Arguments
+/// - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
+/// - `n`      (usize)           : Order of the matrix $A$.
+/// - `alpha`  (f32)             : Scalar multiplier applied to the outer product $x x^T$.
+/// - `x`      (&[f32])          : Input slice containing the vector $x$.
+/// - `incx`   (usize)           : Stride between consecutive elements of $x$.
+/// - `y`      (&[f32])          : Input slice containing the vector $y$.
+/// - `incy`   (usize)           : Stride between consecutive elements of $y$.
+/// - `matrix` (&mut [f32])      : Input/output slice containing the matrix $A$. 
+/// - `lda`    (usize)           : Leading dimension of $A$.
+///
+/// # Returns
+/// - Nothing. The contents of `matrix` are updated in place
+///   within the specified triangle.
+///
+/// 
+/// # Example
+/// ```rust
+/// use coral_aarch64::level2::ssyr2;
+/// use coral_aarch64::enums::CoralTriangular;
+///
+/// fn main() {
+///     let uplo = CoralTriangular::UpperTriangular;
+///
+///     let n = 3;
+///     let alpha = 0.5;
+///
+///     let x = vec![1.0, 2.0, 3.0];
+///     let incx = 1;
+///     let y = vec![2.0, -1.0, 0.5];
+///     let incy = 1;
+/// 
+///     // only upper triangle is referenced
+///     let mut a = vec![0.0; n * n];
+///     let lda = n;
+///
+///     ssyr2(uplo, n, alpha, &x, incx, &y, incy, &mut a, lda);
+/// }
+/// ```
 #[inline]
 #[cfg(target_arch = "aarch64")]
 pub fn ssyr2(
