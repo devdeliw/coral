@@ -21,7 +21,7 @@ use core::arch::aarch64::{
     float64x2x2_t
 };
 
-/// Adds a scaled column vector to a buffer in-place using NEON intrinsics.
+/// Adds a scaled column vector to a buffer in-place 
 ///
 /// Each element in `buffer` is updated as:
 /// `buffer[i] += column[i] * scale`
@@ -87,7 +87,7 @@ pub(crate) fn single_add_and_scale_f32(
     }
 }
 
-/// Adds a scaled column vector to a buffer in-place using NEON intrinsics.
+/// Adds a scaled column vector to a buffer in-place 
 ///
 /// Each element in `buffer` is updated as:
 /// `buffer[i] += column[i] * scale`
@@ -153,7 +153,7 @@ pub(crate) fn single_add_and_scale_f64(
     }
 }
 
-/// Adds a scaled complex column to a complex buffer in-place using NEON intrinsics.
+/// Adds a scaled complex column to a complex buffer in-place 
 ///
 /// For each complex element i:
 /// `buffer[i] += column[i] * (scale_re + i * scale_im)`
@@ -259,7 +259,7 @@ pub(crate) fn single_add_and_scale_c32(
 }
 
 
-/// Adds a scaled complex column to a complex buffer in-place using NEON intrinsics.
+/// Adds a scaled complex column to a complex buffer in-place 
 ///
 /// For each complex element i:
 /// `buffer[i] += column[i] * (scale_re + i * scale_im)`

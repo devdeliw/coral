@@ -7,47 +7,8 @@
 //! where $A$ is an `n_rows x n_cols` column-major matrix, $x$ is a vector of length
 //! `n_rows`, and $y$ is a vector of length `n_cols`.  
 //!
-//! Internally, this uses a fast path for the unit-stride case (`incx == 1` and `incy == 1`)
-//! that applies a scaled [`zaxpy`] into each column, and falls back to a general pointer-walk
-//! loop for arbitrary strides.
-//!
-//! # Arguments
-//! - `n_rows` (usize)      : Number of rows ($m$) in the matrix $A$.
-//! - `n_cols` (usize)      : Number of columns ($n$) in the matrix $A$.
-//! - `alpha`  ([f64; 2])   : Complex scalar multiplier applied to the outer product $x y^T$.
-//! - `x`      (&[f64])     : Input slice containing interleaved complex vector $x$ elements.
-//! - `incx`   (usize)      : Stride between consecutive complex elements of $x$.
-//! - `y`      (&[f64])     : Input slice containing interleaved complex vector $y$ elements.
-//! - `incy`   (usize)      : Stride between consecutive complex elements of $y$.
-//! - `matrix` (&mut [f64]) : Input slice containing interleaved complex matrix $A$.
-//! - `lda`    (usize)      : Leading dimension of $A$.
-//!
-//! # Returns
-//! - Nothing. The contents of `matrix` are updated in place.
-//!
 //! # Author
 //! Deval Deliwala
-//! 
-//! # Example
-//! ```rust
-//! use coral_aarch64::level2::zgeru;
-//!
-//! fn main() {
-//!     let m = 2;
-//!     let n = 2;
-//!
-//!     let alpha = [1.0, -0.5];
-//!     let x     = vec![1.0, 0.0, 2.0, 0.0]; // (1, 2)
-//!     let incx  = 1;
-//!     let y     = vec![0.0, 1.0, 1.0, 0.0]; // (i, 1)
-//!     let incy  = 1;
-//!
-//!     let mut a = vec![0.0; 2 * m * n];
-//!     let lda = m;
-//!
-//!     zgeru(m, n, alpha, &x, incx, &y, incy, &mut a, lda);
-//! }
-//! ```
 
 
 use crate::level1::zaxpy::zaxpy;
@@ -56,6 +17,42 @@ use crate::level1::zaxpy::zaxpy;
 use crate::level1::assert_length_helpers::required_len_ok_cplx; 
 use crate::level2::assert_length_helpers::required_len_ok_matrix_cplx; 
 
+/// Complex rank-1 matrix update. 
+/// 
+/// # Arguments
+/// - `n_rows` (usize)      : Number of rows ($m$) in the matrix $A$.
+/// - `n_cols` (usize)      : Number of columns ($n$) in the matrix $A$.
+/// - `alpha`  ([f64; 2])   : Complex scalar multiplier applied to the outer product $x y^T$.
+/// - `x`      (&[f64])     : Input slice containing interleaved complex vector $x$ elements.
+/// - `incx`   (usize)      : Stride between consecutive complex elements of $x$.
+/// - `y`      (&[f64])     : Input slice containing interleaved complex vector $y$ elements.
+/// - `incy`   (usize)      : Stride between consecutive complex elements of $y$.
+/// - `matrix` (&mut [f64]) : Input slice containing interleaved complex matrix $A$.
+/// - `lda`    (usize)      : Leading dimension of $A$.
+///
+/// # Returns
+/// - Nothing. The contents of `matrix` are updated in place.
+///
+/// # Example
+/// ```rust
+/// use coral_aarch64::level2::zgeru;
+///
+/// fn main() {
+///     let m = 2;
+///     let n = 2;
+///
+///     let alpha = [1.0, -0.5];
+///     let x     = vec![1.0, 0.0, 2.0, 0.0]; // (1, 2)
+///     let incx  = 1;
+///     let y     = vec![0.0, 1.0, 1.0, 0.0]; // (i, 1)
+///     let incy  = 1;
+///
+///     let mut a = vec![0.0; 2 * m * n];
+///     let lda = m;
+///
+///     zgeru(m, n, alpha, &x, incx, &y, incy, &mut a, lda);
+/// }
+/// ```
 #[inline] 
 #[cfg(target_arch = "aarch64")]
 pub fn zgeru( 

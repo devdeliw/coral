@@ -4,53 +4,8 @@
 //! A := \alpha (x y^{H}) + \operatorname{conj}(\alpha) (y x^{H}) + A. 
 //! \\]
 //!
-//! where $A$ is an $n \times n$ **Hermitian** interleaved column-major matrix, `[re, im, ...]`. 
-//! Only the triangle indicated by `uplo` is referenced/updated. $x$ and $y$ are complex vectors 
-//! of length $n$. 
-//!
-//! Internally, this uses a fast path for the unit-stride case (`incx == 1 && incy == 1`)
-//! that applies two triangular [`zaxpy`] streams per column, and falls back to a general
-//! call with arbitrary strides.
-//!
-//! # Arguments
-//! - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
-//! - `n`      (usize)           : Order of the matrix $A$.
-//! - `alpha`  (f64)             : Real scalar multiplier applied to the outer product $x x^H$.
-//! - `x`      (&[f64])          : Input slice containing the complex vector $x$.
-//! - `incx`   (usize)           : Stride between consecutive complex elements of $x$.
-//! - `y`      (&[f64])          : Input slice containing the complex vector $y$.
-//! - `incy`   (usize)           : Stride between consecutive complex elements of $y$.
-//! - `matrix` (&mut [f64])      : Input/output slice containing the matrix $A$.
-//! - `lda`    (usize)           : Leading dimension of $A$.
-//!
-//! # Returns
-//! - Nothing. The contents of `matrix` are updated in place within the specified triangle.
-//!
-//! # Author
-//! Deval Deliwala
-//! 
-//! # Example
-//! ```rust
-//! use coral_aarch64::level2::zher2;
-//! use coral_aarch64::enums::CoralTriangular;
-//!
-//! fn main() {
-//!     let uplo  = CoralTriangular::LowerTriangular;
-//!
-//!     let n = 2;
-//!     let alpha = [1.0, 0.5]; // complex alpha (re, im)
-//!
-//!     let x     = vec![1.0, -1.0,  0.0, 1.0];  // (1 - i, i)
-//!     let incx  = 1;
-//!     let y     = vec![0.5, 0.0,  1.0, 0.0];   // (0.5, 1)
-//!     let incy  = 1;
-//!
-//!     let mut a = vec![0.0; 2 * n * n];
-//!     let lda   = n;
-//!
-//!     zher2(uplo, n, alpha, &x, incx, &y, incy, &mut a, lda);
-//! }
-//! ```
+//! where $A$ is an $n \times n$ Hermitian interleaved complex matrix,
+//! $x$ and $y$ are complex vectors of length $n$. 
 
 
 use crate::level1::zaxpy::zaxpy;
@@ -58,6 +13,44 @@ use crate::level1::assert_length_helpers::required_len_ok_cplx;
 use crate::level2::assert_length_helpers::required_len_ok_matrix_cplx;
 use crate::enums::CoralTriangular;
 
+/// Hermitian rank-2 update 
+///
+/// # Arguments
+/// - `uplo`   (CoralTriangular) : Which triangle of $A$ is stored.
+/// - `n`      (usize)           : Order of the matrix $A$.
+/// - `alpha`  (f64)             : Real scalar multiplier applied to the outer product $x x^H$.
+/// - `x`      (&[f64])          : Input slice containing the complex vector $x$.
+/// - `incx`   (usize)           : Stride between consecutive complex elements of $x$.
+/// - `y`      (&[f64])          : Input slice containing the complex vector $y$.
+/// - `incy`   (usize)           : Stride between consecutive complex elements of $y$.
+/// - `matrix` (&mut [f64])      : Input/output slice containing the matrix $A$.
+/// - `lda`    (usize)           : Leading dimension of $A$.
+///
+/// # Returns
+/// - Nothing. The contents of `matrix` are updated in place within the specified triangle.
+///
+/// # Example
+/// ```rust
+/// use coral_aarch64::level2::zher2;
+/// use coral_aarch64::enums::CoralTriangular;
+///
+/// fn main() {
+///     let uplo  = CoralTriangular::LowerTriangular;
+///
+///     let n = 2;
+///     let alpha = [1.0, 0.5]; // complex alpha (re, im)
+///
+///     let x     = vec![1.0, -1.0,  0.0, 1.0];  // (1 - i, i)
+///     let incx  = 1;
+///     let y     = vec![0.5, 0.0,  1.0, 0.0];   // (0.5, 1)
+///     let incy  = 1;
+///
+///     let mut a = vec![0.0; 2 * n * n];
+///     let lda   = n;
+///
+///     zher2(uplo, n, alpha, &x, incx, &y, incy, &mut a, lda);
+/// }
+/// ```
 #[inline]
 #[cfg(target_arch = "aarch64")]
 pub fn zher2(

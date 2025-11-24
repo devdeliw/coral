@@ -1,38 +1,3 @@
-//! Performs a double precision complex triangular matrix–vector multiply (ZTRMV) with 
-//! an upper triangular matrix.
-//!
-//! This function implements the BLAS [`crate::level2::ztrmv`] routine for **upper triangular** matrices,
-//! computing the in-place product 
-//!
-//! \\[ x := \operatorname{op}(U) x, \quad \operatorname{op}(U) \in \{U, U^{T}, U^{H}\}. \\]
-//!
-//!
-//! Function is crate visible and is implemented via [`crate::level2::ztrmv`] routine. 
-//!
-//! # Arguments
-//! - `n`          (usize)           : Order of the square matrix `A`.
-//! - `diagonal`   (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
-//! - `transpose`  (CoralTranspose)  : Specifies whether to use `A`, `A^T`, or `A^H`.
-//! - `matrix`     (&[f64])          : Input slice of interleaved upper triangular complex matrix `A`.
-//! - `lda`        (usize)           : Leading dimension of `A`.
-//! - `x`          (&mut [f64])      : Input/output slice containing the complex vector `x`.
-//! - `incx`       (usize)           : Stride between consecutive complex elements of `x`.
-//!
-//! # Returns
-//! - Nothing. The contents of `x` are updated in place.
-//!
-//! # Notes
-//! - The implementation uses block decomposition. 
-//! - Fused level-1 routines ([`zaxpyf`], [`zdotcf`], and [`zdotuf`]) are used for panel updates.
-//! - The kernel is optimized for AArch64 NEON targets.
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility 
-//! - pub(crate)
-//!
-//! # Author
-//! Deval Deliwala
-
 use core::slice;
 use crate::enums::{CoralTranspose, CoralDiagonal};  
 
@@ -49,19 +14,6 @@ use crate::level2::matrix_ij::a_ij_immutable_c64;
 
 const NB: usize = 64; 
 
-/// Computes the product of an upper `buf_len x buf_len` diagonal block (no transpose)
-/// with a contiguous `x_block`, writing the result to `y_block`.
-///
-/// This handles the top-left square block `A[idx..idx+buf_len, idx..idx+buf_len]`
-/// during the `NoTranspose` traversal.
-///
-/// # Arguments
-/// - `buf_len`     (usize)      : Size of the block to process.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f64) : Pointer to the first element of the block.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*const f64) : Pointer to the input `x` subvector.
-/// - `y_block`     (*mut f64)   : Pointer to the output subvector; overwrites `x_block`.
 #[inline(always)]
 fn compute_upper_block_notranspose( 
     buf_len     : usize,
@@ -115,19 +67,6 @@ fn compute_upper_block_notranspose(
     }
 }
 
-/// Computes the product of an upper `buf_len x buf_len` diagonal block (transpose)
-/// with a contiguous `x_block`, writing the result to `y_block`.
-///
-/// This handles the top-left square block `A[idx..idx+buf_len, idx..idx+buf_len]`
-/// during the `Transpose` traversal.
-///
-/// # Arguments
-/// - `buf_len`     (usize)      : Size of the block to process.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f64) : Pointer to the first element of the block.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*const f64) : Pointer to the input `x` subvector.
-/// - `y_block`     (*mut f64)   : Pointer to the output subvector; overwrites `x_block`.
 #[inline(always)]
 fn compute_upper_block_transpose( 
     buf_len     : usize,
@@ -225,19 +164,6 @@ fn compute_upper_block_transpose(
     }
 }
 
-/// Computes the product of an upper `buf_len x buf_len` diagonal block (conjugate transpose)
-/// with a contiguous `x_block`, writing the result to `y_block`.
-///
-/// This handles the top-left square block `A[idx..idx+buf_len, idx..idx+buf_len]`
-/// during the `ConjugateTranspose` traversal.
-///
-/// # Arguments
-/// - `buf_len`     (usize)      : Size of the block to process.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f64) : Pointer to the first element of the block.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*const f64) : Pointer to the input `x` subvector.
-/// - `y_block`     (*mut f64)   : Pointer to the output subvector; overwrites `x_block`. 
 #[inline(always)]
 fn compute_upper_block_conjugatetranspose( 
     buf_len     : usize,
@@ -335,7 +261,7 @@ fn compute_upper_block_conjugatetranspose(
     }
 }
 
-/// Scalar fallback kernel for a small upper triangular tail block (no transpose).
+/// Scalar fallback kernel for a small upper triangular tail block 
 ///
 /// Used when fewer than `NB` rows remain, or for non-unit stride.
 #[inline(always)]
@@ -380,7 +306,7 @@ fn compute_upper_block_tail_notranspose(
     }
 }
 
-/// Scalar fallback kernel for a small upper triangular tail block (transpose).
+/// Scalar fallback kernel for a small upper triangular tail block 
 ///
 /// Used when fewer than `NB` rows remain, or for non-unit stride.
 #[inline(always)]
@@ -425,7 +351,7 @@ fn compute_upper_block_tail_transpose(
     }
 }
 
-/// Scalar fallback kernel for a small upper triangular tail block (conjugate transpose).
+/// Scalar fallback kernel for a small upper triangular tail block
 ///
 /// Used when fewer than `NB` rows remain, or for non-unit stride.
 #[inline(always)]

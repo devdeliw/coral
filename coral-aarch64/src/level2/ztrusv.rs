@@ -1,42 +1,3 @@
-//! Performs a double precision complex triangular solve (TRSV) with an upper triangular matrix.
-//!
-//! This function implements the BLAS [`crate::level2::ztrsv`] routine for **upper triangular** matrices,
-//! solving the system 
-//!
-//! \\[ \operatorname{op}(U) x = b, \quad \operatorname{op}(U) \in \{U, U^{T}, U^{H}\}. \\]
-//!
-//!
-//! The [`ztrusv`] function is crate-visible and is implemented via 
-//! [`crate::level2::ztrsv`] using block back/forward substitution kernels.
-//!
-//! # Arguments
-//! - `n`          (usize)           : Order of the square matrix `A`.
-//! - `transpose`  (CoralTranspose)  : Specifies whether to use `A`, `A^T`, or `A^H`.
-//! - `diagonal`   (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
-//! - `matrix`     (&[f64])          : Input slice containing the upper triangular matrix `A`
-//! - `lda`        (usize)           : Leading dimension of `A`. 
-//! - `x`          (&mut [f64])      : Input/output slice containing the right-hand side vector `x`
-//!                                  | updated with solution. 
-//! - `incx`       (usize)           : Stride between consecutive elements of `x`.
-//!
-//! # Returns
-//! - Nothing. `x` is updated in place with the solution. 
-//!
-//! # Notes
-//! - The implementation uses block decomposition with a block size of `NB`.
-//! - For the no-transpose case, diagonal blocks are solved using a **backward substitution** kernel,
-//!   and previously solved elements are propagated with a fused [`zaxpyf`] update.
-//! - For the transpose/conjugate-transpose case, diagonal blocks are solved using a **forward substitution** kernel,
-//!   and remaining elements are updated via fused [`zdotuf`]/[`zdotcf`] dot-product panels.
-//! - The kernel is optimized for AArch64 NEON targets 
-//! - Assumes column-major memory layout.
-//!
-//! # Visibility
-//! - pub(crate)
-//!
-//! # Author
-//! Deval Deliwala
-
 use core::slice; 
 use crate::enums::{CoralTranspose, CoralDiagonal}; 
 
@@ -46,18 +7,6 @@ use crate::level2::assert_length_helpers::required_len_ok_matrix_cplx;
 
 const NB: usize = 8; 
 
-/// Solves a small `nb x nb` upper triangular diagonal block using
-/// **backward substitution**; for no transpose only 
-///
-/// Used as the core kernel for the `NoTranspose` path.
-///
-/// # Arguments
-/// - `nb`          (usize)      : Size of the block to solve.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `mat_block`   (*const f64) : Pointer to the block `A[i.., i..]`.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*mut f64)   : Pointer to the subvector `x[i..]` to solve in place.
-/// - `incx`        (usize)      : Stride between consecutive elements of `x_block`.
 #[inline(always)] 
 fn backward_substitution_z( 
     nb          : usize, 
@@ -150,19 +99,6 @@ fn backward_substitution_z(
     }
 }  
 
-/// Solves a small `nb x nb` upper triangular diagonal block using 
-/// **forward substitution**; for transpose only 
-///
-/// Used as the core kernel for the `Transpose` path.
-///
-/// # Arguments
-/// - `nb`          (usize)      : Size of the block to solve.
-/// - `unit_diag`   (bool)       : Whether to assume implicit 1s on the diagonal.
-/// - `conj`        (bool)       : Whether to conjugate `A`.
-/// - `mat_block`   (*const f64) : Pointer to the block `A[i.., i..]`.
-/// - `lda`         (usize)      : Leading dimension of the full matrix.
-/// - `x_block`     (*mut f64)   : Pointer to the subvector `x[i..]` to solve in place.
-/// - `incx`        (usize)      : Stride between consecutive elements of `x_block`.
 #[inline(always)] 
 fn forward_substitution_z( 
     nb          : usize, 
@@ -178,8 +114,8 @@ fn forward_substitution_z(
     unsafe { 
         if incx == 1 {
             for i in 0..nb { 
-                let mut sum_re = 0.0f64;
-                let mut sum_im = 0.0f64;
+                let mut sum_re = 0.0;
+                let mut sum_im = 0.0;
 
                 for k in 0..i { 
                     let a_idx = 2 * (k + i * lda);
@@ -217,8 +153,8 @@ fn forward_substitution_z(
         } else {
             let step = incx;
             for i in 0..nb { 
-                let mut sum_re = 0.0f64;
-                let mut sum_im = 0.0f64;
+                let mut sum_re = 0.0;
+                let mut sum_im = 0.0;
 
                 for k in 0..i { 
                     let a_idx = 2 * (k + i * lda);
@@ -277,7 +213,7 @@ fn update_tail_transpose_z(
         let mat_view_len = 2 * ((rows_below - 1) * lda + nb); 
         let mat_view     = slice::from_raw_parts(base, mat_view_len); 
 
-        let mut x_block_neg = [0.0f64; 2 * NB]; 
+        let mut x_block_neg = [0.0; 2 * NB]; 
         core::ptr::copy_nonoverlapping(x_block, x_block_neg.as_mut_ptr(), 2 * nb);
         for k in 0..(2 * nb) { x_block_neg[k] = -x_block_neg[k]; }
 
@@ -326,7 +262,7 @@ fn ztrusv_notranspose(
                     let mat_panel_len = 2 * ((nb - 1) * lda + diag_idx); 
                     let mat_panel     = slice::from_raw_parts(mat_panel_ptr, mat_panel_len); 
 
-                    let mut x_block_neg = [0.0f64; 2 * NB];
+                    let mut x_block_neg = [0.0; 2 * NB];
                     core::ptr::copy_nonoverlapping(x_block, x_block_neg.as_mut_ptr(), 2 * nb);
                     for k in 0..(2 * nb) { x_block_neg[k] = -x_block_neg[k]; }
 
