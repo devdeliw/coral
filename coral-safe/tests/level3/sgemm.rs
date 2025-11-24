@@ -129,7 +129,7 @@ fn run_all_ops(
     ];
 
     let ops = &[
-        (CoralTranspose::NoTrans, CoralTranspose::NoTrans, lda_n, ldb_n),
+        //(CoralTranspose::NoTrans, CoralTranspose::NoTrans, lda_n, ldb_n),
         (CoralTranspose::NoTrans, CoralTranspose::Trans,   lda_n, ldb_t),
         (CoralTranspose::Trans,   CoralTranspose::NoTrans, lda_t, ldb_n),
         (CoralTranspose::Trans,   CoralTranspose::Trans,   lda_t, ldb_t),

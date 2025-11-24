@@ -25,8 +25,8 @@ pub(crate) fn macrokernel(
     debug_assert!(a_pack.len() >= a_buf_len(mc, kc));
     debug_assert!(b_pack.len() >= b_buf_len(kc, nc));
 
-    if nc > 0 {
-        debug_assert!(c_base.len() >= ldc * nc);
+    if mc > 0 && nc > 0 {
+        debug_assert!(c_base.len() >= (nc - 1) * ldc + mc);
     }
 
     for jp in 0..np {

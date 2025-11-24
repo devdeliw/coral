@@ -37,13 +37,14 @@ pub(crate) fn mrxnr_beta0(
     let alpha_v = Simd::splat(alpha);
 
     // beta = 0: C := alpha * acc
-    for (acc_col, c_col_full) in acc.iter().zip(c.chunks_exact_mut(ldc)) {
+    for (acc_col, c_col_full) in acc.iter().zip(c.chunks_mut(ldc)) {
         let c_col = &mut c_col_full[..MR];
 
         let v = *acc_col * alpha_v;
         v.copy_to_slice(c_col);
     }
 }
+
 
 #[inline(always)]
 pub(crate) fn mrxnr_beta1(
@@ -79,7 +80,7 @@ pub(crate) fn mrxnr_beta1(
     let alpha_v = Simd::splat(alpha);
 
     // beta = 1: C += alpha * acc
-    for (acc_col, c_col_full) in acc.iter().zip(c.chunks_exact_mut(ldc)) {
+    for (acc_col, c_col_full) in acc.iter().zip(c.chunks_mut(ldc)) {
         let c_col = &mut c_col_full[..MR];
 
         let mut c_vec = Vf32::from_slice(c_col);
@@ -124,7 +125,7 @@ pub(crate) fn mrxnr_betax(
     let beta_v  = Simd::splat(beta);
 
     // beta general: C := beta*C + alpha*acc
-    for (acc_col, c_col_full) in acc.iter().zip(c.chunks_exact_mut(ldc)) {
+    for (acc_col, c_col_full) in acc.iter().zip(c.chunks_mut(ldc)) {
         let c_col = &mut c_col_full[..MR];
 
         let mut c_vec = Vf32::from_slice(c_col);
@@ -133,4 +134,3 @@ pub(crate) fn mrxnr_betax(
         c_vec.copy_to_slice(c_col);
     }
 }
-
