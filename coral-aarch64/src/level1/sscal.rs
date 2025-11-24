@@ -7,25 +7,21 @@
 //! This function implements the BLAS [`sscal`] routine, multiplying each element 
 //! of the input vector $x$ by the scalar $\alpha$ over $n$ entries with a specified stride.
 //!
-//! # Arguments 
-//! - `n`     (usize)      : Number of elements to scale. 
-//! - `alpha` (f32)        : Scalar multiplier. 
-//! - `x`     (&mut [f32]) : Input/output slice containing vector elements. 
-//! - `incx`  (usize)      : Stride between consecutive elements of $x$. 
-//!
-//! # Returns 
-//! - Nothing. The contents of $x$ are updated in place.
-//!
-//! # Notes 
-//! - For `incx == 1`, [`sscal`] does not perform SIMD or unrolling; LLVM is enough. 
-//! - For non unit strides, fallbacks to scalar loop. 
-//! - If `n == 0` or `incx == 0`, the function returns immediately.
-//!
 //! # Author 
 //! Deval Deliwala
 
 use crate::level1::assert_length_helpers::required_len_ok; 
 
+/// sscal 
+///
+/// # Arguments 
+/// - `n`     (usize)      : Number of elements to scale. 
+/// - `alpha` (f32)        : Scalar multiplier. 
+/// - `x`     (&mut [f32]) : Input/output slice containing vector elements. 
+/// - `incx`  (usize)      : Stride between consecutive elements of $x$. 
+///
+/// # Returns 
+/// - Nothing. The contents of $x$ are updated in place.
 #[inline(always)]
 pub fn sscal(
     n       : usize,

@@ -7,20 +7,6 @@
 //!
 //! The absolute value of a complex number is defined here as |Re(x)| + |Im(x)|.
 //!
-//! # Arguments
-//! - `n`    (usize)  : Number of complex elements in the vector.
-//! - `x`    (&[f32]) : Input slice containing interleaved complex vector elements.
-//! - `incx` (usize)  : Stride between consecutive complex elements of $x$; complex units
-//!
-//! # Returns
-//! - `usize` 0-based index of the first complex element with maximum absolute value.
-//!
-//! # Notes
-//! - For `incx == 1`, [`icamax`] uses unrolled NEON SIMD instructions for optimized
-//!   performance on AArch64, with NaN values treated as negative infinity.
-//! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0` or `incx <= 0`, the function returns `0`.
-//!
 //! # Author
 //! Deval Deliwala
 
@@ -42,7 +28,15 @@ use core::arch::aarch64::{
 }; 
 use crate::level1::assert_length_helpers::required_len_ok_cplx; 
 
-
+/// icamax 
+///
+/// # Arguments
+/// - `n`    (usize)  : Number of complex elements in the vector.
+/// - `x`    (&[f32]) : Input slice containing interleaved complex vector elements.
+/// - `incx` (usize)  : Stride between consecutive complex elements of $x$; complex units
+///
+/// # Returns
+/// - [usize] 0-based index of the first complex element with maximum absolute value.
 #[inline]
 #[cfg(target_arch = "aarch64")] 
 pub fn icamax(
@@ -51,7 +45,7 @@ pub fn icamax(
     incx    : usize
 ) -> usize {
     // quick return 
-    if n == 0 || incx <= 0 { return 0; }
+    if n == 0 || incx == 0 { return 0; }
 
     debug_assert!(required_len_ok_cplx(x.len(), n, incx), "x too short for n/incx");
 

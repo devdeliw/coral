@@ -7,23 +7,6 @@
 //! This function implements the BLAS [`saxpy`] routine, updating the vector $y$
 //! by adding $\alpha * x$ elementwise over $n$ entries with specified strides.
 //!
-//! # Arguments
-//! - `n`     (usize)     : Number of elements to process.
-//! - `alpha` (f32)       : Scalar multiplier for $x$.
-//! - `x`     (&[f32])    : Input slice containing vector elements.
-//! - `incx`  (usize)     : Stride between consecutive elements of $x$.
-//! - `y`     (&mut [f32] : Input/output slice containing vector elements, updated in place.
-//! - `incy`  (usize)     : Stride between consecutive elements of $y$.
-//!
-//! # Returns
-//! - Nothing. The contents of $y$ are updated in place. 
-//!
-//! # Notes
-//! - For `incx == 1 && incy == 1`, [`saxpy`] uses unrolled NEON SIMD instructions
-//!   for optimized performance on AArch64.
-//! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0` or `alpha == 0.0`, the function returns immediately.
-//!
 //! # Author
 //! Deval Deliwala
 
@@ -36,7 +19,18 @@ use core::arch::aarch64::{
 }; 
 use crate::level1::assert_length_helpers::required_len_ok;
 
-
+/// saxpy 
+///
+/// # Arguments
+/// - `n`     (usize)     : Number of elements to process.
+/// - `alpha` (f32)       : Scalar multiplier for $x$.
+/// - `x`     (&[f32])    : Input slice containing vector elements.
+/// - `incx`  (usize)     : Stride between consecutive elements of $x$.
+/// - `y`     (&mut [f32] : Input/output slice containing vector elements, updated in place.
+/// - `incy`  (usize)     : Stride between consecutive elements of $y$.
+///
+/// # Returns
+/// - Nothing. The contents of $y$ are updated in place. 
 #[inline(always)]
 #[cfg(target_arch = "aarch64")]
 pub fn saxpy(

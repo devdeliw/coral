@@ -7,22 +7,6 @@
 //! This function implements the BLAS [`sdot`] routine, over $n$ elements 
 //! of the input vectors $x$ and $y$ with specified strides.
 //!
-//! # Arguments
-//! - `n`    (usize)  : Number of elements in the vectors.
-//! - `x`    (&[f32]) : Input slice containing the first vector.
-//! - `incx` (usize)  : Stride between consecutive elements of $x$.
-//! - `y`    (&[f32]) : Input slice containing the second vector.
-//! - `incy` (usize)  : Stride between consecutive elements of $y$.
-//!
-//! # Returns
-//! - `f32` dot product of the selected vector elements.
-//!
-//! # Notes
-//! - For `incx == 1 && incy == 1`, [`sdot`] uses unrolled NEON SIMD instructions
-//!   for optimized performance on AArch64.
-//! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0`, the function returns `0.0f32`.
-//!
 //! # Author
 //! Deval Deliwala
 
@@ -36,7 +20,17 @@ use core::arch::aarch64::{
 };
 use crate::level1::assert_length_helpers::required_len_ok; 
 
-
+/// sdot 
+///
+/// # Arguments
+/// - `n`    (usize)  : Number of elements in the vectors.
+/// - `x`    (&[f32]) : Input slice containing the first vector.
+/// - `incx` (usize)  : Stride between consecutive elements of $x$.
+/// - `y`    (&[f32]) : Input slice containing the second vector.
+/// - `incy` (usize)  : Stride between consecutive elements of $y$.
+///
+/// # Returns
+/// - [f32] dot product of the selected vector elements.
 #[inline] 
 #[cfg(target_arch = "aarch64")]
 pub fn sdot(

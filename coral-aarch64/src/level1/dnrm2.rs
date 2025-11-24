@@ -7,21 +7,6 @@
 //! This function implements the BLAS [`dnrm2`] routine, returning the
 //! Euclidean norm over $n$ elements of the input vector $x$ with a specified stride.
 //!
-//! # Arguments
-//! - `n`    (usize)  : Number of elements in the vector.
-//! - `x`    (&[f64]) : Input slice containing vector elements.
-//! - `incx` (usize)  : Stride between consecutive elements of $x$
-//!
-//! # Returns
-//! - `f64` Euclidean norm of the selected vector elements.
-//!
-//! # Notes
-//! - Uses the scaled sum-of-squares algorithm to avoid overflow and underflow.
-//! - For `incx == 1`, [`dnrm2`] uses unrolled NEON SIMD instructions for optimized 
-//!   performance on AArch64.
-//! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0` or `incx == 0`, the function returns `0.0f64`.
-//!
 //! # Author
 //! Deval Deliwala
 
@@ -39,7 +24,15 @@ use core::arch::aarch64::{
 use crate::level1::nrm2_helpers::upd_f64; 
 use crate::level1::assert_length_helpers::required_len_ok;
 
-
+/// dnrm2 
+///
+/// # Arguments
+/// - `n`    (usize)  : Number of elements in the vector.
+/// - `x`    (&[f64]) : Input slice containing vector elements.
+/// - `incx` (usize)  : Stride between consecutive elements of $x$
+///
+/// # Returns
+/// - [f64] Euclidean norm of the selected vector elements.
 #[inline]
 #[cfg(target_arch = "aarch64")]
 pub fn dnrm2(

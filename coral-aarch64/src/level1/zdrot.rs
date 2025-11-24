@@ -13,24 +13,6 @@
 //! where the rotation is applied elementwise to both the real and imaginary parts
 //! of each complex number, over $n$ complex entries with specified strides.
 //!
-//! # Arguments
-//! - `n`    (usize)      : Number of complex elements to process.
-//! - `x`    (&mut [f64]) : Input/output slice containing interleaved complex vector elements.
-//! - `incx` (usize)      : Stride between consecutive complex elements of `x`; complex units. 
-//! - `y`    (&mut [f64]) : Input/output slice containing interleaved complex vector elements.
-//! - `incy` (usize)      : Stride between consecutive complex elements of `y`; complex units. 
-//! - `c`    (f64)        : Cosine component of the rotation.
-//! - `s`    (f64)        : Sine component of the rotation.
-//!
-//! # Returns
-//! - Nothing. The contents of $x$ and $y$ are updated in place.
-//!
-//! # Notes
-//! - For `incx == 1 && incy == 1`, [`zdrot`] uses unrolled NEON SIMD instructions
-//!   for optimized performance on AArch64.
-//! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0`, the function returns immediately.
-//!
 //! # Author
 //! Deval Deliwala
 
@@ -45,7 +27,19 @@ use core::arch::aarch64::{
 };
 use crate::level1::assert_length_helpers::required_len_ok_cplx;
 
-
+/// zdrot 
+///
+/// # Arguments
+/// - `n`    (usize)      : Number of complex elements to process.
+/// - `x`    (&mut [f64]) : Input/output slice containing interleaved complex vector elements.
+/// - `incx` (usize)      : Stride between consecutive complex elements of `x`; complex units. 
+/// - `y`    (&mut [f64]) : Input/output slice containing interleaved complex vector elements.
+/// - `incy` (usize)      : Stride between consecutive complex elements of `y`; complex units. 
+/// - `c`    (f64)        : Cosine component of the rotation.
+/// - `s`    (f64)        : Sine component of the rotation.
+///
+/// # Returns
+/// - Nothing. The contents of $x$ and $y$ are updated in place.
 #[inline]
 #[cfg(target_arch = "aarch64")] 
 pub fn zdrot(

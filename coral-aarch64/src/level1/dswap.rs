@@ -3,22 +3,6 @@
 //! This function implements the BLAS [`dswap`] routine, exchanging elements of 
 //! two input vectors $x$ and $y$ over $n$ entries with specified strides.
 //!
-//! # Arguments 
-//! - `n`    (usize)      : Number of elements to swap. 
-//! - `x`    (&mut [f64]) : First input/output slice containing vector elements. 
-//! - `incx` (usize)      : Stride between consecutive elements of $x$. 
-//! - `y`    (&mut [f64]) : Second input/output slice containing vector elements. 
-//! - `incy` (usize)      : Stride between consecutive elements of $y$. 
-//!
-//! # Returns 
-//! - Nothing. The contents of $x$ and $y$ are swapped in place.
-//!
-//! # Notes 
-//! - For `incx == 1 && incy == 1`, [`dswap`] uses unrolled NEON SIMD instructions 
-//!   for optimized performance on AArch64. 
-//! - For non-unit or negative strides, the function falls back to scalar iteration. 
-//! - If `n == 0`, the function returns immediately without modifying input slices.
-//!
 //! # Author 
 //! Deval Deliwala
 
@@ -29,7 +13,17 @@ use core::arch::aarch64::{
 };
 use crate::level1::assert_length_helpers::required_len_ok;
 
-
+/// dswap 
+///
+/// # Arguments 
+/// - `n`    (usize)      : Number of elements to swap. 
+/// - `x`    (&mut [f64]) : First input/output slice containing vector elements. 
+/// - `incx` (usize)      : Stride between consecutive elements of $x$. 
+/// - `y`    (&mut [f64]) : Second input/output slice containing vector elements. 
+/// - `incy` (usize)      : Stride between consecutive elements of $y$. 
+///
+/// # Returns 
+/// - Nothing. The contents of $x$ and $y$ are swapped in place.
 #[inline(always)]
 #[cfg(target_arch = "aarch64")]
 pub fn dswap(

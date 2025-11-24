@@ -7,24 +7,7 @@
 //! This function implements the BLAS [`caxpy`] routine, updating the vector $y$
 //! by adding $\alpha x$ elementwise over $n$ complex entries with specified strides.
 //!
-//! # Arguments
-//! - `n`     (usize)      : Number of complex elements to process.
-//! - `alpha` ([f32; 2])   : Complex scalar multiplier given as `[real, imag]`.
-//! - `x`     (&[f32])     : Input slice containing interleaved complex vector elements.
-//! - `incx`  (usize)      : Stride between consecutive complex elements of $x$; complex units.
-//! - `y`     (&mut [f32]) : Input/output slice containing interleaved complex vector elements. 
-//! - `incy`  (usize)      : Stride between consecutive complex elements of $y$; complex units.
-//!
-//! # Returns
-//! - Nothing. The contents of $y$ are updated in place.
-//!
-//! # Notes
-//! - For `incx == 1 && incy == 1`, [`caxpy`] uses unrolled NEON SIMD instructions
-//!   for optimized performance on AArch64.
-//! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0` or `alpha == [0.0, 0.0]`, the function returns immediately;
-//!
-//! # Author
+//! # Author 
 //! Deval Deliwala
 
 
@@ -39,7 +22,18 @@ use core::arch::aarch64::{
 };
 use crate::level1::assert_length_helpers::required_len_ok_cplx;
 
-
+/// caxpy
+///
+/// # Arguments
+/// - `n`     (usize)      : Number of complex elements to process.
+/// - `alpha` ([f32; 2])   : Complex scalar multiplier given as `[real, imag]`.
+/// - `x`     (&[f32])     : Input slice containing interleaved complex vector elements.
+/// - `incx`  (usize)      : Stride between consecutive complex elements of $x$; complex units.
+/// - `y`     (&mut [f32]) : Input/output slice containing interleaved complex vector elements. 
+/// - `incy`  (usize)      : Stride between consecutive complex elements of $y$; complex units.
+///
+/// # Returns
+/// - Nothing. The contents of $y$ are updated in place.
 #[inline(always)]
 #[cfg(target_arch = "aarch64")]
 pub fn caxpy(
@@ -50,8 +44,8 @@ pub fn caxpy(
     y       : &mut [f32], 
     incy    : usize
 ) { 
-    let ar = alpha[0]; // real part 
-    let ai = alpha[1]; // imag part 
+    let ar = alpha[0];
+    let ai = alpha[1]; 
 
     // quick return 
     if n == 0 || (ar == 0.0  && ai == 0.0) { 

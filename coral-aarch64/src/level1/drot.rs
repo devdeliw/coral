@@ -10,24 +10,6 @@
 //! This function implements the BLAS [`drot`] routine, replacing elements of
 //! vectors $x$ and $y$ over $n$ entries with specified strides. 
 //!
-//! # Arguments
-//! - `n`    (usize)      : Number of elements to process.
-//! - `x`    (&mut [f64]) : Input/output slice containing the first vector.
-//! - `incx` (usize)      : Stride between consecutive elements of $x$.
-//! - `y`    (&mut [f64]) : Input/output slice containing the second vector.
-//! - `incy` (usize)      : Stride between consecutive elements of $y$.
-//! - `c`    (f64)        : Cosine component of the rotation.
-//! - `s`    (f64)        : Sine component of the rotation.
-//!
-//! # Returns
-//! - Nothing. The contents of $x$ and $y$ are updated in place.
-//!
-//! # Notes
-//! - For `incx == 1 && incy == 1`, [`drot`] uses unrolled NEON SIMD instructions
-//!   for optimized performance on AArch64.
-//! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0`, the function returns immediately; no slice modification.
-//!
 //! # Author
 //! Deval Deliwala
 
@@ -42,7 +24,19 @@ use core::arch::aarch64::{
 };
 use crate::level1::assert_length_helpers::required_len_ok;
 
-
+/// drot 
+///
+/// # Arguments
+/// - `n`    (usize)      : Number of elements to process.
+/// - `x`    (&mut [f64]) : Input/output slice containing the first vector.
+/// - `incx` (usize)      : Stride between consecutive elements of $x$.
+/// - `y`    (&mut [f64]) : Input/output slice containing the second vector.
+/// - `incy` (usize)      : Stride between consecutive elements of $y$.
+/// - `c`    (f64)        : Cosine component of the rotation.
+/// - `s`    (f64)        : Sine component of the rotation.
+///
+/// # Returns
+/// - Nothing. The contents of $x$ and $y$ are updated in place.
 #[inline]
 #[cfg(target_arch = "aarch64")]
 pub fn drot(

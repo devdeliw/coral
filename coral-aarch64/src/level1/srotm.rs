@@ -9,24 +9,6 @@
 //! - ` 0.0` : Simplified form with implicit ones on the diagonal.
 //! - `+1.0` : Alternate simplified form with fixed off-diagonal structure.
 //!
-//! # Arguments
-//! - `n`     (usize)      : Number of elements to process.
-//! - `x`     (&mut [f32]) : First input/output slice containing vector elements.
-//! - `incx`  (usize)      : Stride between consecutive elements of $x$.
-//! - `y`     (&mut [f32]) : Second input/output slice containing vector elements.
-//! - `incy`  (usize)      : Stride between consecutive elements of $y$.
-//! - `param` ([f32; 5])   : Array of 5 parameters defining the modified Givens rotation
-//!                          (`flag, h11, h21, h12, h22`).
-//!
-//! # Returns
-//! - Nothing. The contents of $x$ and $y$ are updated in place.
-//!
-//! # Notes
-//! - For `flag = -2.0`, the routine exits immediately without modifying inputs.
-//! - For unit strides, [`srotm`] uses unrolled NEON SIMD instructions for optimized 
-//!   performance on AArch64. 
-//! - For non-unit strides, it falls back to scalar loops.
-//!
 //! # Author
 //! Deval Deliwala
 
@@ -41,7 +23,18 @@ use core::arch::aarch64::{
 };
 use crate::level1::assert_length_helpers::required_len_ok;
 
-
+/// srotm 
+///
+/// # Arguments
+/// - `n`     (usize)      : Number of elements to process.
+/// - `x`     (&mut [f32]) : First input/output slice containing vector elements.
+/// - `incx`  (usize)      : Stride between consecutive elements of $x$.
+/// - `y`     (&mut [f32]) : Second input/output slice containing vector elements.
+/// - `incy`  (usize)      : Stride between consecutive elements of $y$.
+/// - `param` ([f32; 5])   : Array of 5 parameters defining the modified Givens rotation (`flag, h11, h21, h12, h22`).
+///
+/// # Returns
+/// - Nothing. The contents of $x$ and $y$ are updated in place.
 #[inline]
 #[cfg(target_arch = "aarch64")] 
 pub fn srotm(

@@ -7,20 +7,6 @@
 //! This function implements the BLAS [`dzasum`] routine over `n` elements of the
 //! input complex vector `x` with a specified stride. 
 //!
-//! # Arguments 
-//! - `n`    : Number of elements to sum. 
-//! - `x`    : Input slice containing interleaved complex vector elements.
-//! - `incx` : Stride between consecutive complex elements of `x`; complex units. 
-//!
-//! # Returns 
-//! - `f64` sum of absolute values of the real and imag parts of selected vector elements. 
-//!
-//! # Notes 
-//! - For `incx == 1`, [`dzasum`] uses unrolled NEON SIMD instructions for optimized 
-//!   performance on AArch64. 
-//! - For non-unit strides the function falls back to a scalar loop
-//! - If `n == 0 || incx == 0`, returns `0.0f64`
-//! 
 //! # Author 
 //! Deval Deliwala
 
@@ -34,7 +20,15 @@ use core::arch::aarch64::{
 }; 
 use crate::level1::assert_length_helpers::required_len_ok_cplx; 
 
-
+/// dzasum 
+///
+/// # Arguments 
+/// - `n`    : Number of elements to sum. 
+/// - `x`    : Input slice containing interleaved complex vector elements.
+/// - `incx` : Stride between consecutive complex elements of `x`; complex units. 
+///
+/// # Returns 
+/// - [f64] sum of absolute values of the real and imag parts of selected vector elements. 
 #[inline]
 #[cfg(target_arch = "aarch64")] 
 pub fn dzasum(

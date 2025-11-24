@@ -18,25 +18,20 @@
 //! - `param[0] = 0.0`  : Simplified form with implicit ones on the diagonal.
 //! - `param[0] = +1.0` : Alternate simplified form with fixed structure.
 //!
-//! # Arguments
-//! - `sd1`   (&mut f64)      : Input/output scalar, updated scaling factor for the first component.
-//! - `sd2`   (&mut f64)      : Input/output scalar, updated scaling factor for the second component.
-//! - `sx1`   (&mut f64)      : Input/output scalar, updated first vector component.
-//! - `sy1`   (&mut f64)      : Input scalar, second vector component (not modified).
-//! - `param` (&mut [f64; 5]) : Output array of 5 elements defining the modified Givens rotation.
-//!
-//! # Returns
-//! - Nothing. Updates `sd1`, `sd2`, `sx1`, and fills `param` in place.
-//!
-//! # Notes
-//! - Applies rescaling with thresholds `GAM`, `GAMSQ`, and `RGAMSQ` to prevent overflow 
-//!   or underflow in the computed parameters.
-//! - If `sd1 < 0.0` or the computation is undefined, [`drotmg`] sets `param[0] = -1.0` 
-//!   and zeroes the inputs.
-//!
 //! # Author
 //! Deval Deliwala
 
+/// drotmg 
+///
+/// # Arguments
+/// - `sd1`   (&mut f64)      : Input/output scalar, updated scaling factor for the first component.
+/// - `sd2`   (&mut f64)      : Input/output scalar, updated scaling factor for the second component.
+/// - `sx1`   (&mut f64)      : Input/output scalar, updated first vector component.
+/// - `sy1`   (&mut f64)      : Input scalar, second vector component (not modified).
+/// - `param` (&mut [f64; 5]) : Output array of 5 elements defining the modified Givens rotation.
+///
+/// # Returns
+/// - Nothing. Updates `sd1`, `sd2`, `sx1`, and fills `param` in place.
 #[inline]
 pub fn drotmg(
     sd1     : &mut f64, 

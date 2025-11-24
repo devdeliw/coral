@@ -4,20 +4,6 @@
 //! of the first element of maximum absolute value over $n$ elements of the input
 //! vector $x$ with a specified stride.
 //!
-//! # Arguments
-//! - `n`    (usize)  : Number of elements in the vector.
-//! - `x`    (&[f64]) : Input slice containing vector elements.
-//! - `incx` (usize)  : Stride between consecutive elements of $x$.
-//!
-//! # Returns
-//! - `usize` 0-based index of the first element with maximum absolute value.
-//!
-//! # Notes
-//! - For `incx == 1`, [`idamax`] uses unrolled NEON SIMD instructions for optimized
-//!   performance on AArch64, with NaN values treated as negative infinity.
-//! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0` or `incx <= 0`, the function returns `0`.
-//!
 //! # Author
 //! Deval Deliwala
 
@@ -37,7 +23,15 @@ use core::arch::aarch64::{
 };
 use crate::level1::assert_length_helpers::required_len_ok; 
 
-
+/// idamax 
+///
+/// # Arguments
+/// - `n`    (usize)  : Number of elements in the vector.
+/// - `x`    (&[f64]) : Input slice containing vector elements.
+/// - `incx` (usize)  : Stride between consecutive elements of $x$.
+///
+/// # Returns
+/// - `usize` 0-based index of the first element with maximum absolute value.
 #[inline]
 #[cfg(target_arch = "aarch64")] 
 pub fn idamax(
@@ -46,7 +40,7 @@ pub fn idamax(
     incx    : usize
 ) -> usize {
     // quick return 
-    if n == 0 || incx <= 0 { return 0; }
+    if n == 0 || incx == 0 { return 0; }
 
     debug_assert!(required_len_ok(x.len(), n, incx), "x too short for n/incx");
 
@@ -83,8 +77,8 @@ pub fn idamax(
                 if m1 > block_max { block_max = m1; }
                 if m2 > block_max { block_max = m2; }
                 if m3 > block_max { block_max = m3; }
-                // block_max is the max value i..i+8
 
+                // block_max is the max value i..i+8
                 if block_max > best_val {
                     let vm = vdupq_n_f64(block_max);
 

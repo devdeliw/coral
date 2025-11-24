@@ -17,25 +17,19 @@
 //! is the nonzero result and $z$ encodes information for reconstructing
 //! the rotation.
 //!
-//! # Arguments
-//! - `a` (&mut f32) : Input scalar, overwritten with $r$, the rotated value.
-//! - `b` (&mut f32) : Input scalar, overwritten with $z$, a parameter related to the rotation.
-//! - `c` (&mut f32) : Output scalar cosine component of the rotation.
-//! - `s` (&mut f32) : Output scalar sine component of the rotation.
-//!
-//! # Returns
-//! - Nothing. The results are written in place to `a`, `b`, `c`, and `s`.
-//!
-//! # Notes
-//! - If both `a` and `b` are zero, the routine sets `c = 1.0`, `s = 0.0`,
-//!   and overwrites `a = b = 0.0`.
-//! - The value `z` stored in `b` allows reconstruction of the rotation without
-//!   recomputing `c` and `s`.
-//!
 //! # Author
 //! Deval Deliwala
 
-
+/// srotg 
+///
+/// # Arguments
+/// - `a` (&mut f32) : Input scalar, overwritten with $r$, the rotated value.
+/// - `b` (&mut f32) : Input scalar, overwritten with $z$, a parameter related to the rotation.
+/// - `c` (&mut f32) : Output scalar cosine component of the rotation.
+/// - `s` (&mut f32) : Output scalar sine component of the rotation.
+///
+/// # Returns
+/// - Nothing. The results are written in place to `a`, `b`, `c`, and `s`.
 #[inline]
 pub fn srotg(
     a: &mut f32, 

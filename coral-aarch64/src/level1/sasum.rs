@@ -7,20 +7,6 @@
 //! This function implements the BLAS [`sasum`] routine over $n$ elements of the input 
 //! vector $x$ with a specified stride. 
 //!
-//! # Arguments 
-//! - `n`    (usize)  : Number of elements to sum. 
-//! - `x`    (&[f32]) : Input slice containing vector elements 
-//! - `incx` (usize)  : Stride between consecutive elements of $x$ 
-//!
-//! # Returns 
-//! - `f32` sum of absolute values of selected vector elements. 
-//!
-//! # Notes 
-//! - For `incx == 1`, [`sasum`] uses unrolled NEON SIMD instructions for optimized 
-//!   performance on AArch64. 
-//! - For non-unit strides the function falls back to a scalar loop
-//! - If `n == 0 || incx == 0`, returns `0.0f32`
-//! 
 //! # Author 
 //! Deval Deliwala 
 
@@ -34,7 +20,15 @@ use core::arch::aarch64::{
 }; 
 use crate::level1::assert_length_helpers::required_len_ok; 
 
-
+/// sasum 
+///
+/// # Arguments 
+/// - `n`    (usize)  : Number of elements to sum. 
+/// - `x`    (&[f32]) : Input slice containing vector elements 
+/// - `incx` (usize)  : Stride between consecutive elements of $x$ 
+///
+/// # Returns 
+/// - [f32] sum of absolute values of selected vector elements. 
 #[inline]
 #[cfg(target_arch = "aarch64")]
 pub fn sasum(

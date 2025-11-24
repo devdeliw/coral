@@ -7,20 +7,6 @@
 //! This function implements the BLAS [`csscal`] routine, multiplying each complex element 
 //! of the input vector $x$ by the real scalar $\alpha$ over $n$ entries with a specified stride.
 //!
-//! # Arguments 
-//! - `n`     (usize)      : Number of complex elements to scale. 
-//! - `alpha` (f32)        : Real scalar multiplier. 
-//! - `x`     (&mut [f32]) : Input/output slice containing interleaved complex vector elements.
-//! - `incx`  (usize)      : Stride between consecutive complex elements of $x$; complex units. 
-//!
-//! # Returns 
-//! - Nothing. The contents of $x$ are updated in place. 
-//!
-//! # Notes 
-//! - For `incx == 1`, [`csscal`] uses NEON SIMD instructions for optimized performance on AArch64. 
-//! - For non unit strides, the function falls back to a scalar loop. 
-//! - If `n == 0` or `incx <= 0`, the function returns immediately; no slice modification. 
-//!
 //! # Author 
 //! Deval Deliwala
 
@@ -34,6 +20,16 @@ use core::arch::aarch64::{
 }; 
 use crate::level1::assert_length_helpers::required_len_ok_cplx;
 
+/// csscal 
+///
+/// # Arguments 
+/// - `n`     (usize)      : Number of complex elements to scale. 
+/// - `alpha` (f32)        : Real scalar multiplier. 
+/// - `x`     (&mut [f32]) : Input/output slice containing interleaved complex vector elements.
+/// - `incx`  (usize)      : Stride between consecutive complex elements of $x$; complex units. 
+///
+/// # Returns 
+/// - Nothing. The contents of $x$ are updated in place. 
 #[inline] 
 #[cfg(target_arch = "aarch64")]
 pub fn csscal(
@@ -64,7 +60,7 @@ pub fn csscal(
                 i += 4;
             }
             while i < 2 * n {
-                *p        = *p * alpha;
+                *p *= alpha;
                 *p.add(1) = *p.add(1) * alpha;
 
                 p = p.add(2);

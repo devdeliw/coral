@@ -11,24 +11,6 @@
 //! vectors $x$ and $y$. The rotation is applied elementwise to both the real and imag parts
 //! of each complex number, over $n$ complex entries with specified strides.
 //!
-//! # Arguments
-//! - `n`    (usize)      : Number of complex elements to process.
-//! - `x`    (&mut [f32]) : Input/output slice containing interleaved complex vector elements.
-//! - `incx` (usize)      : Stride between consecutive complex elements of $x$; complex units. 
-//! - `y`    (&mut [f32]) : Input/output slice containing interleaved complex vector elements.
-//! - `incy` (usize)      : Stride between consecutive complex elements of $y$; complex units. 
-//! - `c`    (f32)        : Cosine component of the rotation.
-//! - `s`    (f32)        : Sine component of the rotation.
-//!
-//! # Returns
-//! - Nothing. The contents of $x$ and $y$ are updated in place.
-//!
-//! # Notes
-//! - For `incx == 1 && incy == 1`, [`csrot`] uses unrolled NEON SIMD instructions
-//!   for optimized performance on AArch64.
-//! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0`, the function returns immediately.
-//!
 //! # Author
 //! Deval Deliwala
 
@@ -44,7 +26,19 @@ use core::arch::aarch64::{
 };
 use crate::level1::assert_length_helpers::required_len_ok_cplx;
 
-
+/// csrot 
+///
+/// # Arguments
+/// - `n`    (usize)      : Number of complex elements to process.
+/// - `x`    (&mut [f32]) : Input/output slice containing interleaved complex vector elements.
+/// - `incx` (usize)      : Stride between consecutive complex elements of $x$; complex units. 
+/// - `y`    (&mut [f32]) : Input/output slice containing interleaved complex vector elements.
+/// - `incy` (usize)      : Stride between consecutive complex elements of $y$; complex units. 
+/// - `c`    (f32)        : Cosine component of the rotation.
+/// - `s`    (f32)        : Sine component of the rotation.
+///
+/// # Returns
+/// - Nothing. The contents of $x$ and $y$ are updated in place.
 #[inline]
 #[cfg(target_arch = "aarch64")]
 pub fn csrot(

@@ -7,23 +7,6 @@
 //! This function implements the BLAS [`zaxpy`] routine, updating the vector $y$
 //! by adding $\alpha x$ elementwise over $n$ complex entries with specified strides.
 //!
-//! # Arguments
-//! - `n`     (usize)      : Number of complex elements to process.
-//! - `alpha` ([f64; 2])   : Complex scalar multiplier given as `[real, imag]`.
-//! - `x`     (&[f64])     : Input slice containing interleaved complex vector elements.
-//! - `incx`  (usize)      : Stride between consecutive complex elements of $x$; complex units. 
-//! - `y`     (&mut [f64]) : Input/output slice containing interleaved complex vector elements.
-//! - `incy`  (usize)      : Stride between consecutive complex elements of $y$; complex units. 
-//!
-//! # Returns
-//! - Nothing. The contents of $y$ are updated in place.
-//!
-//! # Notes
-//! - For `incx == 1 && incy == 1`, [`zaxpy`] uses unrolled NEON SIMD instructions
-//!   for optimized performance on AArch64.
-//! - For non unit strides, the function falls back to a scalar loop.
-//! - If `n == 0` or `alpha == [0.0, 0.0]`, the function returns immediately.
-//!
 //! # Author
 //! Deval Deliwala
 
@@ -38,7 +21,18 @@ use core::arch::aarch64::{
 };
 use crate::level1::assert_length_helpers::required_len_ok_cplx;
 
-
+/// zaxpy 
+///
+/// # Arguments
+/// - `n`     (usize)      : Number of complex elements to process.
+/// - `alpha` ([f64; 2])   : Complex scalar multiplier given as `[real, imag]`.
+/// - `x`     (&[f64])     : Input slice containing interleaved complex vector elements.
+/// - `incx`  (usize)      : Stride between consecutive complex elements of $x$; complex units. 
+/// - `y`     (&mut [f64]) : Input/output slice containing interleaved complex vector elements.
+/// - `incy`  (usize)      : Stride between consecutive complex elements of $y$; complex units. 
+///
+/// # Returns
+/// - Nothing. The contents of $y$ are updated in place.
 #[inline(always)]
 #[cfg(target_arch = "aarch64")]
 pub fn zaxpy(

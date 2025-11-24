@@ -3,22 +3,6 @@
 //! This function implements the BLAS [`cswap`] routine, exchanging elements of 
 //! two input complex vectors $x$ and $y$ over $n$ entries with specified strides.
 //!
-//! # Arguments 
-//! - `n`    (usize)      : Number of complex elements to swap. 
-//! - `x`    (&mut [f32]) : First input/output slice containing interleaved complex vector elements. 
-//! - `incx` (usize)      : Stride between consecutive complex elements of $x$; complex units. 
-//! - `y`    (&mut [f32]) : Second input/output slice containing interleaved complex vector elements 
-//! - `incy` (usize)      : Stride between consecutive complex elements of $y$; complex units.  
-//!
-//! # Returns 
-//! - Nothing. The contents of $x$ and $y$ are swapped in place.
-//!
-//! # Notes 
-//! - For `incx == 1 && incy == 1`, [`cswap`] uses unrolled NEON SIMD instructions 
-//!   for optimized performance on AArch64. 
-//! - For non-unit or negative strides, the function falls back to scalar iteration. 
-//! - If `n == 0`, the function returns immediately without modifying input slices.
-//!
 //! # Author 
 //! Deval Deliwala
 
@@ -30,7 +14,17 @@ use core::arch::aarch64::{
 };
 use crate::level1::assert_length_helpers::required_len_ok_cplx;
 
-
+/// cswap 
+///
+/// # Arguments 
+/// - `n`    (usize)      : Number of complex elements to swap. 
+/// - `x`    (&mut [f32]) : First input/output slice containing interleaved complex vector elements. 
+/// - `incx` (usize)      : Stride between consecutive complex elements of $x$; complex units. 
+/// - `y`    (&mut [f32]) : Second input/output slice containing interleaved complex vector elements 
+/// - `incy` (usize)      : Stride between consecutive complex elements of $y$; complex units.  
+///
+/// # Returns 
+/// - Nothing. The contents of $x$ and $y$ are swapped in place.
 #[inline(always)]
 #[cfg(target_arch = "aarch64")] 
 pub fn cswap(
