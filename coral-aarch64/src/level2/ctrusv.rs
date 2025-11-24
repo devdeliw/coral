@@ -119,7 +119,7 @@ fn forward_substitution_c(
 
                 for k in 0..i { 
                     let a_idx = 2 * (k + i * lda);
-                    let     ar = *mat_block.add(a_idx);
+                    let ar = *mat_block.add(a_idx);
                     let mut ai = *mat_block.add(a_idx + 1);
                     if conj { ai = -ai; }
 
@@ -137,7 +137,7 @@ fn forward_substitution_c(
 
                 if !unit_diag { 
                     let d_idx = 2 * (i + i * lda);
-                    let     dr = *mat_block.add(d_idx);
+                    let dr = *mat_block.add(d_idx);
                     let mut di = *mat_block.add(d_idx + 1);
                     if conj { di = -di; }
                     let den = dr * dr + di * di;
@@ -171,12 +171,12 @@ fn forward_substitution_c(
                 }
 
                 let xi_ptr = x_block.add(2 * (i * step));
-                let mut xr = *xi_ptr     - sum_re; 
+                let mut xr = *xi_ptr - sum_re; 
                 let mut xi = *xi_ptr.add(1) - sum_im; 
 
                 if !unit_diag { 
                     let d_idx = 2 * (i + i * lda);
-                    let     dr = *mat_block.add(d_idx);
+                    let dr = *mat_block.add(d_idx);
                     let mut di = *mat_block.add(d_idx + 1);
                     if conj { di = -di; }
                     let den = dr * dr + di * di;
@@ -186,7 +186,7 @@ fn forward_substitution_c(
                     xi = ni / den;
                 }
 
-                *xi_ptr     = xr; 
+                *xi_ptr = xr; 
                 *xi_ptr.add(1) = xi; 
             }
         }
@@ -207,7 +207,7 @@ fn update_tail_transpose_c(
 
     unsafe { 
         let mat_view_len = 2 * ((rows_below - 1) * lda + nb); 
-        let mat_view     = slice::from_raw_parts(base, mat_view_len); 
+        let mat_view = slice::from_raw_parts(base, mat_view_len); 
 
         let mut x_block_neg = [0.0; 2 * NB]; 
         core::ptr::copy_nonoverlapping(x_block, x_block_neg.as_mut_ptr(), 2 * nb);
@@ -369,8 +369,8 @@ fn ctrusv_conjtranspose(
                 let next_idx = diag_idx + nb; 
                 if next_idx < n { 
                     let rows_below = n - next_idx; 
-                    let col_base  = matrix.as_ptr().add(2 * (diag_idx + next_idx * lda)); 
-                    let x_tail    = x.as_mut_ptr().add(2 * next_idx); 
+                    let col_base = matrix.as_ptr().add(2 * (diag_idx + next_idx * lda)); 
+                    let x_tail   = x.as_mut_ptr().add(2 * next_idx); 
 
                     update_tail_transpose_c(rows_below, nb, col_base, lda, x_block, x_tail, true); 
                 } 

@@ -546,7 +546,7 @@ fn ctrlmv_transpose(
                     let mat_panel_ptr = matrix.as_ptr().add(2 * (row_tail + idx * lda));
 
                     // matrix view from A[row_tail.., idx..] 
-                    let mat_panel     = slice::from_raw_parts(
+                    let mat_panel = slice::from_raw_parts(
                         mat_panel_ptr, 
                         2 * ( (cols_left - 1) * lda + rows_left )
                     ); 
@@ -643,7 +643,7 @@ fn ctrlmv_conjugatetranspose(
                     let mat_panel_ptr = matrix.as_ptr().add(2 * (row_tail + idx * lda));
 
                     // matrix view from A[row_tail.., idx..] 
-                    let mat_panel     = slice::from_raw_parts(
+                    let mat_panel = slice::from_raw_parts(
                         mat_panel_ptr, 
                         2 * ( (cols_left - 1) * lda + rows_left )
                     ); 

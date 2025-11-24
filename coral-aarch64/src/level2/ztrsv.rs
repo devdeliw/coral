@@ -7,47 +7,9 @@
 //! This function implements the BLAS [`ztrsv`] routine for both upper and lower 
 //! triangular systems.
 //!
-//! # Arguments
-//! - `uplo`        (CoralTriangular) : Indicates whether $A$ is upper or lower triangular.
-//! - `transpose`   (CoralTranspose)  : Specifies whether to solve with $A$, $A^T$, or $A^H$.
-//! - `diagonal`    (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
-//! - `n`           (usize)           : Order of the interleaved square matrix $A$.
-//! - `matrix`      (&[f64])          : Input slice containing the triangular matrix $A$.
-//! - `lda`         (usize)           : Leading dimension of $A$.
-//! - `x`           (&mut [f64])      : Input/output slice containing the right-hand side $b$ on
-//!                                     entry and the solution $x$ on exit.
-//! - `incx`        (usize)           : Stride between consecutive elements of $x$.
-//!
-//! # Returns
-//! - Nothing. $x$ is updated in place with the solution. 
-//!
 //! # Author
 //! Deval Deliwala
-//! 
-//! # Example
-//! ```rust
-//! use coral_aarch64::level2::ztrsv;
-//! use coral_aarch64::enums::{CoralTriangular, CoralTranspose, CoralDiagonal};
 //!
-//! fn main() {
-//!     let n = 2;
-//!     let uplo      = CoralTriangular::UpperTriangular;
-//!     let transpose = CoralTranspose::NoTranspose;
-//!     let diagonal  = CoralDiagonal::NonUnitDiagonal;
-//!
-//!     let a = vec![
-//!         2.0, 0.0,   0.0, 0.0,
-//!         1.0, -1.0,  3.0, 0.0,
-//!     ];
-//!
-//!     let lda   = n;
-//!     let mut x = vec![2.0, 1.0, 1.0, 0.0]; // b -> x
-//!     let incx  = 1;
-//!
-//!     ztrsv(uplo, transpose, diagonal, n, &a, lda, &mut x, incx);
-//! }
-//! ```
-
 
 use crate::enums::{CoralDiagonal, CoralTranspose, CoralTriangular};
 use crate::level2::{
@@ -55,6 +17,45 @@ use crate::level2::{
     ztrusv::ztrusv,
 }; 
 
+/// Triangular solve 
+///
+/// # Arguments
+/// - `uplo`        (CoralTriangular) : Indicates whether $A$ is upper or lower triangular.
+/// - `transpose`   (CoralTranspose)  : Specifies whether to solve with $A$, $A^T$, or $A^H$.
+/// - `diagonal`    (CoralDiagonal)   : Indicates if the diagonal is unit (all 1s) or non-unit.
+/// - `n`           (usize)           : Order of the interleaved square matrix $A$.
+/// - `matrix`      (&[f64])          : Input slice containing the triangular matrix $A$.
+/// - `lda`         (usize)           : Leading dimension of $A$.
+/// - `x`           (&mut [f64])      : Input/output slice containing the right-hand side $b$ on entry and the solution $x$ on exit.
+/// - `incx`        (usize)           : Stride between consecutive elements of $x$.
+///
+/// # Returns
+/// - Nothing. $x$ is updated in place with the solution. 
+///
+/// 
+/// # Example
+/// ```rust
+/// use coral_aarch64::level2::ztrsv;
+/// use coral_aarch64::enums::{CoralTriangular, CoralTranspose, CoralDiagonal};
+///
+/// fn main() {
+///     let n = 2;
+///     let uplo      = CoralTriangular::UpperTriangular;
+///     let transpose = CoralTranspose::NoTranspose;
+///     let diagonal  = CoralDiagonal::NonUnitDiagonal;
+///
+///     let a = vec![
+///         2.0, 0.0,   0.0, 0.0,
+///         1.0, -1.0,  3.0, 0.0,
+///     ];
+///
+///     let lda   = n;
+///     let mut x = vec![2.0, 1.0, 1.0, 0.0]; // b -> x
+///     let incx  = 1;
+///
+///     ztrsv(uplo, transpose, diagonal, n, &a, lda, &mut x, incx);
+/// }
+/// ```
 #[inline] 
 #[cfg(target_arch = "aarch64")]
 pub fn ztrsv( 

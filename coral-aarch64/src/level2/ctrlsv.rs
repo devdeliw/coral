@@ -33,15 +33,15 @@ fn forward_substitution_c(
                     let a_im  = *mat_block.add(a_idx + 1);
 
                     let x_idx = 2 * k;
-                    let xr    = *x_block.add(x_idx);
-                    let xi    = *x_block.add(x_idx + 1);
+                    let xr = *x_block.add(x_idx);
+                    let xi = *x_block.add(x_idx + 1);
 
                     sum_re += a_re * xr - a_im * xi;
                     sum_im += a_re * xi + a_im * xr;
                 }
 
                 let xi_idx = 2 * i;
-                let mut xr = *x_block.add(xi_idx)     - sum_re;
+                let mut xr = *x_block.add(xi_idx) - sum_re;
                 let mut xi = *x_block.add(xi_idx + 1) - sum_im;
 
                 if !unit_diag {
@@ -49,8 +49,8 @@ fn forward_substitution_c(
                     let dr    = *mat_block.add(d_idx);
                     let di    = *mat_block.add(d_idx + 1);
                     let den   = dr * dr + di * di;
-                    let nr    =  xr * dr + xi * di;
-                    let ni    =  xi * dr - xr * di;
+                    let nr    = xr * dr + xi * di;
+                    let ni    = xi * dr - xr * di;
                     xr = nr / den;
                     xi = ni / den;
                 }
@@ -70,15 +70,15 @@ fn forward_substitution_c(
                     let a_im  = *mat_block.add(a_idx + 1);
 
                     let x_idx = 2 * (k * step);
-                    let xr    = *x_block.add(x_idx);
-                    let xi    = *x_block.add(x_idx + 1);
+                    let xr = *x_block.add(x_idx);
+                    let xi = *x_block.add(x_idx + 1);
 
                     sum_re += a_re * xr - a_im * xi;
                     sum_im += a_re * xi + a_im * xr;
                 }
 
                 let xi_idx = 2 * (i * step);
-                let mut xr = *x_block.add(xi_idx)     - sum_re;
+                let mut xr = *x_block.add(xi_idx) - sum_re;
                 let mut xi = *x_block.add(xi_idx + 1) - sum_im;
 
                 if !unit_diag {
@@ -86,13 +86,13 @@ fn forward_substitution_c(
                     let dr    = *mat_block.add(d_idx);
                     let di    = *mat_block.add(d_idx + 1);
                     let den   = dr * dr + di * di;
-                    let nr    =  xr * dr + xi * di;
-                    let ni    =  xi * dr - xr * di;
+                    let nr    = xr * dr + xi * di;
+                    let ni    = xi * dr - xr * di;
                     xr = nr / den;
                     xi = ni / den;
                 }
 
-                *x_block.add(xi_idx)     = xr;
+                *x_block.add(xi_idx) = xr;
                 *x_block.add(xi_idx + 1) = xi;
             }
         }
@@ -120,26 +120,26 @@ fn backward_substitution_c(
                 for k in (i + 1)..nb {
                     // (L^T)[i,k] = L[k,i] ; for L^H also conjugate
                     let a_idx = 2 * (k + i * lda);
-                    let ar     = *mat_block.add(a_idx);
+                    let ar = *mat_block.add(a_idx);
                     let mut ai = *mat_block.add(a_idx + 1);
                     if conj { ai = -ai; }
 
                     let x_idx = 2 * k;
-                    let xr    = *x_block.add(x_idx);
-                    let xi    = *x_block.add(x_idx + 1);
+                    let xr = *x_block.add(x_idx);
+                    let xi = *x_block.add(x_idx + 1);
 
                     sum_re += ar * xr - ai * xi;
                     sum_im += ar * xi + ai * xr;
                 }
 
                 let xi_idx = 2 * i;
-                let mut xr = *x_block.add(xi_idx)     - sum_re;
+                let mut xr = *x_block.add(xi_idx) - sum_re;
                 let mut xi = *x_block.add(xi_idx + 1) - sum_im;
 
                 if !unit_diag {
                     // divide by diagonal (conjugate if conj)
                     let d_idx = 2 * (i + i * lda);
-                    let dr     = *mat_block.add(d_idx);
+                    let dr = *mat_block.add(d_idx);
                     let mut di = *mat_block.add(d_idx + 1);
                     if conj { di = -di; }
                     let den = dr * dr + di * di;
@@ -149,7 +149,7 @@ fn backward_substitution_c(
                     xi = ni / den;
                 }
 
-                *x_block.add(xi_idx)     = xr;
+                *x_block.add(xi_idx) = xr;
                 *x_block.add(xi_idx + 1) = xi;
             }
         } else {
@@ -165,15 +165,15 @@ fn backward_substitution_c(
                     if conj { ai = -ai; }
 
                     let x_idx = 2 * (k * step);
-                    let xr    = *x_block.add(x_idx);
-                    let xi    = *x_block.add(x_idx + 1);
+                    let xr = *x_block.add(x_idx);
+                    let xi = *x_block.add(x_idx + 1);
 
                     sum_re += ar * xr - ai * xi;
                     sum_im += ar * xi + ai * xr;
                 }
 
                 let xi_idx = 2 * (i * step);
-                let mut xr = *x_block.add(xi_idx)     - sum_re;
+                let mut xr = *x_block.add(xi_idx) - sum_re;
                 let mut xi = *x_block.add(xi_idx + 1) - sum_im;
 
                 if !unit_diag {
@@ -184,13 +184,13 @@ fn backward_substitution_c(
                     if conj { di = -di; }
 
                     let den = dr * dr + di * di;
-                    let nr  =  xr * dr + xi * di;
-                    let ni  =  xi * dr - xr * di;
+                    let nr  = xr * dr + xi * di;
+                    let ni  = xi * dr - xr * di;
                     xr = nr / den;
                     xi = ni / den;
                 }
 
-                *x_block.add(xi_idx)     = xr;
+                *x_block.add(xi_idx) = xr;
                 *x_block.add(xi_idx + 1) = xi;
             }
         }
@@ -210,7 +210,7 @@ fn update_tail_notranspose_c(
 
     unsafe {
         let mat_view_len = 2 * ((nb - 1) * lda + rows_below);
-        let mat_view     = slice::from_raw_parts(base, mat_view_len);
+        let mat_view = slice::from_raw_parts(base, mat_view_len);
 
         let mut x_block_neg = [0.0; 2 * NB];
         core::ptr::copy_nonoverlapping(x_block, x_block_neg.as_mut_ptr(), 2 * nb);
@@ -236,7 +236,7 @@ fn update_head_transpose_c(
 
     unsafe {
         let mat_view_len = 2 * ((head_len - 1) * lda + nb);
-        let mat_view     = slice::from_raw_parts(base, mat_view_len);
+        let mat_view = slice::from_raw_parts(base, mat_view_len);
 
         let mut x_block_neg = [0.0; 2 * NB];
         core::ptr::copy_nonoverlapping(x_block, x_block_neg.as_mut_ptr(), 2 * nb);
@@ -278,7 +278,7 @@ fn ctrlsv_notranspose(
             let mut diag_idx = 0;
             while diag_idx + nb <= n {
                 let mat_block = matrix.as_ptr().add(2 * (diag_idx + diag_idx * lda));
-                let x_block   = x.as_mut_ptr().add(2 * diag_idx);
+                let x_block = x.as_mut_ptr().add(2 * diag_idx);
 
                 forward_substitution_c(nb, unit_diag, mat_block, lda, x_block, 1);
 
@@ -287,7 +287,7 @@ fn ctrlsv_notranspose(
                     let rows_below = n - next_idx;
 
                     let below_base = matrix.as_ptr().add(2 * (next_idx + diag_idx * lda));
-                    let x_tail     = x.as_mut_ptr().add(2 * next_idx);
+                    let x_tail = x.as_mut_ptr().add(2 * next_idx);
 
                     update_tail_notranspose_c(rows_below, nb, below_base, lda, x_block, x_tail);
                 }
