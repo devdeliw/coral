@@ -31,7 +31,7 @@ pub fn sgemv_n_contiguous(c: &mut Criterion) {
     let incy = 1; 
 
     let alpha = 3.1415; 
-    let beta  = 2.1828; 
+    let beta  = 2.71828; 
 
     let abuf = make_strided_mat(m, n, lda);
     let xbuf = make_strided_vec(n, incx); 
