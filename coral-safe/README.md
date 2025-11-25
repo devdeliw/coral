@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./coral_logo.png" width="75%">
+  <img src="../coral_logo.png" width="75%">
 </p>
 
 <p align="center">
@@ -24,3 +24,5 @@ dependencies.
 to the legacy BLAS API is also provided. 
 
 Only single-precision routines are implemented, and it needs nightly. 
+
+Here are some [benchmarks](https://dev-undergrad.dev/posts/benchmarks/). 
