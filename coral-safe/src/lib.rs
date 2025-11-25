@@ -1,6 +1,7 @@
 //! `coral` is a fully-safe, portable BLAS implementation in pure rust.
 //! 
 //! - no dependencies.
+//! - is nightly.
 //! - column-major only. 
 //! - single precision only. 
 //! - level3 only has `sgemm`. 

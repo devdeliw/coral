@@ -213,7 +213,7 @@ checksum = "7e8f1e641542c07631228b1e0dc04b69ae3c1d58ef65d5691a439711d805c698"
 
 [[package]]
 name = "coral-aarch64"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "blas-src",
  "cblas-sys",
@@ -236,7 +236,7 @@ dependencies = [
 
 [[package]]
 name = "coral-blas"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "blas-src",
  "cblas-sys",
