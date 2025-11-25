@@ -17,7 +17,7 @@
 ## CORAL 
 
 Core Rust Architecture for Linear Algebra. This is a pure-Rust implementation of BLAS routines 
-that is *fully* `safe`, and uses *portable-simd*; it's applicable for all architectures and has no
+that is *fully* `safe`, and uses `portable-simd`; it's applicable for all architectures and has no
 dependencies. 
 
 `coral` uses a more idiomatic, modern API to be fully-safe. However, an `unsafe` fortran77 wrapper conforming 

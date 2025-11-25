@@ -21,7 +21,7 @@ that is optimized and uses NEON AArch64 intrinsics for speed and has no dependen
 with pointers and `unsafe` simd. 
 
 While it is faster and more comparable with `OpenBLAS` and [faer](https://faer.veganb.tw), it is not 
-that far off from the *fully*-safe and *portable-simd* [coral](https://docs.rs/coral-blas/latest/coral/) 
+that far off from the *fully*-`safe` and `portable-simd` [coral](https://docs.rs/coral-blas/latest/coral/) 
 implementation. For these reasons, unless you currently need double precision or complex routines, or 
 need an extra 10GFLOP/s on `SGEMM`, I highly suggest using the safe implementation.
 
