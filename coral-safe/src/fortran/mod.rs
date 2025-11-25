@@ -26,3 +26,20 @@ pub use srotm_f77::srotm_f77;
 pub use srotmg_f77::srotmg_f77; 
 pub use sswap_f77::sswap_f77; 
 
+// level 2
+pub mod sgemv_f77; 
+pub mod sger_f77;
+pub mod ssymv_f77; 
+pub mod ssyr_f77; 
+pub mod ssyr2_f77; 
+pub mod strmv_f77; 
+pub mod strsv_f77; 
+
+pub use sgemv_f77::sgemv_f77; 
+pub use sger_f77::sger_f77; 
+pub use ssymv_f77::ssymv_f77; 
+pub use ssyr_f77::ssyr_f77; 
+pub use ssyr2_f77::ssyr2_f77; 
+pub use strmv_f77::strmv_f77; 
+pub use strsv_f77::strsv_f77; 
+

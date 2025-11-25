@@ -3,7 +3,7 @@ use crate::fortran::wrappers::ptr_to_view;
 
 /// unsafe wrapper for [sdot] routine 
 #[inline] 
-pub unsafe fn sdot_77 ( 
+pub unsafe fn sdot_f77 ( 
     n: i32, 
     x: *const f32, 
     incx: i32, 

@@ -3,7 +3,7 @@ use crate::fortran::wrappers::ptr_to_view;
 
 /// unsafe wrapper for [snrm2] routine 
 #[inline] 
-pub unsafe fn snrm2_77 ( 
+pub unsafe fn snrm2_f77 ( 
     n: i32, 
     x: *const f32, 
     incx: i32, 

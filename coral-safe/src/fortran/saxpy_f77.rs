@@ -3,7 +3,7 @@ use crate::fortran::wrappers::{ptr_to_view, ptr_to_view_mut};
 
 /// unsafe wrapper for [saxpy] routine 
 #[inline] 
-pub unsafe fn saxpy_77 ( 
+pub unsafe fn saxpy_f77 ( 
     n: i32, 
     alpha: f32,
     x: *const f32, 

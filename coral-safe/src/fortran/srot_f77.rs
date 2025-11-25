@@ -3,7 +3,7 @@ use crate::fortran::wrappers::ptr_to_view_mut;
 
 /// unsafe wrapper for [srot] routine 
 #[inline] 
-pub unsafe fn srot_77 ( 
+pub unsafe fn srot_f77 ( 
     n: i32, 
     x: *mut f32, 
     incx: i32, 

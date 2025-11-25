@@ -2,7 +2,7 @@ use crate::level1::srotg;
 
 /// unsafe wrapper for [srotg] routine 
 #[inline] 
-pub unsafe fn srotg_77 ( 
+pub unsafe fn srotg_f77 ( 
     a: *mut f32, 
     b: *mut f32, 
     c: *mut f32, 

@@ -3,7 +3,7 @@ use crate::fortran::wrappers::{ptr_to_view, ptr_to_view_mut};
 
 /// unsafe wrapper for [scopy] routine 
 #[inline] 
-pub unsafe fn scopy_77 ( 
+pub unsafe fn scopy_f77 ( 
     n: i32, 
     x: *const f32, 
     incx: i32, 

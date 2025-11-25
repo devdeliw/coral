@@ -3,7 +3,7 @@ use crate::fortran::wrappers::ptr_to_view_mut;
 
 /// unsafe wrapper for [sswap] routine 
 #[inline] 
-pub unsafe fn sswap_77 ( 
+pub unsafe fn sswap_f77 ( 
     n: i32, 
     x: *mut f32, 
     incx: i32, 
