@@ -25,4 +25,7 @@ that far off from the *fully*-`safe` and `portable-simd` [coral](https://docs.rs
 implementation. For these reasons, unless you currently need double precision or complex routines, or 
 need an extra 10GFLOP/s on `SGEMM`, I highly suggest using the safe implementation.
 
+If you really need speed, on AArch64, and do not mind very `unsafe` code, only then I suggest using 
+[coral-aarch64](https://crates.io/crates/coral-aarch64/). 
+
 Here are some [benchmarks](https://dev-undergrad.dev/posts/benchmarks/). 
