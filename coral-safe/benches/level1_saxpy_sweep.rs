@@ -1,0 +1,110 @@
+mod common;
+use common::{make_strided_vec, bytes, make_view_ref, make_view_mut, SIZES};
+
+use criterion::{
+    criterion_group,
+    criterion_main,
+    BenchmarkId,
+    Criterion,
+    Throughput,
+    black_box,
+};
+
+use blas_src as _;
+use cblas_sys::cblas_saxpy;
+use coral_safe::level1::saxpy as saxpy_safe;
+use coral::level1::saxpy as saxpy_neon;
+
+pub fn saxpy_contiguous_sweep(c: &mut Criterion) {
+    let mut group = c.benchmark_group("saxpy_contiguous_sweep");
+
+    for &n in SIZES {
+        let incx = 1;
+        let incy = 1;
+        let alpha = 3.1415926535_f32;
+
+        let x = make_strided_vec(n, incx);
+        let xsafe = x.clone();
+        let xneon = x.clone();
+        let xblas = x;
+
+        let y = make_strided_vec(n, incy);
+        let ysafe_init = y.clone();
+        let yneon_init = y.clone();
+        let yblas_init = y;
+
+        group.throughput(Throughput::Bytes(bytes(n, 3)));
+
+        group.bench_with_input(
+            BenchmarkId::new("saxpy_coral_safe", n),
+            &n,
+            move |b, &_n| {
+                let n = n;
+                let incx = incx;
+                let incy = incy;
+                let alpha = alpha;
+                let xsafe = xsafe;
+                let mut ysafe = ysafe_init;
+
+                b.iter(|| {
+                    let xcoral = make_view_ref(&xsafe, n, incx);
+                    let ycoral = make_view_mut(&mut ysafe, n, incy);
+                    black_box(saxpy_safe(alpha, black_box(xcoral), black_box(ycoral)));
+                });
+            },
+        );
+
+        group.bench_with_input(
+            BenchmarkId::new("saxpy_coral_neon", n),
+            &n,
+            move |b, &_n| {
+                let n = n;
+                let incx = incx;
+                let incy = incy;
+                let alpha = alpha;
+                let xneon = xneon;
+                let mut yneon = yneon_init;
+
+                b.iter(|| {
+                    black_box(saxpy_neon(
+                        black_box(n),
+                        black_box(alpha),
+                        black_box(&xneon),
+                        black_box(incx),
+                        black_box(&mut yneon),
+                        black_box(incy),
+                    ));
+                });
+            },
+        );
+
+        group.bench_with_input(
+            BenchmarkId::new("saxpy_cblas", n),
+            &n,
+            move |b, &_n| {
+                let n = n;
+                let incx = incx;
+                let incy = incy;
+                let alpha = alpha;
+                let xblas = xblas;
+                let mut yblas = yblas_init;
+
+                b.iter(|| unsafe {
+                    black_box(cblas_saxpy(
+                        black_box(n as i32),
+                        black_box(alpha),
+                        black_box(xblas.as_ptr()),
+                        black_box(incx as i32),
+                        black_box(yblas.as_mut_ptr()),
+                        black_box(incy as i32),
+                    ));
+                });
+            },
+        );
+    }
+
+    group.finish();
+}
+
+criterion_group!(benches, saxpy_contiguous_sweep);
+criterion_main!(benches);
