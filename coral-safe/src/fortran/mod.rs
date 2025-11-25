@@ -43,3 +43,9 @@ pub use ssyr2_f77::ssyr2_f77;
 pub use strmv_f77::strmv_f77; 
 pub use strsv_f77::strsv_f77; 
 
+// level 3
+pub mod sgemm_f77; 
+
+pub use sgemm_f77::sgemm_f77; 
+
+

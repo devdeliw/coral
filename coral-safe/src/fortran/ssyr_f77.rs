@@ -4,7 +4,7 @@ use crate::types::CoralTriangular;
 
 /// unsafe wrapper for [ssyr] routine 
 #[inline] 
-pub unsafe fn sger_f77 ( 
+pub unsafe fn ssyr_f77 ( 
     uplo: CoralTriangular, 
     n: i32, 
     alpha: f32, 
