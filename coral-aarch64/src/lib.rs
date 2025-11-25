@@ -1,15 +1,20 @@
-//! `coral` is a BLAS implementation in pure rust for AArch64.
+//! `coral-aarch64` is a BLAS implementation in pure rust for AArch64.
 //! 
 //! - no dependencies.
 //! - column-major only. 
 //! - level1 and level2 routines fully implemented. 
 //! - level3 only has `GEMM`. 
 //!
+//! This crate is very `unsafe` and only for AArch64. Although it is fast, 
+//! a fully-`safe` and `portable-simd` modern implementation
+//! [exists](https://crates.io/crates/coral-blas) and is not far off in speed.
+//! I highly suggest using that instead. 
+//!
 //! benchmarks: <https://dev-undergrad.dev/posts/benchmarks/>
 //!
 //! ## example
 //!
-//! `SGEMM` 
+//! `sgemm` 
 //! \\[ 
 //!     C \ \leftarrow \ \alpha A B + \beta C 
 //! \\]
