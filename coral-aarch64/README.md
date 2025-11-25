@@ -28,4 +28,8 @@ need an extra 10GFLOP/s on `SGEMM`, I highly suggest using the safe implementati
 If you really need speed, on AArch64, and do not mind very `unsafe` code, only then I suggest using 
 [coral-aarch64](https://crates.io/crates/coral-aarch64/). 
 
-Here are some [benchmarks](https://dev-undergrad.dev/posts/benchmarks/). 
+Here are some [benchmarks](https://dev-undergrad.dev/posts/benchmarks/) for single precision routines 
+comparing the safe impl, openblas, and apple accelerate. 
+
+Here are some [more benchmarks](https://dev-undergrad.dev/posts/benchmarks-aarch64/) for the double/complex
+precision routines in this crate only, also against openblas and apple accelerate. 
