@@ -18,7 +18,7 @@
 
 Core Rust Architecture for Linear Algebra. This is a pure-Rust implementation of BLAS routines. 
 
-There are two versions: `coral` and `coral-aarch64`. 
+There are two versions: [coral](https://crates.io/crates/coral-blas) and [coral-aarch64](https://crates.io/crates/coral-aarch64). 
 
 The first is a nightly, *fully* `safe`, and 
 `portable-simd` version with a more idiomatic API. It has an an `unsafe` fortran77 wrapper if needed too.
