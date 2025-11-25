@@ -23,6 +23,8 @@ dependencies.
 `coral` uses a more idiomatic, modern API to be fully-safe. However, an `unsafe` compat layer for 
 the legacy BLAS API is also provided. 
 
-Only single-precision routines are implemented, and it needs nightly. 
+Only single-precision routines are implemented, and it needs nightly. While it does use portable-simd, 
+cache-blocking constants were tuned on my apple silicon aarch64 machine. If anyone wants to benchmark 
+and derive blocking constants for other architectures, please do. 
 
 Here are some [benchmarks](https://dev-undergrad.dev/posts/benchmarks/). 
