@@ -1,6 +1,6 @@
 [package]
 name        = "coral-aarch64"
-version     = "0.2.1"
+version     = "0.1.0"
 edition     = "2024"
 authors     = ["deval deliwala <devaldeliwala@berkeley.edu>"]
 
@@ -33,7 +33,7 @@ openblas   = ["blas-src/openblas"]
 [dev-dependencies]
 criterion = "0.5"   
 cblas-sys = "0.1" 
-faer = { version = "0.19" } 
+faer = "0.19"
 
 [package.metadata.docs.rs]
 features = ["default"]

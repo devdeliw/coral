@@ -1,0 +1,165 @@
+[package]
+name    = "coral-benches"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+blas-src = { version = "0.12", optional = true, default-features = false }
+criterion    = "0.5"
+coral-blas = { version = "0.3.0", path = "../coral-safe" }
+coral-aarch64 = { version = "0.1.0", path = "../coral-aarch64" }
+cblas-sys = "0.1"
+faer = { version = "0.19" }
+rand = "0.8"
+
+[[bench]]
+name    = "fused_saxpyf"
+harness = false
+
+[[bench]]
+name    = "fused_sdotf"
+harness = false
+
+[[bench]]
+name    = "level1_sasum"
+harness = false
+
+[[bench]]
+name    = "level1_isamax"
+harness = false
+
+[[bench]]
+name    = "level1_snrm2"
+harness = false
+
+[[bench]]
+name    = "level1_sswap"
+harness = false
+
+[[bench]]
+name    = "level1_saxpy"
+harness = false
+
+[[bench]]
+name    = "level1_sdot"
+harness = false
+
+[[bench]]
+name    = "level1_sscal"
+harness = false
+
+[[bench]]
+name    = "level1_scopy"
+harness = false
+
+[[bench]]
+name    = "level1_srot"
+harness = false
+
+[[bench]]
+name    = "level1_srotm"
+harness = false
+
+[[bench]]
+name    = "level2_sgemv"
+harness = false
+
+[[bench]]
+name    = "level2_sger"
+harness = false
+
+[[bench]]
+name    = "level2_strsv"
+harness = false
+
+[[bench]]
+name    = "level2_strmv"
+harness = false
+
+[[bench]]
+name    = "level2_ssymv"
+harness = false
+
+[[bench]]
+name    = "level2_ssyr"
+harness = false
+
+[[bench]]
+name    = "level2_ssyr2"
+harness = false
+
+[[bench]]
+name    = "level3_sgemm"
+harness = false
+
+[[bench]]
+name    = "level1_sasum_sweep"
+harness = false
+
+[[bench]]
+name    = "level1_isamax_sweep"
+harness = false
+
+[[bench]]
+name    = "level1_snrm2_sweep"
+harness = false
+
+[[bench]]
+name    = "level1_sswap_sweep"
+harness = false
+
+[[bench]]
+name    = "level1_saxpy_sweep"
+harness = false
+
+[[bench]]
+name    = "level1_sdot_sweep"
+harness = false
+
+[[bench]]
+name    = "level1_sscal_sweep"
+harness = false
+
+[[bench]]
+name    = "level1_scopy_sweep"
+harness = false
+
+[[bench]]
+name    = "level1_srot_sweep"
+harness = false
+
+[[bench]]
+name    = "level1_srotm_sweep"
+harness = false
+
+[[bench]]
+name    = "level2_sgemv_sweep"
+harness = false
+
+[[bench]]
+name    = "level2_sger_sweep"
+harness = false
+
+[[bench]]
+name    = "level2_strsv_sweep"
+harness = false
+
+[[bench]]
+name    = "level2_strmv_sweep"
+harness = false
+
+[[bench]]
+name    = "level2_ssymv_sweep"
+harness = false
+
+[[bench]]
+name    = "level2_ssyr_sweep"
+harness = false
+
+[[bench]]
+name    = "level2_ssyr2_sweep"
+harness = false
+
+[[bench]]
+name    = "level3_sgemm_sweep"
+harness = false

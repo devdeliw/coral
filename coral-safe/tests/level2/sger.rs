@@ -9,8 +9,8 @@ use super::common::{
 
 use blas_src as _; 
 use cblas_sys::{cblas_sger, CBLAS_LAYOUT}; 
-use coral_safe::types::{VectorRef, MatrixMut}; 
-use coral_safe::level2::sger;
+use coral::types::{VectorRef, MatrixMut}; 
+use coral::level2::sger;
 
 #[test] 
 fn unit_stride() -> CoralResult { 

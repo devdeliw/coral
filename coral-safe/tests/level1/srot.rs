@@ -8,8 +8,8 @@ use super::common::{
 
 use blas_src as _; 
 use cblas_sys::cblas_srot; 
-use coral_safe::level1::srot; 
-use coral_safe::types::VectorMut; 
+use coral::level1::srot; 
+use coral::types::VectorMut; 
 
 #[test]
 fn unit_stride() -> CoralResult { 

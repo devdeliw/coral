@@ -22,21 +22,15 @@ pub fn sscal_contiguous_sweep(c: &mut Criterion) {
         let incx = 1;
         let alpha = 3.1415926535_f32;
 
-        let x = make_strided_vec(n, incx);
-        let xsafe_init = x.clone();
-        let xneon_init = x.clone();
-        let xblas_init = x;
+        let x_init = make_strided_vec(n, incx);
 
         group.throughput(Throughput::Bytes(bytes(n, 2)));
 
         group.bench_with_input(
             BenchmarkId::new("sscal_coral_safe", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let alpha = alpha;
-                let mut xsafe = xsafe_init;
+            |b, &_n| {
+                let mut xsafe = x_init.clone();
 
                 b.iter(|| {
                     let xcoral = make_view_mut(&mut xsafe, n, incx);
@@ -48,11 +42,8 @@ pub fn sscal_contiguous_sweep(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::new("sscal_coral_neon", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let alpha = alpha;
-                let mut xneon = xneon_init;
+            |b, &_n| {
+                let mut xneon = x_init.clone();
 
                 b.iter(|| {
                     black_box(sscal_neon(
@@ -68,11 +59,8 @@ pub fn sscal_contiguous_sweep(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::new("sscal_cblas", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let alpha = alpha;
-                let mut xblas = xblas_init;
+            |b, &_n| {
+                let mut xblas = x_init.clone();
 
                 b.iter(|| unsafe {
                     black_box(cblas_sscal(

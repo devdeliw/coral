@@ -1,7 +1,7 @@
 use rand::thread_rng;
 use rand::distributions::{Distribution, Standard, Uniform}; 
-use coral_safe::errors::BufferError;
-use coral_safe::types::{CoralTriangular, CoralDiagonal}; 
+use coral::errors::BufferError;
+use coral::types::{CoralTriangular, CoralDiagonal}; 
 
 pub type CoralResult = Result<(), BufferError>;
 

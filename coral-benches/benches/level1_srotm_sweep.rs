@@ -24,31 +24,17 @@ pub fn srotm_contiguous_sweep(c: &mut Criterion) {
 
         let param = [-1.0_f32, 3.14_f32, 3.14_f32, 3.14_f32, 3.14_f32];
 
-        let x = make_strided_vec(n, incx);
-        let y = make_strided_vec(n, incy);
-
-        let xsafe_init = x.clone();
-        let ysafe_init = y.clone();
-
-        let xneon_init = x.clone();
-        let yneon_init = y.clone();
-
-        let xblas_init = x;
-        let yblas_init = y;
+        let x_init = make_strided_vec(n, incx);
+        let y_init = make_strided_vec(n, incy);
 
         group.throughput(Throughput::Bytes(bytes(n, 4)));
 
         group.bench_with_input(
             BenchmarkId::new("srotm_coral_safe", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-                let param = param;
-
-                let mut xsafe = xsafe_init;
-                let mut ysafe = ysafe_init;
+            |b, &_n| {
+                let mut xsafe = x_init.clone();
+                let mut ysafe = y_init.clone();
 
                 b.iter(|| {
                     let xcoral = make_view_mut(&mut xsafe, n, incx);
@@ -65,14 +51,9 @@ pub fn srotm_contiguous_sweep(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::new("srotm_coral_neon", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-                let param = param;
-
-                let mut xneon = xneon_init;
-                let mut yneon = yneon_init;
+            |b, &_n| {
+                let mut xneon = x_init.clone();
+                let mut yneon = y_init.clone();
 
                 b.iter(|| {
                     black_box(srotm_neon(
@@ -90,14 +71,9 @@ pub fn srotm_contiguous_sweep(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::new("srotm_cblas", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-                let param = param;
-
-                let mut xblas = xblas_init;
-                let mut yblas = yblas_init;
+            |b, &_n| {
+                let mut xblas = x_init.clone();
+                let mut yblas = y_init.clone();
 
                 b.iter(|| unsafe {
                     black_box(cblas_srotm(

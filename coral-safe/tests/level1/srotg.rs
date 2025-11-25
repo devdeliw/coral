@@ -7,7 +7,7 @@ use super::common::{
 
 use blas_src as _; 
 use cblas_sys::cblas_srotg; 
-use coral_safe::level1::srotg; 
+use coral::level1::srotg; 
 
 #[test]
 fn matches() -> CoralResult { 

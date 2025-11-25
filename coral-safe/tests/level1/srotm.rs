@@ -8,8 +8,8 @@ use super::common::{
 
 use blas_src as _; 
 use cblas_sys::cblas_srotm; 
-use coral_safe::level1::srotm; 
-use coral_safe::types::VectorMut; 
+use coral::level1::srotm; 
+use coral::types::VectorMut; 
 
 const FLAGS: [f32; 4] = [-2.0, -1.0, 0.0, 1.0];
 const PARAM: [f32; 4] = [0.9, -0.3, -0.4, 1.1]; 

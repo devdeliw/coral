@@ -8,8 +8,8 @@ use super::common::{
 
 use blas_src as _;
 use cblas_sys::{cblas_sgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
-use coral_safe::types::{MatrixRef, MatrixMut, CoralTranspose};
-use coral_safe::level3::sgemm;
+use coral::types::{MatrixRef, MatrixMut, CoralTranspose};
+use coral::level3::sgemm;
 
 #[inline(always)]
 fn to_cblas(op: CoralTranspose) -> CBLAS_TRANSPOSE {

@@ -22,29 +22,17 @@ pub fn scopy_contiguous_sweep(c: &mut Criterion) {
         let incx = 1;
         let incy = 1;
 
-        let x = make_strided_vec(n, incx);
-        let y = make_strided_vec(n, incy);
-
-        let xsafe_init = x.clone();
-        let xneon_init = x.clone();
-        let xblas_init = x;
-
-        let ysafe_init = y.clone();
-        let yneon_init = y.clone();
-        let yblas_init = y;
+        let x_init = make_strided_vec(n, incx);
+        let y_init = make_strided_vec(n, incy);
 
         group.throughput(Throughput::Bytes(bytes(n, 2)));
 
         group.bench_with_input(
             BenchmarkId::new("scopy_coral_safe", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-
-                let xsafe = xsafe_init;
-                let mut ysafe = ysafe_init;
+            |b, &_n| {
+                let xsafe = x_init.clone();
+                let mut ysafe = y_init.clone();
 
                 b.iter(|| {
                     let xcoral = make_view_ref(&xsafe, n, incx);
@@ -57,13 +45,9 @@ pub fn scopy_contiguous_sweep(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::new("scopy_coral_neon", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-
-                let xneon = xneon_init;
-                let mut yneon = yneon_init;
+            |b, &_n| {
+                let xneon = x_init.clone();
+                let mut yneon = y_init.clone();
 
                 b.iter(|| {
                     black_box(scopy_neon(
@@ -80,13 +64,9 @@ pub fn scopy_contiguous_sweep(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::new("scopy_cblas", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-
-                let xblas = xblas_init;
-                let mut yblas = yblas_init;
+            |b, &_n| {
+                let xblas = x_init.clone();
+                let mut yblas = y_init.clone();
 
                 b.iter(|| unsafe {
                     black_box(cblas_scopy(

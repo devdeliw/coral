@@ -1,5 +1,5 @@
-use coral_safe::types::{MatrixRef, MatrixMut, VectorMut, VectorRef}; 
-use coral_safe::errors::BufferError;  
+use coral::types::{MatrixRef, MatrixMut, VectorMut, VectorRef}; 
+use coral::errors::BufferError;  
 
 type CoralResult = Result<(), BufferError>;
 

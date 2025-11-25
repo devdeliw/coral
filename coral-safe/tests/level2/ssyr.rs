@@ -9,8 +9,8 @@ use super::common::{
 
 use blas_src as _; 
 use cblas_sys::{cblas_ssyr, CBLAS_LAYOUT, CBLAS_UPLO}; 
-use coral_safe::level2::ssyr; 
-use coral_safe::types::{MatrixMut, VectorRef, CoralTriangular}; 
+use coral::level2::ssyr; 
+use coral::types::{MatrixMut, VectorRef, CoralTriangular}; 
 
 
 #[test] 

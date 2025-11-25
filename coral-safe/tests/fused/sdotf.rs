@@ -9,8 +9,8 @@ use super::common::{
 
 use blas_src as _; 
 use cblas_sys::{cblas_sgemv, CBLAS_LAYOUT, CBLAS_TRANSPOSE}; 
-use coral_safe::fused::sdotf; 
-use coral_safe::types::{VectorMut, VectorRef, MatrixRef}; 
+use coral::fused::sdotf; 
+use coral::types::{VectorMut, VectorRef, MatrixRef}; 
 
 /// AXPYF equivalent to GEMV with alpha, beta = 1.0 
 #[test]

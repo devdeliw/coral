@@ -1,6 +1,7 @@
 [workspace]
 members = [
-  "coral-aarch64",
-  "coral-safe",
+    "coral-safe",
+    "coral-aarch64",
+    "coral-benches"
 ]
 resolver = "2"

@@ -22,26 +22,17 @@ pub fn sswap_contiguous_sweep(c: &mut Criterion) {
         let incx = 1;
         let incy = 1;
 
-        let mut xsafe = make_strided_vec(n, incx);
-        let mut ysafe = make_strided_vec(n, incy);
-
-        let mut xneon = xsafe.clone();
-        let mut yneon = ysafe.clone();
-
-        let mut xblas = xsafe.clone();
-        let mut yblas = ysafe.clone();
+        let x_init = make_strided_vec(n, incx);
+        let y_init = make_strided_vec(n, incy);
 
         group.throughput(Throughput::Bytes(bytes(n, 4)));
 
         group.bench_with_input(
             BenchmarkId::new("sswap_coral_safe", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-                let mut xsafe = xsafe;
-                let mut ysafe = ysafe;
+            |b, &_n| {
+                let mut xsafe = x_init.clone();
+                let mut ysafe = y_init.clone();
 
                 b.iter(|| {
                     let xcoral = make_view_mut(&mut xsafe, n, incx);
@@ -54,12 +45,9 @@ pub fn sswap_contiguous_sweep(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::new("sswap_coral_neon", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-                let mut xneon = xneon;
-                let mut yneon = yneon;
+            |b, &_n| {
+                let mut xneon = x_init.clone();
+                let mut yneon = y_init.clone();
 
                 b.iter(|| {
                     black_box(sswap_neon(
@@ -76,12 +64,9 @@ pub fn sswap_contiguous_sweep(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::new("sswap_cblas", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-                let mut xblas = xblas;
-                let mut yblas = yblas;
+            |b, &_n| {
+                let mut xblas = x_init.clone();
+                let mut yblas = y_init.clone();
 
                 b.iter(|| unsafe {
                     black_box(cblas_sswap(
@@ -101,3 +86,4 @@ pub fn sswap_contiguous_sweep(c: &mut Criterion) {
 
 criterion_group!(benches, sswap_contiguous_sweep);
 criterion_main!(benches);
+

@@ -23,28 +23,17 @@ pub fn saxpy_contiguous_sweep(c: &mut Criterion) {
         let incy = 1;
         let alpha = 3.1415926535_f32;
 
-        let x = make_strided_vec(n, incx);
-        let xsafe = x.clone();
-        let xneon = x.clone();
-        let xblas = x;
-
-        let y = make_strided_vec(n, incy);
-        let ysafe_init = y.clone();
-        let yneon_init = y.clone();
-        let yblas_init = y;
+        let x_init = make_strided_vec(n, incx);
+        let y_init = make_strided_vec(n, incy);
 
         group.throughput(Throughput::Bytes(bytes(n, 3)));
 
         group.bench_with_input(
             BenchmarkId::new("saxpy_coral_safe", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-                let alpha = alpha;
-                let xsafe = xsafe;
-                let mut ysafe = ysafe_init;
+            |b, &_n| {
+                let xsafe = x_init.clone();
+                let mut ysafe = y_init.clone();
 
                 b.iter(|| {
                     let xcoral = make_view_ref(&xsafe, n, incx);
@@ -57,13 +46,9 @@ pub fn saxpy_contiguous_sweep(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::new("saxpy_coral_neon", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-                let alpha = alpha;
-                let xneon = xneon;
-                let mut yneon = yneon_init;
+            |b, &_n| {
+                let xneon = x_init.clone();
+                let mut yneon = y_init.clone();
 
                 b.iter(|| {
                     black_box(saxpy_neon(
@@ -81,13 +66,9 @@ pub fn saxpy_contiguous_sweep(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::new("saxpy_cblas", n),
             &n,
-            move |b, &_n| {
-                let n = n;
-                let incx = incx;
-                let incy = incy;
-                let alpha = alpha;
-                let xblas = xblas;
-                let mut yblas = yblas_init;
+            |b, &_n| {
+                let xblas = x_init.clone();
+                let mut yblas = y_init.clone();
 
                 b.iter(|| unsafe {
                     black_box(cblas_saxpy(
@@ -108,3 +89,4 @@ pub fn saxpy_contiguous_sweep(c: &mut Criterion) {
 
 criterion_group!(benches, saxpy_contiguous_sweep);
 criterion_main!(benches);
+

@@ -3,7 +3,8 @@ use rand::distributions::{Distribution, Standard, Uniform};
 use coral_safe::types::{VectorMut, VectorRef, MatrixMut, MatrixRef};
 use coral_safe::types::{CoralTriangular, CoralDiagonal}; 
 
-/// for sweeps 
+/// for sweeps
+#[allow(dead_code)]
 pub const SIZES: &[usize] = &[
     128, 256, 384, 512, 640, 768, 896, 1024,
     1152, 1280, 1408, 1536, 1664, 1792, 1920, 2048,
