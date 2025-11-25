@@ -1,10 +1,10 @@
 //! Level 3 [`?GEMM`](https://www.netlib.org/lapack/explore-html/dd/d09/group__gemm.html) 
 //! routine in single precision
 //!
-//! \[
+//! \\[
 //! C \leftarrow \alpha \operatorname{op}(A)\operatorname{op}(B) + \beta C, \quad
 //! \operatorname{op}(A) \in \{A, A^{T}\}.
-//! \]
+//! \\]
 //!
 //! A, B, and C are stored in column-major order.
 //!

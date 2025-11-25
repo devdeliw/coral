@@ -2,7 +2,7 @@
 //! routine in single precision. 
 //!
 //! //[ 
-//! x \leftarrow \operatorname{op}(A)x, \quad \operatorname{op}{A} \in \\{A, A^T \\}. 
+//! x \leftarrow \operatorname{op}(A)x, \quad \operatorname{op}(A) \in \\{A, A^T \\}. 
 //! //]
 //!
 //! # Author 

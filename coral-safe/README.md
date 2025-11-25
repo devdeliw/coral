@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../coral_logo.png" width="75%">
+  <img src="https://raw.githubusercontent.com/devdeliw/coral/main/coral_logo.png" width="75%">
 </p>
 
 <p align="center">

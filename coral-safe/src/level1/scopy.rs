@@ -2,7 +2,7 @@
 //! routine in single precision. 
 //!
 //! \\[ 
-//! y_i = x_i \forall i \in \mathbb{Z}_n
+//! y_i = x_i \\; \forall i \in \mathbb{Z}_n
 //! \\]
 //!
 //! # Author 

@@ -2,7 +2,7 @@
 //! routine in single precision 
 //!
 //! \\[
-//! x\_i \;\leftrightarrow\; y\_i
+//! x\_i \\; \leftrightarrow \\; y\_i
 //! \\]
 //!
 //! # Author 
