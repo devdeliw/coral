@@ -16,14 +16,14 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::{cblas_strsv, CBLAS_TRANSPOSE, CBLAS_LAYOUT, CBLAS_DIAG, CBLAS_UPLO}; 
-use coral::level2::strsv as strsv_neon; 
-use coral::enums::{
+use coral_aarch64::level2::strsv as strsv_neon; 
+use coral_aarch64::enums::{
     CoralDiagonal as NeonDiagonal,
     CoralTranspose as NeonTranspose, 
     CoralTriangular as NeonTriangular, 
 };
-use coral_safe::level2::strsv as strsv_safe; 
-use coral_safe::types::{CoralTriangular, CoralTranspose, CoralDiagonal};
+use coral::level2::strsv as strsv_safe; 
+use coral::types::{CoralTriangular, CoralTranspose, CoralDiagonal};
 
 pub fn strlsv_n(c: &mut Criterion) { 
     let n = 1024; 
@@ -46,7 +46,7 @@ pub fn strlsv_n(c: &mut Criterion) {
     let mut group = c.benchmark_group("strlsv_n"); 
     group.throughput(Throughput::Bytes(bytes_decimal((n * n + n) as f32, 0.5))); 
 
-    group.bench_function("strlsv_n_coral_safe", |b| { 
+    group.bench_function("strlsv_n_coral", |b| { 
         b.iter(|| { 
             let xview = make_view_mut(&mut xsafe, n, incx); 
             strsv_safe (
@@ -59,7 +59,7 @@ pub fn strlsv_n(c: &mut Criterion) {
         }); 
     }); 
 
-    group.bench_function("strlsv_n_coral_neon", |b| { 
+    group.bench_function("strlsv_n_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             strsv_neon (
                 NeonTriangular::LowerTriangular, 
@@ -112,7 +112,7 @@ pub fn strlsv_t(c: &mut Criterion) {
     let mut group = c.benchmark_group("strlsv_t"); 
     group.throughput(Throughput::Bytes(bytes_decimal((n * n + n) as f32, 0.5))); 
 
-    group.bench_function("strlsv_t_coral_safe", |b| { 
+    group.bench_function("strlsv_t_coral", |b| { 
         b.iter(|| { 
             let xview = make_view_mut(&mut xsafe, n, incx); 
             strsv_safe (
@@ -125,7 +125,7 @@ pub fn strlsv_t(c: &mut Criterion) {
         }); 
     }); 
 
-    group.bench_function("strlsv_t_coral_neon", |b| { 
+    group.bench_function("strlsv_t_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             strsv_neon (
                 NeonTriangular::LowerTriangular, 
@@ -178,7 +178,7 @@ pub fn strusv_n(c: &mut Criterion) {
     let mut group = c.benchmark_group("strusv_n"); 
     group.throughput(Throughput::Bytes(bytes_decimal((n * n + n) as f32, 0.5))); 
 
-    group.bench_function("strusv_n_coral_safe", |b| { 
+    group.bench_function("strusv_n_coral", |b| { 
         b.iter(|| { 
             let xview = make_view_mut(&mut xsafe, n, incx); 
             strsv_safe (
@@ -191,7 +191,7 @@ pub fn strusv_n(c: &mut Criterion) {
         }); 
     }); 
 
-    group.bench_function("strusv_n_coral_neon", |b| { 
+    group.bench_function("strusv_n_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             strsv_neon (
                 NeonTriangular::UpperTriangular, 
@@ -244,7 +244,7 @@ pub fn strusv_t(c: &mut Criterion) {
     let mut group = c.benchmark_group("strusv_t"); 
     group.throughput(Throughput::Bytes(bytes_decimal((n * n + n) as f32, 0.5))); 
 
-    group.bench_function("strusv_t_coral_safe", |b| { 
+    group.bench_function("strusv_t_coral", |b| { 
         b.iter(|| { 
             let xview = make_view_mut(&mut xsafe, n, incx); 
             strsv_safe (
@@ -257,7 +257,7 @@ pub fn strusv_t(c: &mut Criterion) {
         }); 
     }); 
 
-    group.bench_function("strusv_t_coral_neon", |b| { 
+    group.bench_function("strusv_t_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             strsv_neon (
                 NeonTriangular::UpperTriangular, 

@@ -12,8 +12,8 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::cblas_sasum;
-use coral_safe::level1::sasum as sasum_safe;
-use coral::level1::sasum as sasum_neon;
+use coral::level1::sasum as sasum_safe;
+use coral_aarch64::level1::sasum as sasum_neon;
 
 pub fn sasum_contiguous_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("sasum_contiguous_sweep");
@@ -26,7 +26,7 @@ pub fn sasum_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(n, 1)));
 
         group.bench_with_input(
-            BenchmarkId::new("sasum_coral_safe", n),
+            BenchmarkId::new("sasum_coral", n),
             &n,
             |b, &_n| {
                 b.iter(|| {
@@ -36,7 +36,7 @@ pub fn sasum_contiguous_sweep(c: &mut Criterion) {
         );
 
         group.bench_with_input(
-            BenchmarkId::new("sasum_coral_neon", n),
+            BenchmarkId::new("sasum_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 b.iter(|| {

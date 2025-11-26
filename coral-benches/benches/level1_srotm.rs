@@ -11,8 +11,8 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::cblas_srotm; 
-use coral_safe::level1::srotm as srotm_safe; 
-use coral::level1::srotm as srotm_neon; 
+use coral::level1::srotm as srotm_safe; 
+use coral_aarch64::level1::srotm as srotm_neon; 
 
 pub fn srotm_contiguous(c: &mut Criterion) { 
     let n = 1000000; 
@@ -36,20 +36,20 @@ pub fn srotm_contiguous(c: &mut Criterion) {
     let mut group = c.benchmark_group("srotm_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n, 4))); 
 
-    group.bench_function("srotm_coral_safe", |b| { 
+    group.bench_function("srotm_coral", |b| { 
         b.iter(|| { 
             // includes creation time; neglible 
-            let xcoral = make_view_mut(&mut xsafe, n, incx); 
-            let ycoral = make_view_mut(&mut ysafe, n, incy); 
+            let xcoral_aarch64 = make_view_mut(&mut xsafe, n, incx); 
+            let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy); 
             black_box ( srotm_safe ( 
-                black_box(xcoral), 
-                black_box(ycoral), 
+                black_box(xcoral_aarch64), 
+                black_box(ycoral_aarch64), 
                 black_box(&param), 
             ))
         }); 
     });
 
-    group.bench_function("srotm_coral_neon", |b| { 
+    group.bench_function("srotm_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box ( srotm_neon ( 
                 black_box(n), 
@@ -98,20 +98,20 @@ pub fn srotm_strided(c: &mut Criterion) {
     let mut group = c.benchmark_group("srotm_strided"); 
     group.throughput(Throughput::Bytes(bytes(n, 4))); 
 
-    group.bench_function("srotm_coral_safe", |b| { 
+    group.bench_function("srotm_coral", |b| { 
         b.iter(|| { 
             // includes creation time; neglible 
-            let xcoral = make_view_mut(&mut xsafe, n, incx); 
-            let ycoral = make_view_mut(&mut ysafe, n, incy); 
+            let xcoral_aarch64 = make_view_mut(&mut xsafe, n, incx); 
+            let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy); 
             black_box ( srotm_safe ( 
-                black_box(xcoral), 
-                black_box(ycoral), 
+                black_box(xcoral_aarch64), 
+                black_box(ycoral_aarch64), 
                 black_box(&param), 
             ))
         }); 
     });
 
-    group.bench_function("srotm_coral_neon", |b| { 
+    group.bench_function("srotm_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box ( srotm_neon ( 
                 black_box(n), 

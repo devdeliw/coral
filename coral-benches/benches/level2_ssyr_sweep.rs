@@ -18,10 +18,10 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::{cblas_ssyr, CBLAS_LAYOUT, CBLAS_UPLO};
-use coral::level2::ssyr as ssyr_neon;
-use coral::enums::CoralTriangular as NeonTriangular;
-use coral_safe::level2::ssyr as ssyr_safe;
-use coral_safe::types::CoralTriangular;
+use coral_aarch64::level2::ssyr as ssyr_neon;
+use coral_aarch64::enums::CoralTriangular as NeonTriangular;
+use coral::level2::ssyr as ssyr_safe;
+use coral::types::CoralTriangular;
 
 pub fn ssyr_upper_contiguous_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("ssyr_upper_contiguous_sweep");
@@ -34,7 +34,7 @@ pub fn ssyr_upper_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(n * n, 1)));
 
         group.bench_with_input(
-            BenchmarkId::new("ssyr_upper_coral_safe", n),
+            BenchmarkId::new("ssyr_upper_coral", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);
@@ -51,7 +51,7 @@ pub fn ssyr_upper_contiguous_sweep(c: &mut Criterion) {
         );
 
         group.bench_with_input(
-            BenchmarkId::new("ssyr_upper_coral_neon", n),
+            BenchmarkId::new("ssyr_upper_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);
@@ -108,7 +108,7 @@ pub fn ssyr_lower_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(n * n, 1)));
 
         group.bench_with_input(
-            BenchmarkId::new("ssyr_lower_coral_safe", n),
+            BenchmarkId::new("ssyr_lower_coral", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);
@@ -125,7 +125,7 @@ pub fn ssyr_lower_contiguous_sweep(c: &mut Criterion) {
         );
 
         group.bench_with_input(
-            BenchmarkId::new("ssyr_lower_coral_neon", n),
+            BenchmarkId::new("ssyr_lower_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);

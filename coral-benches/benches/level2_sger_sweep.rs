@@ -18,8 +18,8 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::{cblas_sger, CBLAS_LAYOUT};
-use coral::level2::sger as sger_neon;
-use coral_safe::level2::sger as sger_safe;
+use coral_aarch64::level2::sger as sger_neon;
+use coral::level2::sger as sger_safe;
 
 pub fn sger_contiguous_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("sger_contiguous_sweep");
@@ -34,7 +34,7 @@ pub fn sger_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(m * n, 2)));
 
         group.bench_with_input(
-            BenchmarkId::new("sger_coral_safe", n),
+            BenchmarkId::new("sger_coral", n),
             &n,
             |b, &_n| {
                 let mut asafe_buf = make_strided_mat(m, n, lda);
@@ -51,7 +51,7 @@ pub fn sger_contiguous_sweep(c: &mut Criterion) {
         );
 
         group.bench_with_input(
-            BenchmarkId::new("sger_coral_neon", n),
+            BenchmarkId::new("sger_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let mut aneon_buf = make_strided_mat(m, n, lda);

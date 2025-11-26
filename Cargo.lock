@@ -72,8 +72,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9bae1f9c995f3deabb3eff7ed9272369a6f260e961c8723779b951c35056c45d"
 dependencies = [
  "accelerate-src",
+ "blis-src",
  "openblas-src",
 ]
+
+[[package]]
+name = "blis-src"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc119b6761ce8b063102502af49043051f81a9bdf242ae06d12e9ea0d92b727a"
 
 [[package]]
 name = "block-buffer"
@@ -222,13 +229,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "coral-aarch64"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aadecd1fc69d04f73c5f418de1f21f298abc2abc4ee644d0480d14dca0412207"
+
+[[package]]
 name = "coral-benches"
 version = "0.1.0"
 dependencies = [
  "blas-src",
+ "blis-src",
  "cblas-sys",
- "coral-aarch64",
- "coral-blas",
+ "coral-aarch64 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "coral-blas 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "criterion",
  "faer",
  "rand",
@@ -244,6 +258,12 @@ dependencies = [
  "faer",
  "rand",
 ]
+
+[[package]]
+name = "coral-blas"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "023df497726025623e78d588d3d3caad6825518379aa912a51848da563917e11"
 
 [[package]]
 name = "core-foundation"

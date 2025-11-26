@@ -13,10 +13,10 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::{cblas_sgemm, CBLAS_LAYOUT, CBLAS_TRANSPOSE}; 
-use coral::level3::sgemm as sgemm_neon; 
-use coral::enums::CoralTranspose as NeonTranspose; 
-use coral_safe::level3::sgemm as sgemm_safe; 
-use coral_safe::types::CoralTranspose; 
+use coral_aarch64::level3::sgemm as sgemm_neon; 
+use coral_aarch64::enums::CoralTranspose as NeonTranspose; 
+use coral::level3::sgemm as sgemm_safe; 
+use coral::types::CoralTranspose; 
 
 use faer::{mat, Parallelism}; 
 use faer::linalg::matmul::matmul as sgemm_faer; 
@@ -69,20 +69,20 @@ pub fn sgemm_nn_contiguous(c: &mut Criterion) {
     let bfaer = faer_ref(bbuf.as_ptr(), n, n, lda); 
     let mut cfaer = cbuf.clone(); 
 
-    let acoral = make_matview_ref(&abuf, n, n, lda);
-    let bcoral = make_matview_ref(&bbuf, n, n, ldb); 
+    let acoral_aarch64 = make_matview_ref(&abuf, n, n, lda);
+    let bcoral_aarch64 = make_matview_ref(&bbuf, n, n, ldb); 
 
     let mut group = c.benchmark_group("sgemm_nn_contiguous"); 
     group.throughput(criterion::Throughput::Elements((2 * n * n * n) as u64));
 
-    group.bench_function("sgemm_nn_coral_safe", |b| { 
+    group.bench_function("sgemm_nn_coral", |b| { 
         b.iter(|| {     
-            let ccoral = make_matview_mut(&mut csafe, n, n, ldc);
-            sgemm_safe(opa, opb, alpha, beta, acoral, bcoral, ccoral); 
+            let ccoral_aarch64 = make_matview_mut(&mut csafe, n, n, ldc);
+            sgemm_safe(opa, opb, alpha, beta, acoral_aarch64, bcoral_aarch64, ccoral_aarch64); 
         })
     });
 
-    group.bench_function("sgemm_nn_coral_neon", |b| { 
+    group.bench_function("sgemm_nn_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             sgemm_neon ( 
                 NeonTranspose::NoTranspose, 
@@ -155,20 +155,20 @@ pub fn sgemm_tt_contiguous(c: &mut Criterion) {
     let mut cneon = cbuf.clone(); 
     let mut cblas = cbuf.clone(); 
 
-    let acoral = make_matview_ref(&abuf, n, n, lda);
-    let bcoral = make_matview_ref(&bbuf, n, n, ldb); 
+    let acoral_aarch64 = make_matview_ref(&abuf, n, n, lda);
+    let bcoral_aarch64 = make_matview_ref(&bbuf, n, n, ldb); 
 
     let mut group = c.benchmark_group("sgemm_tt_contiguous"); 
     group.throughput(criterion::Throughput::Elements((2 * n * n * n) as u64));
 
-    group.bench_function("sgemm_tt_coral_safe", |b| { 
+    group.bench_function("sgemm_tt_coral", |b| { 
         b.iter(|| {     
-            let ccoral = make_matview_mut(&mut csafe, n, n, ldc);
-            sgemm_safe(opa, opb, alpha, beta, acoral, bcoral, ccoral); 
+            let ccoral_aarch64 = make_matview_mut(&mut csafe, n, n, ldc);
+            sgemm_safe(opa, opb, alpha, beta, acoral_aarch64, bcoral_aarch64, ccoral_aarch64); 
         })
     });
 
-    group.bench_function("sgemm_tt_coral_neon", |b| { 
+    group.bench_function("sgemm_tt_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             sgemm_neon ( 
                 NeonTranspose::Transpose, 

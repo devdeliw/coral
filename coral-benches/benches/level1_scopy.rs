@@ -11,8 +11,8 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::cblas_scopy; 
-use coral_safe::level1::scopy as scopy_safe; 
-use coral::level1::scopy as scopy_neon; 
+use coral::level1::scopy as scopy_safe; 
+use coral_aarch64::level1::scopy as scopy_neon; 
 
 pub fn scopy_contiguous(c: &mut Criterion) { 
     let n = 1000000; 
@@ -22,7 +22,7 @@ pub fn scopy_contiguous(c: &mut Criterion) {
     let xbuf = make_strided_vec(n, incx); 
     let ybuf = make_strided_vec(n, incy); 
 
-    let xcoral = make_view_ref(&xbuf, n, incx); 
+    let xcoral_aarch64 = make_view_ref(&xbuf, n, incx); 
     let mut ysafe = ybuf.clone(); 
     let mut yneon = ybuf.clone(); 
     let mut yblas = ybuf.clone(); 
@@ -30,14 +30,14 @@ pub fn scopy_contiguous(c: &mut Criterion) {
     let mut group = c.benchmark_group("scopy_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n, 2))); 
 
-    group.bench_function("scopy_coral_safe", |b| { 
+    group.bench_function("scopy_coral", |b| { 
         b.iter(|| { 
-            let ycoral = make_view_mut(&mut ysafe, n, incy); 
-            black_box(scopy_safe(black_box(xcoral), black_box(ycoral))); 
+            let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy); 
+            black_box(scopy_safe(black_box(xcoral_aarch64), black_box(ycoral_aarch64))); 
         }); 
     }); 
 
-    group.bench_function("scopy_coral_neon", |b| { 
+    group.bench_function("scopy_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box ( scopy_neon ( 
                 black_box(n), 
@@ -70,7 +70,7 @@ pub fn scopy_strided(c: &mut Criterion) {
     let xbuf = make_strided_vec(n, incx); 
     let ybuf = make_strided_vec(n, incy); 
 
-    let xcoral = make_view_ref(&xbuf, n, incx); 
+    let xcoral_aarch64 = make_view_ref(&xbuf, n, incx); 
     let mut ysafe = ybuf.clone(); 
     let mut yneon = ybuf.clone(); 
     let mut yblas = ybuf.clone(); 
@@ -78,14 +78,14 @@ pub fn scopy_strided(c: &mut Criterion) {
     let mut group = c.benchmark_group("scopy_strided"); 
     group.throughput(Throughput::Bytes(bytes(n, 2))); 
 
-    group.bench_function("scopy_coral_safe", |b| { 
+    group.bench_function("scopy_coral", |b| { 
         b.iter(|| { 
-            let ycoral = make_view_mut(&mut ysafe, n, incy); 
-            black_box(scopy_safe(black_box(xcoral), black_box(ycoral))); 
+            let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy); 
+            black_box(scopy_safe(black_box(xcoral_aarch64), black_box(ycoral_aarch64))); 
         }); 
     }); 
 
-    group.bench_function("scopy_coral_neon", |b| { 
+    group.bench_function("scopy_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box ( scopy_neon ( 
                 black_box(n), 

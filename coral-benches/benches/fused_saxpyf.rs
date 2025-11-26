@@ -18,9 +18,9 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::{cblas_sgemv, CBLAS_TRANSPOSE, CBLAS_LAYOUT}; 
-use coral_safe::fused::saxpyf;
-use coral::enums::CoralTranspose; 
-use coral::level2::sgemv;
+use coral::fused::saxpyf;
+use coral_aarch64::enums::CoralTranspose; 
+use coral_aarch64::level2::sgemv;
 
 pub fn saxpyf_contiguous(c: &mut Criterion) { 
     let n = 1024; 
@@ -37,25 +37,25 @@ pub fn saxpyf_contiguous(c: &mut Criterion) {
     let xbuf = make_strided_vec(n, incx); 
     let mut ybuf = make_strided_vec(n, incy); 
 
-    let xcoral = make_view_ref(&xbuf, n, incx); 
-    let acoral = make_matview_ref(&abuf, n, n, lda);
+    let xcoral_aarch64 = make_view_ref(&xbuf, n, incx); 
+    let acoral_aarch64 = make_matview_ref(&abuf, n, n, lda);
     
     let mut group = c.benchmark_group("saxpyf_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n*n + 3*n, 1))); 
 
-    group.bench_function("saxpyf_coral_safe", |b| { 
+    group.bench_function("saxpyf_coral", |b| { 
         b.iter(|| { 
-            let ycoral = make_view_mut(&mut ybuf, n, incy); 
+            let ycoral_aarch64 = make_view_mut(&mut ybuf, n, incy); 
             
             saxpyf(
-                black_box(acoral), 
-                black_box(xcoral),
-                black_box(ycoral)
+                black_box(acoral_aarch64), 
+                black_box(xcoral_aarch64),
+                black_box(ycoral_aarch64)
             ); 
         }); 
     });
 
-    group.bench_function("saxpyf_coral_neon", |b| { 
+    group.bench_function("saxpyf_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             sgemv ( 
                 black_box(CoralTranspose::NoTranspose), 
@@ -106,25 +106,25 @@ pub fn saxpyf_strided(c: &mut Criterion) {
     let xbuf = make_strided_vec(n, incx); 
     let mut ybuf = make_strided_vec(n, incy); 
 
-    let xcoral = make_view_ref(&xbuf, n, incx); 
-    let acoral = make_matview_ref(&abuf, n, n, lda);
+    let xcoral_aarch64 = make_view_ref(&xbuf, n, incx); 
+    let acoral_aarch64 = make_matview_ref(&abuf, n, n, lda);
     
     let mut group = c.benchmark_group("saxpyf_strided"); 
     group.throughput(Throughput::Bytes(bytes(n*n + 3*n, 1))); 
 
-    group.bench_function("saxpyf_coral_safe", |b| { 
+    group.bench_function("saxpyf_coral", |b| { 
         b.iter(|| { 
-            let ycoral = make_view_mut(&mut ybuf, n, incy); 
+            let ycoral_aarch64 = make_view_mut(&mut ybuf, n, incy); 
             
             saxpyf(
-                black_box(acoral), 
-                black_box(xcoral),
-                black_box(ycoral)
+                black_box(acoral_aarch64), 
+                black_box(xcoral_aarch64),
+                black_box(ycoral_aarch64)
             ); 
         }); 
     });
 
-    group.bench_function("saxpyf_coral_neon", |b| { 
+    group.bench_function("saxpyf_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             sgemv ( 
                 black_box(CoralTranspose::NoTranspose), 

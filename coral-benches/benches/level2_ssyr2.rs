@@ -16,10 +16,10 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::{cblas_ssyr2, CBLAS_LAYOUT, CBLAS_UPLO}; 
-use coral::level2::ssyr2 as ssyr2_neon; 
-use coral::enums::CoralTriangular as NeonTriangular; 
-use coral_safe::level2::ssyr2 as ssyr2_safe; 
-use coral_safe::types::CoralTriangular; 
+use coral_aarch64::level2::ssyr2 as ssyr2_neon; 
+use coral_aarch64::enums::CoralTriangular as NeonTriangular; 
+use coral::level2::ssyr2 as ssyr2_safe; 
+use coral::types::CoralTriangular; 
 
 
 pub fn ssyr2_upper_contiguous(c: &mut Criterion) { 
@@ -43,14 +43,14 @@ pub fn ssyr2_upper_contiguous(c: &mut Criterion) {
     let mut group = c.benchmark_group("ssyr2_upper_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n * n, 1))); 
 
-    group.bench_function("ssyr2_upper_coral_safe", |b| { 
+    group.bench_function("ssyr2_upper_coral", |b| { 
         b.iter(|| { 
             let aview = make_matview_mut(&mut asafe, n, n, lda); 
             ssyr2_safe(CoralTriangular::Upper, alpha, aview, xview, yview); 
         }); 
     }); 
 
-    group.bench_function("ssyr2_upper_coral_neon", |b| { 
+    group.bench_function("ssyr2_upper_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             ssyr2_neon (
                 NeonTriangular::UpperTriangular, 
@@ -105,14 +105,14 @@ pub fn ssyr2_lower_contiguous(c: &mut Criterion) {
     let mut group = c.benchmark_group("ssyr2_lower_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n * n, 1)));
 
-    group.bench_function("ssyr2_lower_coral_safe", |b| { 
+    group.bench_function("ssyr2_lower_coral", |b| { 
         b.iter(|| { 
             let aview = make_matview_mut(&mut asafe, n, n, lda); 
             ssyr2_safe(CoralTriangular::Lower, alpha, aview, xview, yview); 
         }); 
     }); 
 
-    group.bench_function("ssyr2_lower_coral_neon", |b| { 
+    group.bench_function("ssyr2_lower_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             ssyr2_neon (
                 NeonTriangular::LowerTriangular, 

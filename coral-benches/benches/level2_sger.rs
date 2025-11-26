@@ -16,8 +16,8 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::{cblas_sger, CBLAS_LAYOUT}; 
-use coral::level2::sger as sger_neon;
-use coral_safe::{level2::sger as sger_safe}; 
+use coral_aarch64::level2::sger as sger_neon;
+use coral::{level2::sger as sger_safe}; 
 
 pub fn sger_contiguous(c: &mut Criterion) { 
     let n = 1024; 
@@ -43,14 +43,14 @@ pub fn sger_contiguous(c: &mut Criterion) {
     let mut group = c.benchmark_group("sger_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(m * n, 2)));
 
-    group.bench_function("sger_coral_safe", |b| { 
+    group.bench_function("sger_coral", |b| { 
         b.iter(|| { 
             let asafe = make_matview_mut(&mut asafe_buf, m, n, lda); 
             sger_safe(alpha, asafe, xsafe, ysafe); 
         }); 
     });
 
-    group.bench_function("sger_coral_neon", |b| { 
+    group.bench_function("sger_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             sger_neon ( 
                 m, n, alpha, 

@@ -11,8 +11,8 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::cblas_sdot; 
-use coral_safe::level1::sdot as sdot_safe; 
-use coral::level1::sdot as sdot_neon;
+use coral::level1::sdot as sdot_safe; 
+use coral_aarch64::level1::sdot as sdot_neon;
 
 pub fn sdot_contiguous(c: &mut Criterion) { 
     let n = 1000000; 
@@ -27,13 +27,13 @@ pub fn sdot_contiguous(c: &mut Criterion) {
     let mut group = c.benchmark_group("sdot_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n, 2))); 
 
-    group.bench_function("sdot_coral_safe", |b| { 
+    group.bench_function("sdot_coral", |b| { 
         b.iter(|| { 
             black_box(sdot_safe(black_box(xvec), black_box(yvec))); 
         }); 
     });
 
-    group.bench_function("sdot_coral_neon", |b| { 
+    group.bench_function("sdot_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box ( sdot_neon ( 
                 black_box(n), 
@@ -71,13 +71,13 @@ pub fn sdot_strided(c: &mut Criterion) {
     let mut group = c.benchmark_group("sdot_strided"); 
     group.throughput(Throughput::Bytes(bytes(n, 2))); 
 
-    group.bench_function("sdot_coral_safe", |b| { 
+    group.bench_function("sdot_coral", |b| { 
         b.iter(|| { 
             black_box(sdot_safe(black_box(xvec), black_box(yvec))); 
         }); 
     });
 
-    group.bench_function("sdot_coral_neon", |b| { 
+    group.bench_function("sdot_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box ( sdot_neon ( 
                 black_box(n), 

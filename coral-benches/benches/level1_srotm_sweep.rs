@@ -12,8 +12,8 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::cblas_srotm;
-use coral_safe::level1::srotm as srotm_safe;
-use coral::level1::srotm as srotm_neon;
+use coral::level1::srotm as srotm_safe;
+use coral_aarch64::level1::srotm as srotm_neon;
 
 pub fn srotm_contiguous_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("srotm_contiguous_sweep");
@@ -30,18 +30,18 @@ pub fn srotm_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(n, 4)));
 
         group.bench_with_input(
-            BenchmarkId::new("srotm_coral_safe", n),
+            BenchmarkId::new("srotm_coral", n),
             &n,
             |b, &_n| {
                 let mut xsafe = x_init.clone();
                 let mut ysafe = y_init.clone();
 
                 b.iter(|| {
-                    let xcoral = make_view_mut(&mut xsafe, n, incx);
-                    let ycoral = make_view_mut(&mut ysafe, n, incy);
+                    let xcoral_aarch64 = make_view_mut(&mut xsafe, n, incx);
+                    let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy);
                     black_box(srotm_safe(
-                        black_box(xcoral),
-                        black_box(ycoral),
+                        black_box(xcoral_aarch64),
+                        black_box(ycoral_aarch64),
                         black_box(&param),
                     ));
                 });
@@ -49,7 +49,7 @@ pub fn srotm_contiguous_sweep(c: &mut Criterion) {
         );
 
         group.bench_with_input(
-            BenchmarkId::new("srotm_coral_neon", n),
+            BenchmarkId::new("srotm_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let mut xneon = x_init.clone();

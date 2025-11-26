@@ -12,8 +12,8 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::cblas_scopy;
-use coral_safe::level1::scopy as scopy_safe;
-use coral::level1::scopy as scopy_neon;
+use coral::level1::scopy as scopy_safe;
+use coral_aarch64::level1::scopy as scopy_neon;
 
 pub fn scopy_contiguous_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("scopy_contiguous_sweep");
@@ -28,22 +28,22 @@ pub fn scopy_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(n, 2)));
 
         group.bench_with_input(
-            BenchmarkId::new("scopy_coral_safe", n),
+            BenchmarkId::new("scopy_coral", n),
             &n,
             |b, &_n| {
                 let xsafe = x_init.clone();
                 let mut ysafe = y_init.clone();
 
                 b.iter(|| {
-                    let xcoral = make_view_ref(&xsafe, n, incx);
-                    let ycoral = make_view_mut(&mut ysafe, n, incy);
-                    black_box(scopy_safe(black_box(xcoral), black_box(ycoral)));
+                    let xcoral_aarch64 = make_view_ref(&xsafe, n, incx);
+                    let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy);
+                    black_box(scopy_safe(black_box(xcoral_aarch64), black_box(ycoral_aarch64)));
                 });
             },
         );
 
         group.bench_with_input(
-            BenchmarkId::new("scopy_coral_neon", n),
+            BenchmarkId::new("scopy_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let xneon = x_init.clone();

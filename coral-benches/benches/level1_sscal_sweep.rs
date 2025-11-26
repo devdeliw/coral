@@ -12,8 +12,8 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::cblas_sscal;
-use coral_safe::level1::sscal as sscal_safe;
-use coral::level1::sscal as sscal_neon;
+use coral::level1::sscal as sscal_safe;
+use coral_aarch64::level1::sscal as sscal_neon;
 
 pub fn sscal_contiguous_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("sscal_contiguous_sweep");
@@ -27,20 +27,20 @@ pub fn sscal_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(n, 2)));
 
         group.bench_with_input(
-            BenchmarkId::new("sscal_coral_safe", n),
+            BenchmarkId::new("sscal_coral", n),
             &n,
             |b, &_n| {
                 let mut xsafe = x_init.clone();
 
                 b.iter(|| {
-                    let xcoral = make_view_mut(&mut xsafe, n, incx);
-                    black_box(sscal_safe(black_box(alpha), black_box(xcoral)));
+                    let xcoral_aarch64 = make_view_mut(&mut xsafe, n, incx);
+                    black_box(sscal_safe(black_box(alpha), black_box(xcoral_aarch64)));
                 });
             },
         );
 
         group.bench_with_input(
-            BenchmarkId::new("sscal_coral_neon", n),
+            BenchmarkId::new("sscal_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let mut xneon = x_init.clone();

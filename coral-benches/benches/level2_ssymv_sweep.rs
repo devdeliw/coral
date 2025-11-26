@@ -19,8 +19,8 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::{cblas_ssymv, CBLAS_LAYOUT, CBLAS_UPLO};
-use coral_safe::level2::ssymv as ssymv_safe;
-use coral_safe::types::CoralTriangular;
+use coral::level2::ssymv as ssymv_safe;
+use coral::types::CoralTriangular;
 
 pub fn ssymv_upper_contiguous_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("ssymv_upper_contiguous_sweep");
@@ -35,19 +35,19 @@ pub fn ssymv_upper_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes_decimal((n * n) as f32, 0.5)));
 
         group.bench_with_input(
-            BenchmarkId::new("ssymv_upper_coral_safe", n),
+            BenchmarkId::new("ssymv_upper_coral", n),
             &n,
             |b, &_n| {
                 let abuf = make_strided_mat(n, n, lda);
                 let xbuf = make_strided_vec(n, incx);
                 let mut ybuf = make_strided_vec(n, incy);
 
-                let acoral = make_matview_ref(&abuf, n, n, lda);
-                let xcoral = make_view_ref(&xbuf, n, incx);
+                let acoral_aarch64 = make_matview_ref(&abuf, n, n, lda);
+                let xcoral_aarch64 = make_view_ref(&xbuf, n, incx);
 
                 b.iter(|| {
-                    let ycoral = make_view_mut(&mut ybuf, n, incy);
-                    ssymv_safe(CoralTriangular::Upper, alpha, beta, acoral, xcoral, ycoral);
+                    let ycoral_aarch64 = make_view_mut(&mut ybuf, n, incy);
+                    ssymv_safe(CoralTriangular::Upper, alpha, beta, acoral_aarch64, xcoral_aarch64, ycoral_aarch64);
                 });
             },
         );
@@ -95,19 +95,19 @@ pub fn ssymv_lower_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes_decimal((n * n) as f32, 0.5)));
 
         group.bench_with_input(
-            BenchmarkId::new("ssymv_lower_coral_safe", n),
+            BenchmarkId::new("ssymv_lower_coral", n),
             &n,
             |b, &_n| {
                 let abuf = make_strided_mat(n, n, lda);
                 let xbuf = make_strided_vec(n, incx);
                 let mut ybuf = make_strided_vec(n, incy);
 
-                let acoral = make_matview_ref(&abuf, n, n, lda);
-                let xcoral = make_view_ref(&xbuf, n, incx);
+                let acoral_aarch64 = make_matview_ref(&abuf, n, n, lda);
+                let xcoral_aarch64 = make_view_ref(&xbuf, n, incx);
 
                 b.iter(|| {
-                    let ycoral = make_view_mut(&mut ybuf, n, incy);
-                    ssymv_safe(CoralTriangular::Lower, alpha, beta, acoral, xcoral, ycoral);
+                    let ycoral_aarch64 = make_view_mut(&mut ybuf, n, incy);
+                    ssymv_safe(CoralTriangular::Lower, alpha, beta, acoral_aarch64, xcoral_aarch64, ycoral_aarch64);
                 });
             },
         );

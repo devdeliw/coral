@@ -12,8 +12,8 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::cblas_sdot;
-use coral_safe::level1::sdot as sdot_safe;
-use coral::level1::sdot as sdot_neon;
+use coral::level1::sdot as sdot_safe;
+use coral_aarch64::level1::sdot as sdot_neon;
 
 pub fn sdot_contiguous_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("sdot_contiguous_sweep");
@@ -31,7 +31,7 @@ pub fn sdot_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(n, 2)));
 
         group.bench_with_input(
-            BenchmarkId::new("sdot_coral_safe", n),
+            BenchmarkId::new("sdot_coral", n),
             &n,
             move |b, &_n| {
                 b.iter(|| {
@@ -41,7 +41,7 @@ pub fn sdot_contiguous_sweep(c: &mut Criterion) {
         );
 
         group.bench_with_input(
-            BenchmarkId::new("sdot_coral_neon", n),
+            BenchmarkId::new("sdot_coral_aarch64_neon", n),
             &n,
             move |b, &_n| {
                 b.iter(|| {

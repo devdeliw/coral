@@ -11,8 +11,8 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::cblas_sswap; 
-use coral_safe::level1::sswap as sswap_safe; 
-use coral::level1::sswap as sswap_neon; 
+use coral::level1::sswap as sswap_safe; 
+use coral_aarch64::level1::sswap as sswap_neon; 
 
 pub fn sswap_contiguous(c: &mut Criterion) { 
     let n = 1000000; 
@@ -30,20 +30,20 @@ pub fn sswap_contiguous(c: &mut Criterion) {
     let mut group = c.benchmark_group("sswap_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n, 4)));
 
-    group.bench_function("sswap_coral_safe", |b| { 
+    group.bench_function("sswap_coral", |b| { 
         b.iter(|| {
             // creation time is included
             // unavoidable due to VectorMut<'_, f32> 
             // owning a &'a mut [f32]
             //
             // basically negligible though
-            let xcoral = make_view_mut(&mut xsafe, n, incx); 
-            let ycoral = make_view_mut(&mut ysafe, n, incy); 
-            black_box(sswap_safe(black_box(xcoral), black_box(ycoral))); 
+            let xcoral_aarch64 = make_view_mut(&mut xsafe, n, incx); 
+            let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy); 
+            black_box(sswap_safe(black_box(xcoral_aarch64), black_box(ycoral_aarch64))); 
         });
     });
 
-    group.bench_function("sswap_coral_neon", |b| { 
+    group.bench_function("sswap_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box( sswap_neon ( 
                 black_box(n), 
@@ -84,15 +84,15 @@ pub fn sswap_strided(c: &mut Criterion) {
     let mut group = c.benchmark_group("sswap_strided"); 
     group.throughput(Throughput::Bytes(bytes(n, 4)));
 
-    group.bench_function("sswap_coral_safe", |b| { 
+    group.bench_function("sswap_coral", |b| { 
         b.iter(|| {
-            let xcoral = make_view_mut(&mut xsafe, n, incx); 
-            let ycoral = make_view_mut(&mut ysafe, n, incy); 
-            black_box(sswap_safe(black_box(xcoral), black_box(ycoral))); 
+            let xcoral_aarch64 = make_view_mut(&mut xsafe, n, incx); 
+            let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy); 
+            black_box(sswap_safe(black_box(xcoral_aarch64), black_box(ycoral_aarch64))); 
         }); 
     }); 
 
-    group.bench_function("sswap_coral_neon", |b| { 
+    group.bench_function("sswap_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box( sswap_neon ( 
                 black_box(n), 

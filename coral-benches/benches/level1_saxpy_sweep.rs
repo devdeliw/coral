@@ -12,8 +12,8 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::cblas_saxpy;
-use coral_safe::level1::saxpy as saxpy_safe;
-use coral::level1::saxpy as saxpy_neon;
+use coral::level1::saxpy as saxpy_safe;
+use coral_aarch64::level1::saxpy as saxpy_neon;
 
 pub fn saxpy_contiguous_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("saxpy_contiguous_sweep");
@@ -29,22 +29,22 @@ pub fn saxpy_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(n, 3)));
 
         group.bench_with_input(
-            BenchmarkId::new("saxpy_coral_safe", n),
+            BenchmarkId::new("saxpy_coral", n),
             &n,
             |b, &_n| {
                 let xsafe = x_init.clone();
                 let mut ysafe = y_init.clone();
 
                 b.iter(|| {
-                    let xcoral = make_view_ref(&xsafe, n, incx);
-                    let ycoral = make_view_mut(&mut ysafe, n, incy);
-                    black_box(saxpy_safe(alpha, black_box(xcoral), black_box(ycoral)));
+                    let xcoral_aarch64 = make_view_ref(&xsafe, n, incx);
+                    let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy);
+                    black_box(saxpy_safe(alpha, black_box(xcoral_aarch64), black_box(ycoral_aarch64)));
                 });
             },
         );
 
         group.bench_with_input(
-            BenchmarkId::new("saxpy_coral_neon", n),
+            BenchmarkId::new("saxpy_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let xneon = x_init.clone();

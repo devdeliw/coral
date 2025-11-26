@@ -11,8 +11,8 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::cblas_sasum; 
-use coral_safe::level1::sasum as sasum_safe; 
-use coral::level1::sasum as sasum_neon;
+use coral::level1::sasum as sasum_safe; 
+use coral_aarch64::level1::sasum as sasum_neon;
 
 pub fn sasum_contiguous(c: &mut Criterion) { 
     let n = 1000000; 
@@ -23,13 +23,13 @@ pub fn sasum_contiguous(c: &mut Criterion) {
     let mut group = c.benchmark_group("sasum_contiguous");
     group.throughput(Throughput::Bytes(bytes(n, 1))); 
 
-    group.bench_function("sasum_coral_safe", |b| { 
+    group.bench_function("sasum_coral", |b| { 
         b.iter(|| {
             black_box(sasum_safe(black_box(xvec))); 
         });
     });
 
-    group.bench_function("sasum_coral_neon", |b| { 
+    group.bench_function("sasum_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box(sasum_neon(
                 black_box(n), 
@@ -59,13 +59,13 @@ pub fn sasum_strided(c: &mut Criterion) {
     let mut group = c.benchmark_group("sasum_strided"); 
     group.throughput(Throughput::Bytes(bytes(n, 1))); 
 
-    group.bench_function("sasum_coral_safe", |b| { 
+    group.bench_function("sasum_coral", |b| { 
         b.iter(|| {
             black_box(sasum_safe(black_box(xvec))); 
         });
     });
 
-    group.bench_function("sasum_coral_neon", |b| { 
+    group.bench_function("sasum_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box(sasum_neon(
                 black_box(n), 

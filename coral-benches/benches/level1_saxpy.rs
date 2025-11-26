@@ -11,8 +11,8 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::cblas_saxpy; 
-use coral_safe::level1::saxpy as saxpy_safe; 
-use coral::level1::saxpy as saxpy_neon; 
+use coral::level1::saxpy as saxpy_safe; 
+use coral_aarch64::level1::saxpy as saxpy_neon; 
 
 pub fn saxpy_contiguous(c: &mut Criterion) { 
     let n = 1000000; 
@@ -23,19 +23,19 @@ pub fn saxpy_contiguous(c: &mut Criterion) {
     let xbuf = make_strided_vec(n, incx); 
     let mut ybuf = make_strided_vec(n, incy); 
     
-    let xcoral = make_view_ref(&xbuf, n, incx);
+    let xcoral_aarch64 = make_view_ref(&xbuf, n, incx);
 
     let mut group = c.benchmark_group("saxpy_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n, 3))); 
 
-    group.bench_function("saxpy_coral_safe", |b| { 
+    group.bench_function("saxpy_coral", |b| { 
         b.iter(|| { 
-            let ycoral = make_view_mut(&mut ybuf, n, incy); 
-            black_box(saxpy_safe(alpha, black_box(xcoral), black_box(ycoral))); 
+            let ycoral_aarch64 = make_view_mut(&mut ybuf, n, incy); 
+            black_box(saxpy_safe(alpha, black_box(xcoral_aarch64), black_box(ycoral_aarch64))); 
         }); 
     });
 
-    group.bench_function("saxpy_coral_neon", |b| { 
+    group.bench_function("saxpy_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box ( saxpy_neon ( 
                 black_box(n), 
@@ -71,19 +71,19 @@ pub fn saxpy_strided(c: &mut Criterion) {
     let xbuf = make_strided_vec(n, incx); 
     let mut ybuf = make_strided_vec(n, incy); 
 
-    let xcoral = make_view_ref(&xbuf, n, incx);
+    let xcoral_aarch64 = make_view_ref(&xbuf, n, incx);
 
     let mut group = c.benchmark_group("saxpy_strided"); 
     group.throughput(Throughput::Bytes(bytes(n, 3))); 
 
-    group.bench_function("saxpy_coral_safe", |b| { 
+    group.bench_function("saxpy_coral", |b| { 
         b.iter(|| { 
-            let ycoral = make_view_mut(&mut ybuf, n, incy); 
-            black_box(saxpy_safe(alpha, black_box(xcoral), black_box(ycoral))); 
+            let ycoral_aarch64 = make_view_mut(&mut ybuf, n, incy); 
+            black_box(saxpy_safe(alpha, black_box(xcoral_aarch64), black_box(ycoral_aarch64))); 
         }); 
     });
 
-    group.bench_function("saxpy_coral_neon", |b| { 
+    group.bench_function("saxpy_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box ( saxpy_neon ( 
                 black_box(n), 

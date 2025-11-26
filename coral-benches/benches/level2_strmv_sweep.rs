@@ -18,14 +18,14 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::{cblas_strmv, CBLAS_TRANSPOSE, CBLAS_LAYOUT, CBLAS_DIAG, CBLAS_UPLO};
-use coral::level2::strmv as strmv_neon;
-use coral::enums::{
+use coral_aarch64::level2::strmv as strmv_neon;
+use coral_aarch64::enums::{
     CoralDiagonal as NeonDiagonal,
     CoralTranspose as NeonTranspose,
     CoralTriangular as NeonTriangular,
 };
-use coral_safe::level2::strmv as strmv_safe;
-use coral_safe::types::{CoralTriangular, CoralTranspose, CoralDiagonal};
+use coral::level2::strmv as strmv_safe;
+use coral::types::{CoralTriangular, CoralTranspose, CoralDiagonal};
 
 pub fn strlmv_n_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("strlmv_n_sweep");
@@ -37,7 +37,7 @@ pub fn strlmv_n_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes_decimal((n * n + n) as f32, 0.5)));
 
         group.bench_with_input(
-            BenchmarkId::new("strlmv_n_coral_safe", n),
+            BenchmarkId::new("strlmv_n_coral", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);
@@ -64,7 +64,7 @@ pub fn strlmv_n_sweep(c: &mut Criterion) {
         );
 
         group.bench_with_input(
-            BenchmarkId::new("strlmv_n_coral_neon", n),
+            BenchmarkId::new("strlmv_n_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);
@@ -134,7 +134,7 @@ pub fn strlmv_t_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes_decimal((n * n + n) as f32, 0.5)));
 
         group.bench_with_input(
-            BenchmarkId::new("strlmv_t_coral_safe", n),
+            BenchmarkId::new("strlmv_t_coral", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);
@@ -161,7 +161,7 @@ pub fn strlmv_t_sweep(c: &mut Criterion) {
         );
 
         group.bench_with_input(
-            BenchmarkId::new("strlmv_t_coral_neon", n),
+            BenchmarkId::new("strlmv_t_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);
@@ -231,7 +231,7 @@ pub fn strumv_n_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes_decimal((n * n + n) as f32, 0.5)));
 
         group.bench_with_input(
-            BenchmarkId::new("strumv_n_coral_safe", n),
+            BenchmarkId::new("strumv_n_coral", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);
@@ -258,7 +258,7 @@ pub fn strumv_n_sweep(c: &mut Criterion) {
         );
 
         group.bench_with_input(
-            BenchmarkId::new("strumv_n_coral_neon", n),
+            BenchmarkId::new("strumv_n_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);
@@ -328,7 +328,7 @@ pub fn strumv_t_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes_decimal((n * n + n) as f32, 0.5)));
 
         group.bench_with_input(
-            BenchmarkId::new("strumv_t_coral_safe", n),
+            BenchmarkId::new("strumv_t_coral", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);
@@ -355,7 +355,7 @@ pub fn strumv_t_sweep(c: &mut Criterion) {
         );
 
         group.bench_with_input(
-            BenchmarkId::new("strumv_t_coral_neon", n),
+            BenchmarkId::new("strumv_t_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let xbuf = make_strided_vec(n, incx);

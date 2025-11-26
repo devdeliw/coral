@@ -1,7 +1,7 @@
 use rand::thread_rng;
 use rand::distributions::{Distribution, Standard, Uniform}; 
-use coral_safe::types::{VectorMut, VectorRef, MatrixMut, MatrixRef};
-use coral_safe::types::{CoralTriangular, CoralDiagonal}; 
+use coral::types::{VectorMut, VectorRef, MatrixMut, MatrixRef};
+use coral::types::{CoralTriangular, CoralDiagonal}; 
 
 /// for sweeps
 #[allow(dead_code)]

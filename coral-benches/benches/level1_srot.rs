@@ -11,8 +11,8 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::cblas_srot;
-use coral_safe::level1::srot as srot_safe; 
-use coral::level1::srot as srot_neon; 
+use coral::level1::srot as srot_safe; 
+use coral_aarch64::level1::srot as srot_neon; 
 
 pub fn srot_contiguous(c: &mut Criterion) { 
     let n = 1000000;
@@ -36,22 +36,22 @@ pub fn srot_contiguous(c: &mut Criterion) {
     let mut group = c.benchmark_group("srot_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n, 4))); 
 
-    group.bench_function("srot_coral_safe", |b| { 
+    group.bench_function("srot_coral", |b| { 
         b.iter(|| {
             // unavoidable egligible creation time
-            let xcoral = make_view_mut(&mut xsafe, n, incx); 
-            let ycoral = make_view_mut(&mut ysafe, n, incy); 
+            let xcoral_aarch64 = make_view_mut(&mut xsafe, n, incx); 
+            let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy); 
 
             black_box( srot_safe (
-                black_box(xcoral), 
-                black_box(ycoral), 
+                black_box(xcoral_aarch64), 
+                black_box(ycoral_aarch64), 
                 black_box(c_val), 
                 black_box(s_val), 
             )); 
         }); 
     }); 
 
-    group.bench_function("srot_coral_neon", |b| { 
+    group.bench_function("srot_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box ( srot_neon ( 
                 black_box(n), 
@@ -101,21 +101,21 @@ pub fn srot_strided(c: &mut Criterion) {
     let mut group = c.benchmark_group("srot_strided"); 
     group.throughput(Throughput::Bytes(bytes(n, 4))); 
 
-    group.bench_function("srot_coral_safe", |b| { 
+    group.bench_function("srot_coral", |b| { 
         b.iter(|| {
-            let xcoral = make_view_mut(&mut xsafe, n, incx); 
-            let ycoral = make_view_mut(&mut ysafe, n, incy); 
+            let xcoral_aarch64 = make_view_mut(&mut xsafe, n, incx); 
+            let ycoral_aarch64 = make_view_mut(&mut ysafe, n, incy); 
 
             black_box( srot_safe (
-                black_box(xcoral), 
-                black_box(ycoral), 
+                black_box(xcoral_aarch64), 
+                black_box(ycoral_aarch64), 
                 black_box(c_val), 
                 black_box(s_val), 
             )); 
         }); 
     }); 
 
-    group.bench_function("srot_coral_neon", |b| { 
+    group.bench_function("srot_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box ( srot_neon ( 
                 black_box(n), 

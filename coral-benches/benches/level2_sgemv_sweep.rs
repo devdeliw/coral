@@ -19,10 +19,10 @@ use criterion::{
 
 use blas_src as _;
 use cblas_sys::{cblas_sgemv, CBLAS_TRANSPOSE, CBLAS_LAYOUT};
-use coral::level2::sgemv as sgemv_neon;
-use coral::enums::CoralTranspose as CoralNeonTranspose;
-use coral_safe::level2::sgemv as sgemv_safe;
-use coral_safe::types::CoralTranspose;
+use coral_aarch64::level2::sgemv as sgemv_neon;
+use coral_aarch64::enums::CoralTranspose as CoralNeonTranspose;
+use coral::level2::sgemv as sgemv_safe;
+use coral::types::CoralTranspose;
 
 pub fn sgemv_n_contiguous_sweep(c: &mut Criterion) {
     let mut group = c.benchmark_group("sgemv_n_contiguous_sweep");
@@ -38,25 +38,25 @@ pub fn sgemv_n_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(n * m, 1)));
 
         group.bench_with_input(
-            BenchmarkId::new("sgemv_n_coral_safe", n),
+            BenchmarkId::new("sgemv_n_coral", n),
             &n,
             |b, &_n| {
                 let abuf = make_strided_mat(m, n, lda);
                 let xbuf = make_strided_vec(n, incx);
                 let mut ybuf = make_strided_vec(m, incy);
 
-                let acoral = make_matview_ref(&abuf, m, n, lda);
-                let xcoral = make_view_ref(&xbuf, n, incx);
+                let acoral_aarch64 = make_matview_ref(&abuf, m, n, lda);
+                let xcoral_aarch64 = make_view_ref(&xbuf, n, incx);
 
                 b.iter(|| {
-                    let ycoral = make_view_mut(&mut ybuf, m, incy);
-                    sgemv_safe(CoralTranspose::NoTrans, alpha, beta, acoral, xcoral, ycoral);
+                    let ycoral_aarch64 = make_view_mut(&mut ybuf, m, incy);
+                    sgemv_safe(CoralTranspose::NoTrans, alpha, beta, acoral_aarch64, xcoral_aarch64, ycoral_aarch64);
                 });
             },
         );
 
         group.bench_with_input(
-            BenchmarkId::new("sgemv_n_coral_neon", n),
+            BenchmarkId::new("sgemv_n_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let abuf = make_strided_mat(m, n, lda);
@@ -126,25 +126,25 @@ pub fn sgemv_t_contiguous_sweep(c: &mut Criterion) {
         group.throughput(Throughput::Bytes(bytes(n * m, 1)));
 
         group.bench_with_input(
-            BenchmarkId::new("sgemv_t_coral_safe", n),
+            BenchmarkId::new("sgemv_t_coral", n),
             &n,
             |b, &_n| {
                 let abuf = make_strided_mat(m, n, lda);
                 let xbuf = make_strided_vec(n, incx);
                 let mut ybuf = make_strided_vec(m, incy);
 
-                let acoral = make_matview_ref(&abuf, m, n, lda);
-                let xcoral = make_view_ref(&xbuf, n, incx);
+                let acoral_aarch64 = make_matview_ref(&abuf, m, n, lda);
+                let xcoral_aarch64 = make_view_ref(&xbuf, n, incx);
 
                 b.iter(|| {
-                    let ycoral = make_view_mut(&mut ybuf, m, incy);
-                    sgemv_safe(CoralTranspose::Trans, alpha, beta, acoral, xcoral, ycoral);
+                    let ycoral_aarch64 = make_view_mut(&mut ybuf, m, incy);
+                    sgemv_safe(CoralTranspose::Trans, alpha, beta, acoral_aarch64, xcoral_aarch64, ycoral_aarch64);
                 });
             },
         );
 
         group.bench_with_input(
-            BenchmarkId::new("sgemv_t_coral_neon", n),
+            BenchmarkId::new("sgemv_t_coral_aarch64_neon", n),
             &n,
             |b, &_n| {
                 let abuf = make_strided_mat(m, n, lda);

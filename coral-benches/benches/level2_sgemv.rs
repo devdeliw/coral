@@ -17,10 +17,10 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::{cblas_sgemv, CBLAS_TRANSPOSE, CBLAS_LAYOUT};
-use coral::level2::sgemv as sgemv_neon; 
-use coral::enums::CoralTranspose as CoralNeonTranspose; 
-use coral_safe::level2::sgemv as sgemv_safe; 
-use coral_safe::types::CoralTranspose;
+use coral_aarch64::level2::sgemv as sgemv_neon; 
+use coral_aarch64::enums::CoralTranspose as CoralNeonTranspose; 
+use coral::level2::sgemv as sgemv_safe; 
+use coral::types::CoralTranspose;
 
 pub fn sgemv_n_contiguous(c: &mut Criterion) { 
     let n = 1024; 
@@ -37,20 +37,20 @@ pub fn sgemv_n_contiguous(c: &mut Criterion) {
     let xbuf = make_strided_vec(n, incx); 
     let mut ybuf = make_strided_vec(m, incy); 
 
-    let acoral = make_matview_ref(&abuf, m, n, lda);
-    let xcoral = make_view_ref(&xbuf, n, incx); 
+    let acoral_aarch64 = make_matview_ref(&abuf, m, n, lda);
+    let xcoral_aarch64 = make_view_ref(&xbuf, n, incx); 
 
     let mut group = c.benchmark_group("sgemv_n_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n * m, 1))); 
 
-    group.bench_function("sgemv_n_coral_safe", |b| { 
+    group.bench_function("sgemv_n_coral", |b| { 
         b.iter(|| { 
-            let ycoral = make_view_mut(&mut ybuf, m, incy);   
-            sgemv_safe(CoralTranspose::NoTrans, alpha, beta, acoral, xcoral, ycoral); 
+            let ycoral_aarch64 = make_view_mut(&mut ybuf, m, incy);   
+            sgemv_safe(CoralTranspose::NoTrans, alpha, beta, acoral_aarch64, xcoral_aarch64, ycoral_aarch64); 
         }); 
     }); 
 
-    group.bench_function("sgemv_n_coral_neon", |b| { 
+    group.bench_function("sgemv_n_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             sgemv_neon (
                 CoralNeonTranspose::NoTranspose,
@@ -103,20 +103,20 @@ pub fn sgemv_t_contiguous(c: &mut Criterion) {
     let xbuf = make_strided_vec(n, incx); 
     let mut ybuf = make_strided_vec(m, incy); 
 
-    let acoral = make_matview_ref(&abuf, m, n, lda);
-    let xcoral = make_view_ref(&xbuf, n, incx); 
+    let acoral_aarch64 = make_matview_ref(&abuf, m, n, lda);
+    let xcoral_aarch64 = make_view_ref(&xbuf, n, incx); 
 
     let mut group = c.benchmark_group("sgemv_t_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n * m, 1))); 
 
-    group.bench_function("sgemv_t_coral_safe", |b| { 
+    group.bench_function("sgemv_t_coral", |b| { 
         b.iter(|| { 
-            let ycoral = make_view_mut(&mut ybuf, m, incy);   
-            sgemv_safe(CoralTranspose::Trans, alpha, beta, acoral, xcoral, ycoral); 
+            let ycoral_aarch64 = make_view_mut(&mut ybuf, m, incy);   
+            sgemv_safe(CoralTranspose::Trans, alpha, beta, acoral_aarch64, xcoral_aarch64, ycoral_aarch64); 
         }); 
     }); 
 
-    group.bench_function("sgemv_t_coral_neon", |b| { 
+    group.bench_function("sgemv_t_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             sgemv_neon (
                 CoralNeonTranspose::Transpose,

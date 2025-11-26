@@ -11,8 +11,8 @@ use criterion::{
 
 use blas_src as _; 
 use cblas_sys::cblas_sscal; 
-use coral_safe::level1::sscal as sscal_safe;
-use coral::level1::sscal as sscal_neon;
+use coral::level1::sscal as sscal_safe;
+use coral_aarch64::level1::sscal as sscal_neon;
 
 pub fn sscal_contiguous(c: &mut Criterion) { 
     let n = 1000000; 
@@ -28,14 +28,14 @@ pub fn sscal_contiguous(c: &mut Criterion) {
     let mut group = c.benchmark_group("sscal_contiguous"); 
     group.throughput(Throughput::Bytes(bytes(n, 2))); 
 
-    group.bench_function("sscal_coral_safe", |b| { 
+    group.bench_function("sscal_coral", |b| { 
         b.iter(|| { 
-            let xcoral = make_view_mut(&mut xsafe, n, incx); 
-            black_box(sscal_safe(black_box(alpha), black_box(xcoral))); 
+            let xcoral_aarch64 = make_view_mut(&mut xsafe, n, incx); 
+            black_box(sscal_safe(black_box(alpha), black_box(xcoral_aarch64))); 
         }); 
     }); 
 
-    group.bench_function("sscal_coral_neon", |b| { 
+    group.bench_function("sscal_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box( sscal_neon ( 
                 black_box(n), 
@@ -72,14 +72,14 @@ pub fn sscal_strided(c: &mut Criterion) {
     let mut group = c.benchmark_group("sscal_strided"); 
     group.throughput(Throughput::Bytes(bytes(n, 2))); 
 
-    group.bench_function("sscal_coral_safe", |b| { 
+    group.bench_function("sscal_coral", |b| { 
         b.iter(|| { 
-            let xcoral = make_view_mut(&mut xsafe, n, incx); 
-            black_box(sscal_safe(black_box(alpha), black_box(xcoral))); 
+            let xcoral_aarch64 = make_view_mut(&mut xsafe, n, incx); 
+            black_box(sscal_safe(black_box(alpha), black_box(xcoral_aarch64))); 
         }); 
     }); 
 
-    group.bench_function("sscal_coral_neon", |b| { 
+    group.bench_function("sscal_coral_aarch64_neon", |b| { 
         b.iter(|| { 
             black_box( sscal_neon ( 
                 black_box(n), 
