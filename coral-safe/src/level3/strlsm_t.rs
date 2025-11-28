@@ -1,11 +1,11 @@
-use crate::level3::sgemm_nn::sgemm_nn; 
-use crate::level3::sgemm::{MC, NC}; 
-use crate::fused::sscalf; 
-use crate::level3::substitutions::{
+use crate::level3::{sgemm_tn, sgemm_nt}; 
+use crate::level3::sgemm::{MC, NC};
+use crate::fused::sscalf;
+use crate::level3::subs_lower::{ 
     backward_sub_panel_left_lower_t, 
     forward_sub_panel_right_lower_t, 
 }; 
-use crate::types::MatrixMut; 
+use crate::types::MatrixMut;
 
 pub(crate) fn strlsm_left_trans (
     m: usize,
@@ -16,6 +16,7 @@ pub(crate) fn strlsm_left_trans (
     lda: usize,
     b: &mut [f32],
     ldb: usize,
+    scratch: &mut [f32],
 ) {
     if m == 0 || n == 0 {
         return;
@@ -35,10 +36,11 @@ pub(crate) fn strlsm_left_trans (
         let i0 = bi * mc;
         let ib_dim = mc.min(m - i0);
 
-        let a_ii = &a[i0 + i0 * lda..];
-        let b_i  = &mut b[i0..];
+        // solve diagonal b
+        let a_ii = &a[i0 + i0 * lda ..];
+        let b_i  = &mut b[i0 ..];
 
-        backward_sub_panel_left_lower_t (
+        backward_sub_panel_left_lower_t ( 
             ib_dim,
             n,
             unit_diag,
@@ -48,50 +50,37 @@ pub(crate) fn strlsm_left_trans (
             ldb,
         );
 
-        // for now, I'll use a vec to avoid aliasing and 
-        // keep things safe until I think of a workaround.
-        // for small matrices this should only 
-        // reduce performance a few percent (O(1/m)). 
-        let mut bi_buf = vec![0.0; ib_dim * n];
+        let panel_len = ib_dim * n;
+        debug_assert!(scratch.len() >= panel_len);
+        let (xi_buf, _rest) = scratch.split_at_mut(panel_len);
 
-        // copy solved panel b_i into temporary buf 
+        // copy solved panel into scratch buffer
         for j in 0..n {
             let src_col = &b[i0 + j * ldb .. i0 + j * ldb + ib_dim];
-            let dst_col = &mut bi_buf[j * ib_dim .. (j + 1) * ib_dim];
+            let dst_col = &mut xi_buf[j * ib_dim .. (j + 1) * ib_dim];
             dst_col.copy_from_slice(src_col);
         }
+
+        let x_i: &[f32] = &xi_buf[..];
+        let ldx = ib_dim;
 
         let mut bk = 0;
         while bk < bi {
             let k0 = bk * mc;
             let kb_dim = mc.min(m - k0);
 
-            let mut a_t_buf = vec![0.0; kb_dim * ib_dim];
+            let a_ik = &a[i0 + k0 * lda ..];
+            let b_k  = &mut b[k0 ..];
 
-            for q in 0..ib_dim {
-                let row = i0 + q;
-                for p in 0..kb_dim {
-                    let col = k0 + p;
-                    a_t_buf[p + q * kb_dim] = a[row + col * lda];
-                }
-            }
-
-            let a_t = a_t_buf.as_slice();
-            let x_i = bi_buf.as_slice();
-            let b_k = &mut b[k0..];
-
-            let lda_at = kb_dim;
-            let ldb_xi = ib_dim;
-
-            sgemm_nn(
-                kb_dim,
-                n,
-                ib_dim,
+            sgemm_tn (
+                kb_dim,   
+                n,        
+                ib_dim,   
                 -1.0,
-                a_t,
-                lda_at,
+                a_ik,     
+                lda,
                 x_i,
-                ldb_xi,
+                ldx,
                 1.0,
                 b_k,
                 ldb,
@@ -127,7 +116,7 @@ pub(crate) fn strlsm_right_trans (
         let j0 = bj * nc;
         let jb_dim = nc.min(n - j0);
 
-        let a_ii = &a[j0 + j0 * lda..];
+        let a_ii = &a[j0 + j0 * lda ..];
 
         let split = j0 * ldb;
         let (_b_left, b_j_and_right) = b.split_at_mut(split);
@@ -150,33 +139,22 @@ pub(crate) fn strlsm_right_trans (
             let k0 = bk * nc;
             let kb_dim = nc.min(n - k0);
 
-            let mut a_t_buf = vec![0.0; jb_dim * kb_dim];
-            let a_kj = &a[k0 + j0 * lda..];
+            let l_kj = &a[k0 + j0 * lda ..];
 
-            let mut p = 0;
-            while p < jb_dim {
-                let mut q = 0;
-                while q < kb_dim {
-                    a_t_buf[p + q * jb_dim] = a_kj[q + p * lda];
-                    q += 1;
-                }
-                p += 1;
-            }
+            let col_rel = k0 - (j0 + jb_dim);
+            let b_k = &mut b_right[col_rel * ldb .. (col_rel + kb_dim) * ldb];
 
-            let col0_rel = k0 - (j0 + jb_dim);
-            let b_k = &mut b_right[col0_rel * ldb .. (col0_rel + kb_dim) * ldb];
-
-            sgemm_nn(
-                m,
-                kb_dim,
-                jb_dim,
+            sgemm_nt (
+                m,        
+                kb_dim,   
+                jb_dim,   
                 -1.0,
-                x_j,
+                x_j,      
                 ldb,
-                a_t_buf.as_slice(),
-                jb_dim,
+                l_kj,     
+                lda,
                 1.0,
-                b_k,
+                b_k,      
                 ldb,
             );
 

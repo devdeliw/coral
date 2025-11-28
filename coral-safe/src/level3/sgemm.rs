@@ -11,6 +11,7 @@
 //! # Author 
 //! Deval Deliwala
 
+
 use crate::types::{CoralTranspose, MatrixRef, MatrixMut};
 
 use crate::level3::{
@@ -24,13 +25,6 @@ pub(crate) const MC: usize = 256;
 pub(crate) const NC: usize = 576;
 pub(crate) const KC: usize = 512;
 
-#[inline(always)]
-fn is_transpose(op: CoralTranspose) -> bool {
-    match op {
-        CoralTranspose::NoTrans => false,
-        CoralTranspose::Trans   => true,
-    }
-}
 
 /// General matrix-matrix multiply.
 /// `C := alpha AB + beta C`
@@ -56,8 +50,8 @@ pub fn sgemm(
     b: MatrixRef<'_, f32>,
     mut c: MatrixMut<'_, f32>,
 ) {
-    let a_t = is_transpose(op_a);
-    let b_t = is_transpose(op_b);
+    let a_t = op_a.is_transpose();
+    let b_t = op_b.is_transpose();
 
     let (a_rows, a_cols) = (a.n_rows(), a.n_cols());
     let (b_rows, b_cols) = (b.n_rows(), b.n_cols());
