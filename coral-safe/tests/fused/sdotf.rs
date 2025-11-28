@@ -12,7 +12,7 @@ use cblas_sys::{cblas_sgemv, CBLAS_LAYOUT, CBLAS_TRANSPOSE};
 use coral::fused::sdotf; 
 use coral::types::{VectorMut, VectorRef, MatrixRef}; 
 
-/// AXPYF equivalent to GEMV with alpha, beta = 1.0 
+/// SDOTF equivalent to Transpose GEMV with alpha, beta = 1.0 
 #[test]
 fn unit_stride() -> CoralResult { 
     let n = 1024; 
