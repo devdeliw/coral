@@ -20,7 +20,7 @@ use crate::level3::{
     sgemm_tt::sgemm_tt,
 };
 
-pub(crate) const MC: usize = 64;
+pub(crate) const MC: usize = 256;
 pub(crate) const NC: usize = 576;
 pub(crate) const KC: usize = 512;
 
