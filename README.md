@@ -25,3 +25,16 @@ The first is a nightly, *fully* `safe`, and
 The second is a very `unsafe`, but *slightly* faster BLAS for AArch64 only. In most cases, `coral` should be used.
 
 Here are some [benchmarks](https://dev-undergrad.dev/posts/benchmarks/). 
+
+### Contributing 
+
+Contributions to `coral-safe/` to help build a safe rust BLAS are welcome. This would involve either 
+
+- writing the double/complex-precision routines analagous to the single-precision routines already written.  
+- finishing level 3 single-precision routines. 
+
+Fork the repo, make your changes/additions, then send a pull request. 
+
+
+
+
