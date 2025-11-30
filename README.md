@@ -28,13 +28,8 @@ Here are some [benchmarks](https://dev-undergrad.dev/posts/benchmarks/).
 
 ### Contributing 
 
-Contributions to `coral-safe/` to help build a safe rust BLAS are welcome. This would involve either 
-
-- writing the double/complex-precision routines analagous to the single-precision routines already written.  
-- finishing level 3 single-precision routines. 
-
-Fork the repo, make your changes/additions, then send a pull request. 
-
+Contributions to `coral-safe/` to help build a safe rust BLAS are welcome.
+See [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 
 
